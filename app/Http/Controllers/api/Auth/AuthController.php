@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\api\Auth;
 
 use App\Models\User;
+use App\Models\Admin;
 use App\Utils\ImageManager;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use App\Http\Requests\AdminRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -20,6 +23,7 @@ class AuthController extends Controller
                 'name' => $request->post('name'),
                 'email' => $request->post('email'),
                 'phone_number' => $request->post('phone_number'),
+                'password' => $request->post('password'),
                 'image'=> $request->post('image') ?? asset('User-Profile-PNG-Image.png'),
             ]);
 
@@ -28,13 +32,46 @@ class AuthController extends Controller
             }
 
             if($request->hasFile('image')){
-                ImageManager::UploadImages($request, $user, null);
+                ImageManager::UploadImages($request, $user);
             }
-            $token = $user->createToken('user_token')->plainTextToken;
+
+            $token = $user->createToken('user_token', ['user'])->plainTextToken;
 
             // $user->notify(new SendOtpNotify());
             // DB::commit();
-            return responseApi(201, 'User registered successfully', ['token'=>$token]);
+            return responseApi(201, $request->type . ' registered successfully', ['token'=>$token]);
+        // } catch (\Exception ) {
+        //     DB::rollBack();
+        //     return responseApi(500, 'Internal Server Error');
+        // }
+    }
+    public function registerAdmin(AdminRequest $request)
+    {
+        $request->validated();
+        // try{
+        //     DB::beginTransaction();
+            $admin = Admin::create([
+                'type' => $request->post('type'),
+                'name' => $request->post('name'),
+                'email' => $request->post('email'),
+                'phone_number' => $request->post('phone_number'),
+                'password' => $request->post('password'),
+                'image'=> $request->post('image') ?? asset('User-Profile-PNG-Image.png'),
+            ]);
+
+            if (!$admin) {
+                return responseApi(404, 'admin not found');
+            }
+
+            if($request->hasFile('image')){
+                ImageManager::UploadImages($request, $admin);
+            }
+
+            $token = $admin->createToken('admin_token', ['admin'])->plainTextToken;
+
+            // $admin->notify(new SendOtpNotify());
+            // DB::commit();
+            return responseApi(201, 'Admin registered successfully', ['token'=>$token]);
         // } catch (\Exception ) {
         //     DB::rollBack();
         //     return responseApi(500, 'Internal Server Error');
