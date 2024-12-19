@@ -12,4 +12,8 @@ class Hotel extends Model
         'lat',
         'lng',
     ];
+
+    public function units(){
+        return $this->hasMany(Unit::class);
+    }
 }

@@ -32,8 +32,6 @@ return new class extends Migration
             $table->enum('pool_unit_transportation', ['car', 'walking']);
             $table->integer('room_count');
             $table->integer('toilet_count');
-            $table->json('images')->nullable();
-            $table->json('videos')->nullable();
             $table->text('description')->nullable();
             $table->text('reservation_roles')->nullable();
             $table->enum('reservation_type', ['direct', 'request']);

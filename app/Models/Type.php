@@ -10,4 +10,8 @@ class Type extends Model
         'name',
         'type_for',
     ];
+
+    public function units(){
+        return $this->hasMany(Unit::class);
+    }
 }

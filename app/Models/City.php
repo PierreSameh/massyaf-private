@@ -17,4 +17,8 @@ class City extends Model
         'lat_bottom_left',
         'lng_bottom_left',
     ];
+
+    public function units(){
+        return $this->hasMany(Unit::class);
+    }
 }

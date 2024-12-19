@@ -43,6 +43,22 @@ class Unit extends Model
         'weekend_price',
     ];
 
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
+
+    public function compound(){
+        return $this->belongsTo(Compound::class);
+    }
+
+    public function hotel(){
+        return $this->belongsTo(Hotel::class);
+    }
+
+    public function type(){
+        return $this->belongsTo(Type::class);
+    }
+    
     public function additionalFees(){
         return $this->hasMany(AdditionalFee::class);
     }
@@ -61,5 +77,13 @@ class Unit extends Model
 
     public function specialReservationTimes(){
         return $this->hasMany(SpecialReservationTimes::class);
+    }
+
+    public function images(){
+        return $this->hasMany(UnitImage::class);
+    }
+
+    public function videos(){
+        return $this->hasMany(UnitVideo::class);
     }
 }
