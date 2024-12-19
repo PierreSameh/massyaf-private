@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\Auth\AuthController;
 use App\Http\Controllers\api\Auth\ProfileController;
 use App\Http\Controllers\api\Auth\PhoneVerifyController;
+use App\Http\Controllers\Api\Auth\password\ResetPasswordController;
+use App\Http\Controllers\Api\Auth\password\ForgetPasswordController;
 
 
 Route::middleware('auth:sanctum')->group(function(){
@@ -27,3 +29,6 @@ Route::prefix('account/')->controller(AuthController::class)->group(function(){
     Route::delete('logout', 'logout')->middleware('auth:sanctum');
     Route::delete('destroy', 'deleteAccount')->middleware('auth:sanctum');
 });
+
+Route::post('forget/password', [ForgetPasswordController::class, 'forget']);
+Route::post('reset/password', [ResetPasswordController::class, 'reset']);
