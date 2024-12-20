@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('id_image')->nullable();
             $table->string('phone_number')->unique();
             $table->boolean('phone_verified_at')->default(false);
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
