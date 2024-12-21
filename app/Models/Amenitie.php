@@ -10,4 +10,9 @@ class Amenitie extends Model
         'name',
         'type',
     ];
+
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_amenities');
+    }
 }
