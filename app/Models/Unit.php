@@ -63,8 +63,12 @@ class Unit extends Model
         return $this->hasMany(AdditionalFee::class);
     }
 
-    public function availabeDates(){
+    public function availableDates(){
         return $this->hasMany(AvailableDate::class);
+    }
+
+    public function sales(){
+        return $this->hasMany(Sale::class);
     }
 
     public function cancelPolicies(){
@@ -85,5 +89,14 @@ class Unit extends Model
 
     public function videos(){
         return $this->hasMany(UnitVideo::class);
+    }
+
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenitie::class, 'unit_amenities');
+    }
+
+    public function rooms(){
+        return $this->hasMany(Room::class);
     }
 }

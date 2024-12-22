@@ -15,4 +15,8 @@ class Amenitie extends Model
     {
         return $this->belongsToMany(Room::class, 'room_amenities');
     }
+    public function units()
+    {
+        return $this->belongsToMany(Unit::class, 'unit_amenities');
+    }
 }
