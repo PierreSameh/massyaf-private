@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->redirectGuestsTo('/unauthorized');
         $middleware->alias([
             'checkTypeUser' => checkTypeUser::class,
             'abilities' => CheckAbilities::class,
