@@ -7,28 +7,31 @@ use App\Http\Controllers\api\Auth\ProfileController;
 use App\Http\Controllers\api\Auth\PhoneVerifyController;
 use App\Http\Controllers\Api\Auth\password\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\password\ForgetPasswordController;
-
+use App\Http\Controllers\Chat\Owner\LiveChatOwnerController;
+use App\Http\Controllers\Chat\User\LiveChatUserController;
 
 Route::middleware('auth:sanctum')->group(function(){
-    Route::get('/user', function (Request $request) {
+    Route::get('/type', function (Request $request) {
         return $request->user();
     })->middleware('abilities:user');
     Route::get('/admin', function (Request $request) {
         return $request->user();
-    })->middleware('abilities:admin');
+    });
+
     Route::put('/user/update', [ProfileController::class, 'updateProfile']);
     Route::prefix('verify/')->controller(PhoneVerifyController::class)->group(function(){
         Route::post('/', 'verify');
         Route::get('resend', 'resend');
     });
+
+    Route::delete('account/logout', [AuthController::class, 'logout']);
+    Route::delete('account/destroy', [AuthController::class, 'deleteAccount']);
+
+    Route::post('message/user', [LiveChatUserController::class, 'sendUser']);
+    Route::post('message/owner', [LiveChatOwnerController::class, 'sendOwner']);
 });
 
-Route::prefix('account/')->controller(AuthController::class)->group(function(){
-    Route::post('register', 'register')->middleware('checkTypeUser');
-    Route::post('admin/register', 'registerAdmin');
-    Route::delete('logout', 'logout')->middleware('auth:sanctum');
-    Route::delete('destroy', 'deleteAccount')->middleware('auth:sanctum');
-});
 
+Route::post('account/register', [AuthController::class, 'register'])->middleware('checkTypeUser');
 Route::post('forget/password', [ForgetPasswordController::class, 'forget']);
 Route::post('reset/password', [ResetPasswordController::class, 'reset']);
