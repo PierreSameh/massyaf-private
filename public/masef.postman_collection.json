@@ -179,252 +179,420 @@
 					]
 				},
 				{
-					"name": "Register Admin",
-					"event": [
+					"name": "Admin",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.collectionVariables.unset(\"token\");\r",
-									"\r",
-									"var jsonData = pm.response.json();\r",
-									"pm.collectionVariables.set(\"token\", jsonData.data.token);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "multipart/form-data",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
+							"name": "login",
+							"event": [
 								{
-									"key": "name",
-									"value": "Freddie",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "Admin@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/C:/Users/polaf/Downloads/MySQL Query_2.jpg"
-								},
-								{
-									"key": "phone_number",
-									"value": "01122858515",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "mmmm1234",
-									"type": "text"
-								},
-								{
-									"key": "password_confirmation",
-									"value": "mmmm1234",
-									"type": "text"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.unset(\"token\");\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"token\", jsonData.data.token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}/account/admin/register",
-							"host": [
-								"{{url}}"
 							],
-							"path": [
-								"account",
-								"admin",
-								"register"
-							]
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "admin@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "password",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/auth/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.unset(\"token\");\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"token\", jsonData.data.token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Freddie",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "Admin@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/polaf/Downloads/MySQL Query_2.jpg"
+										},
+										{
+											"key": "phone_number",
+											"value": "01122858515",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "mmmm1234",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "mmmm1234",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/account/admin/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"account",
+										"admin",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "admin auth",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/admin",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"admin"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Register User",
-					"event": [
+					"name": "user",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.collectionVariables.unset(\"token\");\r",
-									"\r",
-									"var jsonData = pm.response.json();\r",
-									"pm.collectionVariables.set(\"token\", jsonData.data.token);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "multipart/form-data",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
+							"name": "Register User",
+							"event": [
 								{
-									"key": "type",
-									"value": "user",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "Freddie",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "FreddieFady2@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "01122858514",
-									"type": "text"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/C:/Users/polaf/Downloads/MySQL Joins_1.jpg"
-								},
-								{
-									"key": "password",
-									"value": "74185296378",
-									"type": "text"
-								},
-								{
-									"key": "password_confirmation",
-									"value": "74185296378",
-									"type": "text"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.unset(\"token\");\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"token\", jsonData.data.token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}/account/register",
-							"host": [
-								"{{url}}"
 							],
-							"path": [
-								"account",
-								"register"
-							]
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type",
+											"value": "user",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "Freddie",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "FreddieFady1@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone_number",
+											"value": "01122858511",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/polaf/Downloads/MySQL Joins_1.jpg"
+										},
+										{
+											"key": "password",
+											"value": "74185296378",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "74185296378",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/account/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"account",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user auth",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/type",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"type"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Register Owner",
-					"event": [
+					"name": "Owner",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.collectionVariables.unset(\"token\");\r",
-									"\r",
-									"var jsonData = pm.response.json();\r",
-									"pm.collectionVariables.set(\"token\", jsonData.data.token);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "multipart/form-data",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
+							"name": "Register Owner",
+							"event": [
 								{
-									"key": "type",
-									"value": "owner",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "Freddie",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "FreddieFady2@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "01122858514",
-									"type": "text"
-								},
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/C:/Users/polaf/Downloads/MySQL Query.jpg"
-								},
-								{
-									"key": "password",
-									"value": "14725836978",
-									"type": "text"
-								},
-								{
-									"key": "password_confirmation",
-									"value": "14725836978",
-									"type": "text"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.unset(\"token\");\r",
+											"\r",
+											"var jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"token\", jsonData.data.token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}/account/register",
-							"host": [
-								"{{url}}"
 							],
-							"path": [
-								"account",
-								"register"
-							]
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type",
+											"value": "owner",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "Freddie",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "FreddieFady2@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone_number",
+											"value": "01122858514",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/polaf/Downloads/MySQL Query.jpg"
+										},
+										{
+											"key": "password",
+											"value": "14725836978",
+											"type": "text"
+										},
+										{
+											"key": "password_confirmation",
+											"value": "14725836978",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/account/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"account",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "owner auth",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/type",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"type"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
 					"name": "logout",
@@ -567,72 +735,129 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Live Chat",
+			"item": [
+				{
+					"name": "Sent Message Owner",
+					"item": [
+						{
+							"name": "livechat",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "sender_type",
+											"value": "owner",
+											"type": "text"
+										},
+										{
+											"key": "reciver_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "message",
+											"value": "hello",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/message/owner",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"message",
+										"owner"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				},
 				{
-					"name": "user auth",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
+					"name": "Sent Message User",
+					"item": [
+						{
+							"name": "livechat",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "sender_type",
+											"value": "user",
+											"type": "text"
+										},
+										{
+											"key": "reciver_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "message",
+											"value": "hello",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/message/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"message",
+										"user"
+									]
 								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/user",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"user"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "admin auth",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/admin",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"admin"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		}
