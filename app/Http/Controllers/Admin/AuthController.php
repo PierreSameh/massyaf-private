@@ -44,5 +44,26 @@ class AuthController extends Controller
                 'message' => 'Invalid username or password',
             ], 401);
         }
-    } 
+    }
+
+    public function logout(Request $request)
+{   
+    try{
+        // Revoke all tokens for the admin
+        $admin = $request->user();
+        $admin->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم تسجيل الخروج بنجاح.'
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'حدث خطاء في الخادم',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }

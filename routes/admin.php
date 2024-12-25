@@ -13,6 +13,8 @@ Route::prefix("admin")->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum,admin')->group(function () {
+        //Logout
+        Route::post('/logout', [AuthController::class, 'logout']);
         //Cities CRUD
         Route::apiResource('city', CityController::class);
         //Compounds CRUD

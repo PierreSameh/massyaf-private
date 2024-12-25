@@ -26,7 +26,7 @@ class UserRequest extends FormRequest
             'name' =>'required|string|min:2|max:50',
             'email' =>'required|email|unique:users,email',
             'phone_number' => 'required|string|max:16|unique:users,phone_number',
-            'image' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             'id_image' => 'nullable|image|mimes:jpg',
             'password'=>'required|confirmed|string|min:8',
             'password_confirmation'=>'required',

@@ -24,6 +24,8 @@ class User extends Authenticatable
         'image',
         'id_image',
         'phone_number',
+        'last_otp',
+        'last_otp_expire',
         'phone_verified_at',
         'password',
     ];

@@ -32,6 +32,17 @@ Route::middleware('auth:sanctum')->group(function(){
 });
 
 
-Route::post('account/register', [AuthController::class, 'register'])->middleware('checkTypeUser');
+Route::post('account/register', [AuthController::class, 'register']);
+Route::post('account/login', [AuthController::class, 'login']);
+Route::get('/account/forget-password/send-code', [AuthController::class, 'sendForgetPassword']);
+Route::post('/account/forget-password/check-code', [AuthController::class, 'forgetPasswordCheckCode']);
+Route::post('/account/forget-password/reset', [AuthController::class, 'forgetPassword']);
+Route::middleware('auth:sanctum')->group(function(){
+    //Ask Code for email validation
+    Route::get('account/ask-code', [AuthController::class, 'askCode']);
+    Route::post('account/verify', [AuthController::class, 'verify']);
+    Route::delete('account/logout', [AuthController::class, 'logout']);
+    Route::delete('account/destroy', [AuthController::class, 'deleteAccount']);
+});
 Route::post('forget/password', [ForgetPasswordController::class, 'forget']);
 Route::post('reset/password', [ResetPasswordController::class, 'reset']);
