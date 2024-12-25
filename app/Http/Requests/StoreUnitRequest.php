@@ -22,8 +22,8 @@ class StoreUnitRequest extends FormRequest
             'videos.*' => 'nullable|file|mimetypes:video/mp4,video/avi,video/mpeg|max:10240',
             
             // Fields for unit type, city, and compound/hotel
-            'owner_id' => ['required'],
             'type' => ['required', 'in:unit,hotel'],
+            'name' => ['required', 'string', 'max:255'],
             'unit_type_id' => ['required', 'exists:types,id'],
             'city_id' => ['required', 'exists:cities,id'],
             'compound_id' => ['nullable', 'required_if:type,unit', 'exists:compounds,id'],

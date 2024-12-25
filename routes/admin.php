@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AmenitieController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CompoundController;
@@ -23,6 +24,8 @@ Route::prefix("admin")->group(function () {
         Route::apiResource('types', UnitTypeController::class);
         //Hotels CRUD
         Route::apiResource('hotels', HotelController::class);
+        //Amenities CRUD
+        Route::apiResource('amenities', AmenitieController::class);
 
     });
 });

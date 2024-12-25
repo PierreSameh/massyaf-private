@@ -9,6 +9,7 @@ class Unit extends Model
     protected $fillable = [
         'owner_id',
         'type',
+        'name',
         'unit_type_id',
         'city_id',
         'compound_id',
