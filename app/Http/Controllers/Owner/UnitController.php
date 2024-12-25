@@ -371,4 +371,230 @@ class UnitController extends Controller
             ], 500);
         }
     }
+
+    public function update(StoreUnitRequest $request, $id)
+{
+    try {
+        DB::beginTransaction();
+
+        $unit = Unit::find($id);
+
+        if (!$unit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unit not found',
+            ], 404);
+        }
+        $validated = $request->validated();
+        $unitData = $validated;
+        
+        // Update the unit
+        $unit->update([
+            'owner_id' => $unitData['owner_id'],
+            'type' => $unitData['type'],
+            'unit_type_id' => $unitData['unit_type_id'],
+            'city_id' => $unitData['city_id'],
+            'compound_id' => $unitData['compound_id'] ?? null,
+            'hotel_id' => $unitData['hotel_id'] ?? null,
+            'address' => $unitData['address'] ?? null,
+            'lat' => $unitData['lat'] ?? null,
+            'lng' => $unitData['lng'] ?? null,
+            'unit_number' => $unitData['unit_number'],
+            'floors_count' => $unitData['floors_count'],
+            'elevator' => $unitData['elevator'],
+            'area' => $unitData['area'],
+            'distance_unit_beach' => $unitData['distance_unit_beach'] ?? null,
+            'beach_unit_transportation' => $unitData['beach_unit_transportation'] ?? null,
+            'distance_unit_pool' => $unitData['distance_unit_pool'] ?? null,
+            'pool_unit_transportation' => $unitData['pool_unit_transportation'] ?? null,
+            'amenities' => json_encode($unitData['amenities'] ?? []),
+            'room_count' => $unitData['room_count'],
+            'toilet_count' => $unitData['toilet_count'],
+            'reception' => json_encode($unitData['reception'] ?? []),
+            'kitchen' => json_encode($unitData['kitchen'] ?? []),
+            'description' => $unitData['description'] ?? null,
+            'reservation_roles' => $unitData['reservation_roles'] ?? null,
+            'reservation_type' => $unitData['reservation_type'],
+            'price' => $unitData['price'],
+            'insurance_amount' => $unitData['insurance_amount'],
+            'max_individuals' => $unitData['max_individuals'],
+            'youth_only' => $unitData['youth_only'],
+            'min_reservation_days' => $unitData['min_reservation_days'] ?? null,
+            'deposit' => $unitData['deposit'],
+            'upon_arival_price' => $unitData['upon_arival_price'],
+            'weekend_prices' => $unitData['weekend_prices'],
+            'min_weekend_period' => $unitData['min_weekend_period'] ?? null,
+            'weekend_price' => $unitData['weekend_price'] ?? null,
+        ]);
+
+        // Update amenities
+        if (isset($unitData['amenities'])) {
+            $unit->amenities()->sync($unitData['amenities']);
+        }
+
+        // Update rooms
+        if (isset($unitData['rooms'])) {
+            // Delete existing rooms and their relationships
+            $unit->rooms()->each(function($room) {
+                $room->amenities()->detach();
+                $room->delete();
+            });
+
+            // Create new rooms
+            foreach ($unitData['rooms'] as $roomData) {
+                $room = $unit->rooms()->create([
+                    'bed_count' => $roomData['bed_count'],
+                    'bed_sizes' => json_encode($roomData['bed_sizes'] ?? []),
+                ]);
+                
+                if (!empty($roomData['amenities'])) {
+                    $room->amenities()->attach($roomData['amenities']);
+                }
+            }
+        }
+
+        // Update available dates
+        if (isset($unitData['available_dates'])) {
+            $unit->availableDates()->delete();
+            $unit->availableDates()->createMany($unitData['available_dates']);
+        }
+
+        // Update cancel policies
+        if (isset($unitData['cancel_policies'])) {
+            $unit->cancelPolicies()->delete();
+            $unit->cancelPolicies()->createMany($unitData['cancel_policies']);
+        }
+
+        // Update additional fees
+        if (isset($unitData['additional_fees'])) {
+            $unit->additionalFees()->delete();
+            $unit->additionalFees()->createMany($unitData['additional_fees']);
+        }
+
+        // Update long term reservations
+        if (isset($unitData['long_term_reservations'])) {
+            $unit->longTermReservations()->delete();
+            $unit->longTermReservations()->createMany($unitData['long_term_reservations']);
+        }
+
+        // Update sales
+        if (isset($unitData['sales'])) {
+            $unit->sales()->delete();
+            $unit->sales()->createMany($unitData['sales']);
+        }
+
+        // Update special reservation times
+        if (isset($unitData['special_reservation_times'])) {
+            $unit->specialReservationTimes()->delete();
+            $unit->specialReservationTimes()->createMany($unitData['special_reservation_times']);
+        }
+
+        // Handle images
+        if ($request->hasFile('images')) {
+            // Delete existing images
+            foreach ($unit->images as $image) {
+                Storage::disk('public')->delete($image->image);
+                $image->delete();
+            }
+            
+            // Upload new images
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('uploads/units/images', 'public');
+                $unit->images()->create(['image' => $path]);
+            }
+        }
+
+        // Handle videos
+        if ($request->hasFile('videos')) {
+            // Delete existing videos
+            foreach ($unit->videos as $video) {
+                Storage::disk('public')->delete($video->video);
+                $video->delete();
+            }
+            
+            // Upload new videos
+            foreach ($request->file('videos') as $video) {
+                $path = $video->store('uploads/units/videos', 'public');
+                $unit->videos()->create(['video' => $path]);
+            }
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Unit updated successfully',
+            'data' => $unit->load([
+                'rooms.amenities', 
+                'availableDates', 
+                'cancelPolicies',
+                'additionalFees',
+                'longTermReservations',
+                'sales',
+                'specialReservationTimes',
+                'images',
+                'videos'
+            ])
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        
+        // Clean up any newly uploaded files
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                Storage::disk('public')->delete($image->path());
+            }
+        }
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                Storage::disk('public')->delete($video->path());
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update unit',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+    public function destroy($id)
+    {
+        try {
+            $unit = Unit::find($id);
+
+            if (!$unit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unit not found',
+                ], 404);
+            }
+
+            // Delete related images and videos
+            foreach ($unit->images as $image) {
+                Storage::disk('public')->delete($image->image);
+                $image->delete();
+            }
+
+            foreach ($unit->videos as $video) {
+                Storage::disk('public')->delete($video->video);
+                $video->delete();
+            }
+
+            // Delete unit
+            $unit->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Unit deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete unit',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

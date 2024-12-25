@@ -15,15 +15,6 @@ class StoreUnitRequest extends FormRequest
         return true;
     }
 
-    // protected function prepareForValidation()
-    // {
-    //     if (is_string($this->input('data'))) {
-    //         $this->merge([
-    //             'data' => json_decode($this->input('data'), true)
-    //         ]);
-    //     }
-    // }
-
     public function rules(): array
     {
         return [
@@ -113,7 +104,7 @@ class StoreUnitRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => $validator->errors()->first(),
                 'errors' => $validator->errors(),
             ], 422)
         );

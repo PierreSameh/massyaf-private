@@ -13,6 +13,7 @@ class Unit extends Model
         'city_id',
         'compound_id',
         'hotel_id',
+        'status',
         'address',
         'lat',
         'lng',
