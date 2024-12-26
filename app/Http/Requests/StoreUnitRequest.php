@@ -40,6 +40,7 @@ class StoreUnitRequest extends FormRequest
             'distance_unit_pool' => ['nullable', 'numeric', 'min:0'],
             'pool_unit_transportation' => ['nullable', 'in:car,walking'],
             'amenities' => ['nullable', 'array'],
+            'amenities.*' => ['exists:amenities,id'],
             'room_count' => ['required', 'integer', 'min:1'],
             'toilet_count' => ['required', 'integer', 'min:1'],
             'reception' => ['nullable', 'array'],

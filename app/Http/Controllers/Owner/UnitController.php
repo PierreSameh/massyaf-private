@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUnitRequest;
 use App\Models\AdditionalFee;
+use App\Models\Amenitie;
 use App\Models\AvailableDate;
 use App\Models\CancelPoliciy;
 use App\Models\LongTermReservations;
@@ -26,7 +27,7 @@ class UnitController extends Controller
             'city',
             'compound',
             'hotel',
-            'type',
+            'unitType',
             'additionalFees',
             'availableDates',
             'sales',
@@ -50,7 +51,7 @@ class UnitController extends Controller
             'city',
             'compound',
             'hotel',
-            'type',
+            'unitType',
             'additionalFees',
             'availableDates',
             'sales',
@@ -75,7 +76,7 @@ class UnitController extends Controller
             'city',
             'compound',
             'hotel',
-            'type',
+            'unitType',
             'additionalFees',
             'availableDates',
             'sales',
@@ -87,7 +88,6 @@ class UnitController extends Controller
             'rooms',
             'amenities'
         ])->find($id);
-    
         if (!$unit) {
             return response()->json(['message' => 'Unit not found'], 404);
         }
@@ -96,10 +96,10 @@ class UnitController extends Controller
         $unitAmenities = [];
         $receptionAmenities = [];
         $kitchenAmenities = [];
-    
+
         foreach ($unit->amenities as $amenity) {
             switch ($amenity->type) {
-                case 'unit':
+                case 'unit' || 'hotel':
                     $unitAmenities[] = $amenity;
                     break;
                 case 'reception':
@@ -119,7 +119,7 @@ class UnitController extends Controller
     
         // Remove the original amenities array
         unset($unitData['amenities']);
-    
+
         return response()->json($unitData);
     }
     
@@ -153,11 +153,8 @@ class UnitController extends Controller
                 'beach_unit_transportation' => $unitData['beach_unit_transportation'] ?? null,
                 'distance_unit_pool' => $unitData['distance_unit_pool'] ?? null,
                 'pool_unit_transportation' => $unitData['pool_unit_transportation'] ?? null,
-                'amenities' => json_encode($unitData['amenities'] ?? []),
                 'room_count' => $unitData['room_count'],
                 'toilet_count' => $unitData['toilet_count'],
-                'reception' => json_encode($unitData['reception'] ?? []),
-                'kitchen' => json_encode($unitData['kitchen'] ?? []),
                 'description' => $unitData['description'] ?? null,
                 'reservation_roles' => $unitData['reservation_roles'] ?? null,
                 'reservation_type' => $unitData['reservation_type'],
@@ -175,6 +172,12 @@ class UnitController extends Controller
 
             if (!empty($unitData['amenities'])) {
                 $unit->amenities()->attach($unitData['amenities']);
+            }
+            if (!empty($unitData['reception'])) {
+                $unit->amenities()->attach($unitData['reception']);
+            }
+            if (!empty($unitData['kitchen'])) {
+                $unit->amenities()->attach($unitData['kitchen']);
             }
 
             // Handle rooms
@@ -321,7 +324,6 @@ class UnitController extends Controller
             'beach_unit_transportation' => $unitData['beach_unit_transportation'] ?? null,
             'distance_unit_pool' => $unitData['distance_unit_pool'] ?? null,
             'pool_unit_transportation' => $unitData['pool_unit_transportation'] ?? null,
-            'amenities' => json_encode($unitData['amenities'] ?? []),
             'room_count' => $unitData['room_count'],
             'toilet_count' => $unitData['toilet_count'],
             'reception' => json_encode($unitData['reception'] ?? []),
@@ -343,7 +345,17 @@ class UnitController extends Controller
 
         // Update amenities
         if (isset($unitData['amenities'])) {
-            $unit->amenities()->sync($unitData['amenities']);
+            $validAmenities = Amenitie::whereIn('id', $unitData['amenities'])->pluck('id')->toArray();
+            $invalidAmenities = array_diff($unitData['amenities'], $validAmenities);
+        
+            if (!empty($invalidAmenities)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Some amenities are invalid: ' . implode(', ', $invalidAmenities),
+                ], 400);
+            }
+        
+            $unit->amenities()->sync($validAmenities);
         }
 
         // Update rooms
