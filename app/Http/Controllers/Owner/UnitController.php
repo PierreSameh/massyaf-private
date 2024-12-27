@@ -403,6 +403,10 @@ class UnitController extends Controller
             $unit->longTermReservations()->createMany($unitData['long_term_reservations']);
         }
 
+        //Remove Sales
+        if (!isset($unitData['sales'])) {
+            $unit->sales()->delete();
+        }
         // Update sales
         if (isset($unitData['sales'])) {
             $unit->sales()->delete();

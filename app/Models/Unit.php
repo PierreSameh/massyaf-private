@@ -10,6 +10,7 @@ class Unit extends Model
         'owner_id',
         'type',
         'name',
+        'rate',
         'unit_type_id',
         'city_id',
         'compound_id',
