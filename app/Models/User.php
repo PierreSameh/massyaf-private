@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -24,10 +25,22 @@ class User extends Authenticatable
         'image',
         'id_image',
         'phone_number',
+        'last_otp',
+        'last_otp_expire',
         'phone_verified_at',
         'password',
     ];
 
+    public function getImageAttribute($value)
+    {
+        // Assuming the 'picture' column stores the image path
+        return $value ? url(Storage::url("app/public/" . $value)) : null;
+    }
+    public function getIdImageAttribute($value)
+    {
+        // Assuming the 'picture' column stores the image path
+        return $value ? url(Storage::url("app/public/" . $value)) : null;
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

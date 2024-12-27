@@ -9,10 +9,13 @@ class Unit extends Model
     protected $fillable = [
         'owner_id',
         'type',
+        'name',
+        'rate',
         'unit_type_id',
         'city_id',
         'compound_id',
         'hotel_id',
+        'status',
         'address',
         'lat',
         'lng',
@@ -43,6 +46,47 @@ class Unit extends Model
         'weekend_price',
     ];
 
+    protected $appends = ['min_price', 'max_price'];
+
+    public function getMaxPriceAttribute()
+{
+    // Get the unit's base price
+    $basePrice = $this->price;
+    
+    // Get the highest special reservation time price
+    $maxSpecialPrice = $this->specialReservationTimes()
+        ->max('price');
+    
+    // Return the higher of the two prices
+    return (float) max($basePrice, $maxSpecialPrice ?? 0);
+}
+
+public function getMinPriceAttribute()
+{
+    // Get the unit's base price
+    $basePrice = $this->price;
+    
+    // Get all active sales that could affect the current price
+    $currentSales = $this->sales()
+        // ->where('from', '<=', now())
+        // ->where('to', '>=', now())
+        ->get();
+    
+    // If there are no active sales, return the base price
+    if ($currentSales->isEmpty()) {
+        return $basePrice;
+    }
+    
+    // Calculate prices after applying each sale percentage
+    $pricesAfterSales = $currentSales->map(function ($sale) use ($basePrice) {
+        $discountAmount = ($basePrice * $sale->sale_percentage) / 100;
+        return $basePrice - $discountAmount;
+    });
+    
+    // Return the lowest price after applying sales
+    return (float) $pricesAfterSales->min();
+}
+
     public function city(){
         return $this->belongsTo(City::class);
     }
@@ -55,7 +99,7 @@ class Unit extends Model
         return $this->belongsTo(Hotel::class);
     }
 
-    public function type(){
+    public function unitType(){
         return $this->belongsTo(Type::class);
     }
     
@@ -63,8 +107,12 @@ class Unit extends Model
         return $this->hasMany(AdditionalFee::class);
     }
 
-    public function availabeDates(){
+    public function availableDates(){
         return $this->hasMany(AvailableDate::class);
+    }
+
+    public function sales(){
+        return $this->hasMany(Sale::class);
     }
 
     public function cancelPolicies(){
@@ -85,5 +133,14 @@ class Unit extends Model
 
     public function videos(){
         return $this->hasMany(UnitVideo::class);
+    }
+
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenitie::class, 'unit_amenities');
+    }
+
+    public function rooms(){
+        return $this->hasMany(Room::class);
     }
 }

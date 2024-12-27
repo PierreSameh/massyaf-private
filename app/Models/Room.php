@@ -19,4 +19,10 @@ class Room extends Model
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
+
+    public function amenities()
+{
+    return $this->belongsToMany(Amenitie::class, 'room_amenities');
+}
+
 }
