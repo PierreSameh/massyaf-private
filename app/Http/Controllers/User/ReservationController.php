@@ -82,7 +82,8 @@ class ReservationController extends Controller
             $saturday = Carbon::SATURDAY;
             
             if (($dateFrom->dayOfWeek === $friday || $dateFrom->dayOfWeek === $saturday) && 
-                ($dateTo->dayOfWeek === $friday || $dateTo->dayOfWeek === $saturday)){
+                ($dateTo->dayOfWeek === $friday || $dateTo->dayOfWeek === $saturday) && $daysCount <= 2)
+                {
                     if($daysCount < $unit->min_weekend_period){
                         return response()->json([
                             "success" => false,
@@ -112,7 +113,6 @@ class ReservationController extends Controller
                 $price -= $saleAmount;
             }
             $bookAdvance = ($price * $unit->deposit) / 100;
-        
             $reservation = Reservation::create([
                 "user_id" => $user->id,
                 "unit_id" => $request->unit_id,
