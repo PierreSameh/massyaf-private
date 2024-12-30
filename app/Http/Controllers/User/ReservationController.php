@@ -19,6 +19,8 @@ class ReservationController extends Controller
                 "unit_id" => "required|exists:units,id",
                 "date_from" => "required|date",
                 "date_to" => "required|date",
+                "adults_count" => "required|integer|min:1",
+                "children_count" => "nullable|integer|min:0",
                 "ids.*" => "required|image|max:2048"
             ]);
             $user = $request->user();
@@ -43,11 +45,15 @@ class ReservationController extends Controller
             if (!$isAvailable) {
                 return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
             }
+            //Check on Current reservations on Unit
+            $reservations = Reservation::where('unit_id', $unit->id)
+                ->whereDate('date_from', '<=', $dateFrom)
+                ->whereDate('date_to', '>=', $dateTo)
+                ->exists();
         
-            /* Reminder
-              Should Check on Unit Reservations
-            */
-        
+            if ($reservations) {
+                return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
+            }
             //Check on Min Reservation Days
             if($daysCount < $unit->min_reservation_days){
                 return response()->json([
@@ -118,7 +124,10 @@ class ReservationController extends Controller
                 "unit_id" => $request->unit_id,
                 "date_from" => $request->date_from,
                 "date_to"=> $request->date_to,
+                "adults_count" => $request->adults_count,
+                "children_count" => $request->children_count ?? null,
                 "book_advance" => $bookAdvance,
+                "booking_price" => $price, 
                 "status" => $status,
             ]);
             if ($request->hasFile('ids')) {
@@ -146,5 +155,50 @@ class ReservationController extends Controller
             ], 500);
         }
     }
-    
+
+    public function getAll() {
+        $user = auth()->user();
+        $reservations = Reservation::where('user_id', $user->id)
+            ->with('unit.images')
+            ->get();
+        // Calculate Days Count
+        foreach ($reservations as $reservation) {        
+            $dateFrom = Carbon::parse($reservation->date_from);
+            $dateTo = Carbon::parse($reservation->date_to);
+            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
+        }
+        return response()->json([
+            "success" => true,
+            "reservations" => $reservations
+        ], 200);
+    }
+
+    public function get($id) {
+        $user = auth()->user();
+        $reservation = Reservation::where('id', $id)
+            ->where('user_id', $user->id)
+            ->with('ids','unit.rooms', 'unit.images')
+            ->first();
+        // Calculate Days Count
+        $dateFrom = Carbon::parse($reservation->date_from);
+        $dateTo = Carbon::parse($reservation->date_to);
+        $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
+        return response()->json([
+            "success" => true,
+            "reservation" => $reservation
+        ], 200);
+    }
+
+    public function cancel($id) {
+        $user = auth()->user();
+        $reservation = Reservation::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+        $reservation->status = "canceled_user";
+        $reservation->save();
+        return response()->json([
+            "success" => true,
+            "message" => "تم الغاء الحجز بنجاح"
+        ], 200);
+    }
 }

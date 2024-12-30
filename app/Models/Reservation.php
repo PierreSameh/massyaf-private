@@ -11,7 +11,10 @@ class Reservation extends Model
         "user_id",
         "date_from",
         "date_to",
+        "adults_count",
+        "children_count",
         "book_advance",
+        "booking_price",
         "paid",
         "status",
         "approved_at",
@@ -22,7 +25,7 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function units(){
+    public function unit(){
         return $this->belongsTo(Unit::class);
     }
 
