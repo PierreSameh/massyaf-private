@@ -16,6 +16,18 @@ class Room extends Model
         'bed_sizes' => 'array',
     ];
 
+    public function getBedSizesAttribute($value){
+        // Decode the value twice if it was double-encoded
+        $decodedValue = json_decode($value, true);
+        
+        // Check if it's still a string and needs another decoding
+        if (is_string($decodedValue)) {
+            $decodedValue = json_decode($decodedValue, true);
+        }
+    
+        return $decodedValue;
+    }
+
     public function unit(){
         return $this->belongsTo(Unit::class);
     }

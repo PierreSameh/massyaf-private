@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Owner\ReservationController;
+use App\Http\Controllers\Owner\ReservationFilterController;
 use App\Http\Controllers\Owner\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,20 @@ Route::prefix('owner')->group(function () {
             Route::get('/{id}', [UnitController::class, 'get']);
             Route::delete('/{id}', [UnitController::class, 'destroy']);
             
+        });
+
+        Route::prefix('reservations')->group(function () {
+            Route::get('/all', [ReservationController::class, 'getAll']);
+            Route::get('/{id}', [ReservationController::class,'get']);
+            Route::put('/{id}/cancel', [ReservationController::class,'cancel']);
+            Route::put('/{id}/accept', [ReservationController::class,'accept']);
+            Route::put('/{id}/approve', [ReservationController::class,'approve']);
+        });
+        Route::prefix('home')->group(function () {
+            Route::get('/pending', [ReservationFilterController::class, 'pending']);
+            Route::get('/reserved', [ReservationFilterController::class, 'reserved']);
+            Route::get('/approved', [ReservationFilterController::class, 'approved']);
+            Route::get('/cancelled', [ReservationFilterController::class, 'cancelled']);
         });
     });
 });

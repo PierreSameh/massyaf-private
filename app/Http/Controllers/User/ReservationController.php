@@ -47,6 +47,7 @@ class ReservationController extends Controller
             }
             //Check on Current reservations on Unit
             $reservations = Reservation::where('unit_id', $unit->id)
+                ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
                 ->whereDate('date_from', '<=', $dateFrom)
                 ->whereDate('date_to', '>=', $dateTo)
                 ->exists();
@@ -179,6 +180,12 @@ class ReservationController extends Controller
             ->where('user_id', $user->id)
             ->with('ids','unit.rooms', 'unit.images')
             ->first();
+        if (!$reservation) {
+            return response()->json([
+                "success" => false,
+                "message" => "الحجز غير موجود"
+            ], 404);
+        }
         // Calculate Days Count
         $dateFrom = Carbon::parse($reservation->date_from);
         $dateTo = Carbon::parse($reservation->date_to);
@@ -194,7 +201,14 @@ class ReservationController extends Controller
         $reservation = Reservation::where('id', $id)
             ->where('user_id', $user->id)
             ->first();
+        if (!$reservation) {
+            return response()->json([
+                "success" => false,
+                "message" => "الحجز غير موجود"
+            ], 404);
+        }
         $reservation->status = "canceled_user";
+        $reservation->cancelled_at = now();
         $reservation->save();
         return response()->json([
             "success" => true,
