@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Global\BankAccountController;
+use App\Http\Controllers\Global\WithdrawController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\Auth\AuthController;
@@ -51,6 +53,17 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/change-password', [ProfileController::class, 'changePassword']);
         Route::get('/', [ProfileController::class, 'get']);
         Route::post('/update', [ProfileController::class,'update']);
+    });
+    //Wallet
+    Route::prefix('wallet')->group(function(){
+        //Bank Account
+        Route::post('/bank-account', [BankAccountController::class, 'store']);
+        Route::get('/bank-account', [BankAccountController::class, 'index']);
+        Route::delete('/bank-account/{id}', [BankAccountController::class, 'destroy']);
+
+        //Withdraws
+        Route::get('/withdraws', [WithdrawController::class, 'index']);
+        Route::post('/withdraws', [WithdrawController::class, 'store']);
     });
 });
 

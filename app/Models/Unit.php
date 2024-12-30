@@ -87,6 +87,10 @@ public function getMinPriceAttribute()
     return (float) $pricesAfterSales->min();
 }
 
+    public function owner(){
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
     public function city(){
         return $this->belongsTo(City::class);
     }

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'image',
         'id_image',
         'phone_number',
+        'balance',
         'last_otp',
         'last_otp_expire',
         'phone_verified_at',
@@ -62,5 +63,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function units(){
+        return $this->hasMany(Unit::class, 'owner_id');
+    }
+
+    public function reservations(){
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function bankAccounts(){
+        return $this->hasMany(BankAccount::class);
+    }
+
+    public function withdraws(){
+        return $this->hasMany(Withdraw::class);
     }
 }
