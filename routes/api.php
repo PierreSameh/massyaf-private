@@ -34,8 +34,8 @@ use App\Http\Controllers\Chat\User\LiveChatUserController;
 // });
 
 
-Route::post('account/register', [AuthController::class, 'register']);
-Route::post('account/login', [AuthController::class, 'login']);
+Route::post('/account/register', [AuthController::class, 'register']);
+Route::post('/account/login', [AuthController::class, 'login']);
 Route::get('/account/forget-password/send-code', [AuthController::class, 'sendForgetPassword']);
 Route::post('/account/forget-password/check-code', [AuthController::class, 'forgetPasswordCheckCode']);
 Route::post('/account/forget-password/reset', [AuthController::class, 'forgetPassword']);
