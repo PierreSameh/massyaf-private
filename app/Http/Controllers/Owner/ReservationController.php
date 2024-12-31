@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -50,6 +51,7 @@ class ReservationController extends Controller
             ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
             ->where('paid', 1)
             ->first();
+
         if (!$reservation) {
             return response()->json([
                 "success" => false,
@@ -59,6 +61,17 @@ class ReservationController extends Controller
         $reservation->status = "canceled_owner";
         $reservation->cancelled_at = now();
         $reservation->save();
+        //Take the book advance from the owner
+        $user->balance -= $reservation->book_advance;
+        $user->save();
+        //Return money to customer
+        $customer = User::where('id', $reservation->user_id)->first();
+        $customer->balance += $reservation->book_advance;
+        $customer->save();
+
+        /*
+            Should create transactions and notification
+        */
         return response()->json([
             "success" => true,
             "message" => "تم الغاء الحجز بنجاح"

@@ -73,7 +73,7 @@ class StoreUnitRequest extends FormRequest
             // Cancel Policies validation
             'cancel_policies' => ['nullable', 'array'],
             'cancel_policies.*.days' => ['required', 'integer', 'min:0'],
-            'cancel_policies.*.penalty' => ['required', 'numeric', 'min:0'],
+            'cancel_policies.*.penalty' => ['required', 'numeric', 'min:0', 'max:100'],
             
             // Additional Fees validation
             'additional_fees' => ['nullable', 'array'],

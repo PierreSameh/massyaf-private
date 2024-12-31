@@ -50,6 +50,7 @@ class ReservationController extends Controller
                 ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
                 ->whereDate('date_from', '<=', $dateFrom)
                 ->whereDate('date_to', '>=', $dateTo)
+                ->where('paid', 1)
                 ->exists();
         
             if ($reservations) {
@@ -189,23 +190,98 @@ class ReservationController extends Controller
         ], 200);
     }
 
-    public function cancel($id) {
-        $user = auth()->user();
-        $reservation = Reservation::where('id', $id)
-            ->where('user_id', $user->id)
-            ->first();
-        if (!$reservation) {
-            return response()->json([
-                "success" => false,
-                "message" => "الحجز غير موجود"
-            ], 404);
-        }
-        $reservation->status = "canceled_user";
-        $reservation->cancelled_at = now();
-        $reservation->save();
+    // public function cancel($id) {
+    //     $user = auth()->user();
+    //     $reservation = Reservation::where('id', $id)
+    //         ->where('user_id', $user->id)
+    //         ->first();
+    //     if (!$reservation) {
+    //         return response()->json([
+    //             "success" => false,
+    //             "message" => "الحجز غير موجود"
+    //         ], 404);
+    //     }
+    //     $reservation->status = "canceled_user";
+    //     $reservation->cancelled_at = now();
+    //     $reservation->save();
+    //     return response()->json([
+    //         "success" => true,
+    //         "message" => "تم الغاء الحجز بنجاح"
+    //     ], 200);
+    // }
+
+    public function cancel($id)
+{
+    $user = auth()->user();
+    
+    // Retrieve the reservation
+    $reservation = Reservation::where('id', $id)
+        ->where('user_id', $user->id)
+        ->first();
+
+    if (!$reservation) {
         return response()->json([
-            "success" => true,
-            "message" => "تم الغاء الحجز بنجاح"
-        ], 200);
+            "success" => false,
+            "message" => "الحجز غير موجود"
+        ], 404);
     }
+    $owner = $reservation->unit->owner;
+    // Check if the reservation already has a status of canceled
+    if ($reservation->status === 'canceled_user' || $reservation->status === 'canceled_owner') {
+        return response()->json([
+            "success" => false,
+            "message" => "تم الغاء الحجز مسبقًا"
+        ], 400);
+    }
+
+    // Retrieve the unit and its cancellation policies
+    $unit = $reservation->unit; // Ensure the Reservation model has a `unit` relationship
+    $cancelPolicies = $unit->cancelPolicies()
+        ->orderBy('days', 'asc') // Sort by days in descending order
+        ->get();
+
+    if($cancelPolicies->count()){
+        // Calculate days before the reservation starts
+        $daysBeforeReservation = now()->diffInDays($reservation->date_from, false);
+        $penaltyPercentage = 0; // Default penalty percentage
+
+        // Determine the penalty based on cancellation policies
+        foreach ($cancelPolicies as $policy) {
+            if ($daysBeforeReservation >= $policy->days) {
+                $penaltyPercentage = $policy->penalty;
+                break;
+            }
+        }
+        // Calculate the penalty amount
+        $penaltyAmount = ($reservation->book_advance * $penaltyPercentage) / 100;
+
+        $user->balance += $reservation->book_advance - $penaltyAmount;
+        $user->save();
+
+        $owner->balance -= $penaltyAmount;
+        $owner->save();
+
+        //transaction and notification
+    } else {
+        $user->balance += $reservation->book_advance;
+        $user->save();
+
+        $owner->balance -= $reservation->book_advance;
+        $owner->save();
+
+        //transaction and notification
+    }
+    // Update the reservation's status and cancellation details
+    $reservation->status = 'canceled_user';
+    $reservation->cancelled_at = now();
+    $reservation->save();
+
+    return response()->json([
+        "success" => true,
+        "message" => "تم الغاء الحجز بنجاح",
+        "penalty" => $penaltyAmount,
+        "refunded_amount" => $reservation->book_advance - $penaltyAmount,
+    ], 200);
+}
+
 }
