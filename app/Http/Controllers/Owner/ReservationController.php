@@ -13,6 +13,7 @@ class ReservationController extends Controller
         $user = auth()->user();
         $reservations = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->with('unit.images', 'unit.rooms')
+            ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -47,6 +48,7 @@ class ReservationController extends Controller
         $reservation = Reservation::where('id', $id)
             ->whereRelation("unit","owner_id","=", $user->id)
             ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
+            ->where('paid', 1)
             ->first();
         if (!$reservation) {
             return response()->json([
@@ -67,6 +69,7 @@ class ReservationController extends Controller
         $reservation = Reservation::where('id', $id)
             ->where('status', 'pending')
             ->whereRelation("unit","owner_id","=", $user->id)
+            ->where('paid', 1)
             ->first();
         if (!$reservation) {
             return response()->json([
@@ -86,6 +89,7 @@ class ReservationController extends Controller
         $reservation = Reservation::where('id', $id)
             ->where('status', 'accepted')
             ->whereRelation("unit","owner_id","=", $user->id)
+            ->where('paid', 1)
             ->first();
         if (!$reservation) {
             return response()->json([

@@ -21,6 +21,7 @@ class Reservation extends Model
         "status",
         "approved_at",
         "cancelled_at",
+        "transaction_id"
     ];
     protected $appends = ['days_count'];
 
@@ -42,5 +43,9 @@ class Reservation extends Model
 
     public function ids(){
         return $this->hasMany(ReservationId::class);
+    }
+
+    public function transaction(){
+        return $this->belongsTo(Transaction::class);
     }
 }

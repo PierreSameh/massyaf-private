@@ -161,13 +161,9 @@ class ReservationController extends Controller
         $user = auth()->user();
         $reservations = Reservation::where('user_id', $user->id)
             ->with('unit.images')
+            ->where('paid', 1)
             ->get();
-        // Calculate Days Count
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
+
         return response()->json([
             "success" => true,
             "reservations" => $reservations
@@ -186,10 +182,7 @@ class ReservationController extends Controller
                 "message" => "الحجز غير موجود"
             ], 404);
         }
-        // Calculate Days Count
-        $dateFrom = Carbon::parse($reservation->date_from);
-        $dateTo = Carbon::parse($reservation->date_to);
-        $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
+    
         return response()->json([
             "success" => true,
             "reservation" => $reservation
