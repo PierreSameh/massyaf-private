@@ -37,8 +37,11 @@ class UnitController extends Controller
             'images',
             'videos',
             'rooms',
-            'amenities'
-        ])->where('owner_id', $owner->id)->get();
+            'amenities',
+            'reservations'
+        ])->where('owner_id', $owner->id)
+        ->latest()
+        ->get();
 
         return response()->json([
             "success" => true,
@@ -61,7 +64,8 @@ class UnitController extends Controller
             'images',
             'videos',
             'rooms',
-            'amenities'
+            'amenities',
+            'reservations'
         ])->where('owner_id', $owner->id)->paginate((int) $request->per_page ?: 10);
 
         return response()->json([
@@ -86,7 +90,8 @@ class UnitController extends Controller
             'images',
             'videos',
             'rooms',
-            'amenities'
+            'amenities',
+            'reservations'
         ])->find($id);
         if (!$unit) {
             return response()->json(['message' => 'Unit not found'], 404);

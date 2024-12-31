@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
@@ -15,12 +16,21 @@ class Reservation extends Model
         "children_count",
         "book_advance",
         "booking_price",
+        "owner_profit",
         "paid",
         "status",
         "approved_at",
         "cancelled_at",
     ];
+    protected $appends = ['days_count'];
 
+    public function getDaysCountAttribute(){
+        $dateFrom = Carbon::parse($this->date_from);
+        $dateTo = Carbon::parse($this->date_to);
+        $daysCount = $dateFrom->diffInDays($dateTo) + 1; 
+
+        return $daysCount;
+    }
     public function user(){
         return $this->belongsTo(User::class);
     }

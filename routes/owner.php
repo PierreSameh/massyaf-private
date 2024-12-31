@@ -42,6 +42,7 @@ Route::prefix('owner')->group(function () {
             Route::put('/{id}/approve', [ReservationController::class,'approve']);
         });
         Route::prefix('home')->group(function () {
+            Route::get('/widgets', [ReservationFilterController::class, 'widgets']);
             Route::get('/pending', [ReservationFilterController::class, 'pending']);
             Route::get('/reserved', [ReservationFilterController::class, 'reserved']);
             Route::get('/approved', [ReservationFilterController::class, 'approved']);

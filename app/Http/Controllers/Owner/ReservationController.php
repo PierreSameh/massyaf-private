@@ -16,12 +16,6 @@ class ReservationController extends Controller
             ->latest()
             ->get();
 
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
-
         return response()->json([
             "success" => true,
             "data"=> $reservations
@@ -41,10 +35,7 @@ class ReservationController extends Controller
             ], 404);
         }
 
-        $dateFrom = Carbon::parse($reservation->date_from);
-        $dateTo = Carbon::parse($reservation->date_to);
-        $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-
+        
         return response()->json([
             "success" => true,
             "reservation" => $reservation

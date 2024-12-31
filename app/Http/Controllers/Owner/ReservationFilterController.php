@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -16,12 +17,6 @@ class ReservationFilterController extends Controller
             ->with('unit.images', 'unit.rooms')
             ->latest()
             ->get();
-
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
 
         return response()->json([
             "success" => true,
@@ -36,11 +31,6 @@ class ReservationFilterController extends Controller
             ->latest()
             ->get();
 
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
 
         return response()->json([
             "success" => true,
@@ -55,12 +45,6 @@ class ReservationFilterController extends Controller
             ->latest()
             ->get();
 
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
-
         return response()->json([
             "success" => true,
             "data"=> $reservations
@@ -74,15 +58,26 @@ class ReservationFilterController extends Controller
             ->latest()
             ->get();
 
-        foreach ($reservations as $reservation) {        
-            $dateFrom = Carbon::parse($reservation->date_from);
-            $dateTo = Carbon::parse($reservation->date_to);
-            $reservation->days_count = $dateFrom->diffInDays($dateTo) + 1; // Include the start day
-        }
-
         return response()->json([
             "success" => true,
             "data"=> $reservations
         ], 200);
+    }
+
+    public function widgets(){
+        $user = auth()->user();
+        $newRequests = Reservation::whereRelation("unit","owner_id","=", $user->id)
+            ->where('status', 'pending')
+            ->count();
+        $units = Unit::where('owner_id', $user->id)->count();
+        $totalProfits = Reservation::whereRelation("unit","owner_id","=", $user->id)
+            ->where('status', 'approved')
+            ->sum('owner_profit');
+        return response()->json([
+            "success"=> true,
+            "new_requests" => $newRequests,
+            "units_count" => $units,
+            "total_profits" => $totalProfits
+        ]);
     }
 }

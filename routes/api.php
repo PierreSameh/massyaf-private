@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Global\BankAccountController;
+use App\Http\Controllers\Global\WalletController;
 use App\Http\Controllers\Global\WithdrawController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +65,9 @@ Route::middleware('auth:sanctum')->group(function(){
         //Withdraws
         Route::get('/withdraws', [WithdrawController::class, 'index']);
         Route::post('/withdraws', [WithdrawController::class, 'store']);
+
+        //Balance
+        Route::get('/balance', [WalletController::class, 'balance']);
     });
 });
 
