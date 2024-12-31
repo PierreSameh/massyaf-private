@@ -3,6 +3,7 @@
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ReservationController;
 use App\Http\Controllers\User\UnPaidController;
+use App\Http\Controllers\User\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,12 @@ Route::prefix('user')->group(function () {
 
         Route::prefix('unpaid')->group(function () {
             Route::get('/all', [UnPaidController::class, 'getAll']);
+        });
+        //Wishlist
+        Route::prefix('wishlist')->group(function () {
+            Route::get('/', [WishlistController::class, 'index']);
+            Route::post('/', [WishlistController::class, 'store']);
+            Route::delete('/{id}', [WishlistController::class, 'destroy']);
         });
     });
 });

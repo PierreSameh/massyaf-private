@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class Unit extends Model
 {
@@ -46,7 +47,32 @@ class Unit extends Model
         'weekend_price',
     ];
 
-    protected $appends = ['min_price', 'max_price'];
+    protected $appends = ['min_price', 'max_price', 'in_wishlist'];
+
+    public function getInWishlistAttribute()
+    {
+        $request = request();
+        $user = null;
+
+        // Check if there's a bearer token in the request
+        if ($request->bearerToken()) {
+            // Get user from token
+            $token = PersonalAccessToken::findToken($request->bearerToken());
+            if ($token) {
+                $user = $token->tokenable;
+            }
+        }
+
+        // If no user found, return false
+        if (!$user) {
+            return false;
+        }
+
+        // Check if product is in user's wishlist
+        return $this->wishlists()
+            ->where('user_id', $user->id)
+            ->exists();
+    }
 
     public function getMaxPriceAttribute()
 {
@@ -150,5 +176,9 @@ public function getMinPriceAttribute()
 
     public function reservations(){
         return $this->hasMany(Reservation::class);
+    }
+
+    public function wishlists(){
+        return $this->hasMany(Wishlist::class);
     }
 }

@@ -88,4 +88,8 @@ class User extends Authenticatable
     public function receivedTransactions(){
         return $this->hasMany(Transaction::class, 'receiver_id');
     }
+
+    public function wishlists(){
+        return $this->hasMany(Wishlist::class);
+    }
 }
