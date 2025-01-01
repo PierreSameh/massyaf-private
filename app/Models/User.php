@@ -50,6 +50,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'last_otp',
+        'last_otp_expire'
     ];
 
     /**
@@ -92,4 +94,13 @@ class User extends Authenticatable
     public function wishlists(){
         return $this->hasMany(Wishlist::class);
     }
+
+    public function userChats(){
+        return $this->hasMany(Chat::class, 'user_id');
+    }
+
+    public function ownerChats(){
+        return $this->hasMany(Chat::class, 'owner_id');
+    }
+
 }

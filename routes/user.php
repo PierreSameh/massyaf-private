@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ReservationController;
 use App\Http\Controllers\User\UnPaidController;
@@ -32,6 +33,15 @@ Route::prefix('user')->group(function () {
             Route::get('/', [WishlistController::class, 'index']);
             Route::post('/', [WishlistController::class, 'store']);
             Route::delete('/{id}', [WishlistController::class, 'destroy']);
+        });
+
+        //Chat
+        Route::prefix('chat')->group(function () {
+            Route::post('/message', [ChatController::class, 'sendMessage']);
+            Route::get('/', [ChatController::class,'getChats']);
+            Route::get('/{id}', [ChatController::class,'getMessages']);
+            Route::put('/{id}', [ChatController::class,'seenMessages']);
+            Route::delete('/{id}', [ChatController::class,'delete']);
         });
     });
 });

@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $fillable = [
-        'sender_id',
+        'sender_type',
         'chat_id',
         'message',
+        'seen',
+        'created_at',
     ];
-    public function sender(){
-        return $this->belongsTo(User::class, 'sender_id');
-    }
+
+    public $timestamps = false;
+
+    protected $hidden = [ 'updated_at'];
+
     public function chat(){
         return $this->belongsTo(Chat::class);
     }
