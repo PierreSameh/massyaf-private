@@ -30,6 +30,7 @@ class ReservationController extends Controller
             $unitSales = $unit->sales()->get();
             $unitSpecialPrices = $unit->specialReservationTimes()->get();
             $unitLongTermReservations = $unit->longTermReservations()->get();
+            $unitAdditionalFees = $unit->additionalFees()->get();
         
             // Calculate Days Count
             $dateFrom = Carbon::parse($request->date_from);
@@ -115,11 +116,18 @@ class ReservationController extends Controller
                     }
                 }
             }
-        
+            // Check on additional fees
+            if($unitAdditionalFees->count() > 0){
+                foreach($unitAdditionalFees as $unitAdditionalFee){
+                    $price += $unitAdditionalFee->amount;
+                }
+            }
+            // Calculate the total price
             if($salePercentage > 0){
                 $saleAmount = ($price * $salePercentage) / 100;
                 $price -= $saleAmount;
             }
+            
             $bookAdvance = ($price * $unit->deposit) / 100;
             $reservation = Reservation::create([
                 "user_id" => $user->id,
