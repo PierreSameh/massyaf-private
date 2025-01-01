@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Owner;
 
-use App\Events\LiveChat;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Events\LiveChat;
 use App\Models\Chat;
 use App\Models\Message;
-use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
@@ -18,21 +18,20 @@ class ChatController extends Controller
         ]);
 
         $user = $request->user();
-
         if($user->id == $request->receiver_id){
             return response()->json([
                 'success' => false,
                 "message" => "لا يمكنك ارسال رسالة إلى نفسك"
             ], 400);
         }
-        $chat = Chat::where('owner_id', $request->receiver_id)
-        ->where('user_id', $user->id)->firstOrCreate([
-            'user_id' => $user->id,
-            'owner_id' => $request->receiver_id,
+        $chat = Chat::where('user_id', $request->receiver_id)
+        ->where('owner_id', $user->id)->firstOrCreate([
+            'owner_id' => $user->id,
+            'user_id' => $request->receiver_id,
         ]);
 
         $message = Message::create([
-            'sender_type' => "user",
+            'sender_type' => "owner",
             'chat_id' => $chat->id,
             'message' => $request->message,
             'created_at' => now()
@@ -51,9 +50,9 @@ class ChatController extends Controller
 
     public function getChats(){
         $user = auth()->user();
-        $chats = Chat::where('user_id', $user->id)->with('owner')
+        $chats = Chat::where('owner_id', $user->id)->with('user')
         ->withCount(['messages as unseen_messages_count' => function ($query) {
-            $query->where('seen', false)->where('sender_type', 'owner'); // Count only unseen messages
+            $query->where('seen', false)->where('sender_type', 'user'); // Count only unseen messages
         }])
         ->with(['messages' => function ($query) {
             $query->latest(); // Get the latest message
@@ -75,10 +74,10 @@ class ChatController extends Controller
         $user = auth()->user();
 
         $chat = Chat::where('id', $id)
-        ->where('user_id', $user->id)
-        ->with('owner')
+        ->where('owner_id', $user->id)
+        ->with('user')
         ->withCount(['messages as unseen_messages_count' => function ($query) {
-            $query->where('seen', false)->where('sender_type', 'owner'); // Count only unseen messages
+            $query->where('seen', false)->where('sender_type', 'user'); // Count only unseen messages
         }])
         ->with(['messages' => function ($query) {
             $query->latest(); // Get the latest message
@@ -99,7 +98,7 @@ class ChatController extends Controller
     public function seenMessages($id){
         $user = auth()->user();
         $messages = Message::where('chat_id', $id)
-        ->where('sender_type', 'owner')
+        ->where('sender_type', 'user')
         ->where('seen', false)->update(['seen' => true]);
         return response()->json([
             "success" => true,
@@ -109,7 +108,7 @@ class ChatController extends Controller
 
     public function delete($id){
         $user = auth()->user();
-        $chat = Chat::where('id', $id)->where('user_id', $user->id)->first();
+        $chat = Chat::where('id', $id)->where('owner_id', $user->id)->first();
         if(!$chat){
             return response()->json([
                 "success" => false,
@@ -125,14 +124,14 @@ class ChatController extends Controller
 
     public function muteChat($id){
         $user = auth()->user();
-        $chat = Chat::where('id', $id)->where('user_id', $user->id)->first();
+        $chat = Chat::where('id', $id)->where('owner_id', $user->id)->first();
         if(!$chat){
             return response()->json([
                 "success" => false,
                 "message" => "لم يتم العثور على الدردشة"
             ], 404);
         }
-        $chat->muted_for_user = true;
+        $chat->muted_for_owner = true;
         $chat->save();
         return response()->json([
             "success" => true,

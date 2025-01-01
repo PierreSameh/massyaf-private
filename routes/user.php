@@ -41,6 +41,7 @@ Route::prefix('user')->group(function () {
             Route::get('/', [ChatController::class,'getChats']);
             Route::get('/{id}', [ChatController::class,'getMessages']);
             Route::put('/{id}', [ChatController::class,'seenMessages']);
+            Route::put('/{id}/mute', [ChatController::class,'muteChat']);
             Route::delete('/{id}', [ChatController::class,'delete']);
         });
     });

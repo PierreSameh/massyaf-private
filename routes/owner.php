@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Owner\ChatController;
 use App\Http\Controllers\Owner\ReservationController;
 use App\Http\Controllers\Owner\ReservationFilterController;
 use App\Http\Controllers\Owner\UnitController;
@@ -47,6 +48,16 @@ Route::prefix('owner')->group(function () {
             Route::get('/reserved', [ReservationFilterController::class, 'reserved']);
             Route::get('/approved', [ReservationFilterController::class, 'approved']);
             Route::get('/cancelled', [ReservationFilterController::class, 'cancelled']);
+        });
+
+        //Chat
+        Route::prefix('chat')->group(function () {
+            Route::post('/message', [ChatController::class, 'sendMessage']);
+            Route::get('/', [ChatController::class,'getChats']);
+            Route::get('/{id}', [ChatController::class,'getMessages']);
+            Route::put('/{id}', [ChatController::class,'seenMessages']);
+            Route::put('/{id}/mute', [ChatController::class,'muteChat']);
+            Route::delete('/{id}', [ChatController::class,'delete']);
         });
     });
 });
