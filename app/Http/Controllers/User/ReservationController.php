@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\AvailableDate;
 use App\Models\Reservation;
 use App\Models\ReservationId;
+use App\Models\Transaction;
 use App\Models\Unit;
+use App\Traits\PayTabsPayment;
 use App\Traits\PushNotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
-    use PushNotificationTrait;
+    use PushNotificationTrait, PayTabsPayment;
 
     public function reserve(Request $request)
     {
@@ -55,7 +57,6 @@ class ReservationController extends Controller
                 ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
                 ->whereDate('date_from', '<=', $dateFrom)
                 ->whereDate('date_to', '>=', $dateTo)
-                ->where('paid', 1)
                 ->exists();
 
             if ($reservations) {
@@ -156,9 +157,24 @@ class ReservationController extends Controller
                     ]);
                 }
             }
+            //Create a transaction for the reservation process
+            $owner = $unit->owner;
+            $transaction = Transaction::create([
+                "sender_id" => $user->id,
+                "receiver_id" => $owner->id,
+                "amount" => $reservation->book_advance,
+                "type" => "booking",
+                "created_at" => now()
+            ]);
+            //Update Reservation transaction id
+            $reservation->transaction_id = $transaction->id;
+            $reservation->save();
+            //Payment Process
+            $paymentUrl = $this->createPayTabsPayment($transaction->amount, $transaction->id);
             return response()->json([
                 "success" => true,
                 "message" => "تم الحجز بنجاح",
+                "payment_url" => $paymentUrl['data']['redirect_url'],
                 "reservation" => $reservation,
             ]);
         } catch (\Exception $e) {
@@ -235,8 +251,8 @@ class ReservationController extends Controller
         $cancelPolicies = $unit->cancelPolicies()
             ->orderBy('days', 'asc') // Sort by days in descending order
             ->get();
-
-        if ($cancelPolicies->count()) {
+        if($reservation->paid == 1) {
+            if ($cancelPolicies->count()) {
             // Calculate days before the reservation starts
             $daysBeforeReservation = now()->diffInDays($reservation->date_from, false);
             $penaltyPercentage = 0; // Default penalty percentage
@@ -270,38 +286,40 @@ class ReservationController extends Controller
             );
 
             //transaction and notification
-        } else {
-            $user->balance += $reservation->book_advance;
-            $user->save();
+            } else {
+                $user->balance += $reservation->book_advance;
+                $user->save();
 
-            $this->pushNotification(
-                'تم إلغاء الحجز واسترجاع المقدم',
-                "لقد تم إلغاء حجزك {$unit->name} بنجاح، وتم استرجاع مبلغ المقدم إلى حسابك.",
-                $user->id,
-            );
+                $this->pushNotification(
+                    'تم إلغاء الحجز واسترجاع المقدم',
+                    "لقد تم إلغاء حجزك {$unit->name} بنجاح، وتم استرجاع مبلغ المقدم إلى حسابك.",
+                    $user->id,
+                );
 
 
-            $owner->balance -= $reservation->book_advance;
-            $owner->save();
+                $owner->balance -= $reservation->book_advance;
+                $owner->save();
 
-            $this->pushNotification(
-                ' تم إلغاء الحجز وخصم المقدم',
-                "نود إعلامك بأن حجز {$user->name} قد تم إلغاؤه من قِبل المستخدم. تم خصم مبلغ المقدم وفقًا لسياسة الإلغاء.",
-                $owner->id,
-            );
+                $this->pushNotification(
+                    ' تم إلغاء الحجز وخصم المقدم',
+                    "نود إعلامك بأن حجز {$user->name} قد تم إلغاؤه من قِبل المستخدم. تم خصم مبلغ المقدم وفقًا لسياسة الإلغاء.",
+                    $owner->id,
+                );
 
-            //transaction and notification
-        }
+                //transaction and notification
+            }
+        }   
         // Update the reservation's status and cancellation details
         $reservation->status = 'canceled_user';
         $reservation->cancelled_at = now();
         $reservation->save();
-
+        $penaltyResponse = $reservation->paid == 1 ? $penaltyAmount : null;
+        $refundResponse = $reservation->paid == 1 ? $reservation->book_advance - $penaltyAmount : null;
         return response()->json([
             "success" => true,
             "message" => "تم الغاء الحجز بنجاح",
-            "penalty" => $penaltyAmount,
-            "refunded_amount" => $reservation->book_advance - $penaltyAmount,
+            "penalty" => $penaltyResponse,
+            "refunded_amount" => $refundResponse,
         ], 200);
     }
 }

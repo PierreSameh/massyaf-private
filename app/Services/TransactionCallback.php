@@ -2,6 +2,7 @@
 
 namespace  App\Services;
 
+use App\Models\Reservation;
 use App\Models\Transaction;
 use App\Models\User;
 
@@ -21,11 +22,7 @@ class TransactionCallback
             $transaction->updated_at = now();
             $transaction->save();
         } else if($transaction->type == "booking"){
-            $sender = User::find($transaction->sender_id);
             $receiver = User::find($transaction->receiver_id);
-            //Update Sender wallet
-            $sender->balance -= $transaction->amount;
-            $sender->save();
 
             //Update Receiver wallet
             $receiver->balance += $transaction->amount;
@@ -35,6 +32,10 @@ class TransactionCallback
             $transaction->status = "completed";
             $transaction->updated_at = now();
             $transaction->save();
+
+            $reservation = Reservation::where('transaction_id', $transaction->id)->first();
+            $reservation->paid = 1;
+            $reservation->save();
         }
     }
 }

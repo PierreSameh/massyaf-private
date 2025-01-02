@@ -29,7 +29,7 @@ class WalletController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "تم ارسال طلب الايداع بنجاح",
-                "data" => $result['data']['redirect_url']
+                "payment_url" => $result['data']['redirect_url']
             ], 200);
         }catch(\Exception $e){
             return response()->json([
