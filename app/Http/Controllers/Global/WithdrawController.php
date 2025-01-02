@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Global;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankAccount;
+use App\Models\Transaction;
 use App\Models\Withdraw;
 use Illuminate\Http\Request;
 
@@ -54,6 +55,12 @@ class WithdrawController extends Controller
             "user_id" => $user->id
         ]);
 
+        $transaction = Transaction::create([
+            "sender_id" => $user->id,
+            "amount" => $withdraw->amount,
+            "type" => "withdraw",
+            "created_at" => now()
+        ]);
         return response()->json([
             "success" => true,
             "data" => $withdraw
