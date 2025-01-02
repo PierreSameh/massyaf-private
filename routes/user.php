@@ -27,6 +27,7 @@ Route::prefix('user')->group(function () {
 
         Route::prefix('unpaid')->group(function () {
             Route::get('/all', [UnPaidController::class, 'getAll']);
+            Route::post('/pay/{id}', [UnPaidController::class, 'pay']);
         });
         //Wishlist
         Route::prefix('wishlist')->group(function () {
