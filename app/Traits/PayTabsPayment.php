@@ -44,7 +44,7 @@ trait PayTabsPayment
                 'cart_currency' => $currency,
                 'cart_amount' => $amount,
                 'callback' => "http://localhost:8000/api/callback",
-                'return' => "http://localhost:8000/api/callback?id=" . $transaction_id,
+                'return' => env('APP_URL') . "/api/callback?id=" . $transaction_id,
             ]);
             $decodeResponse = json_decode($response, true);
             $transaction = Transaction::find($transaction_id);
