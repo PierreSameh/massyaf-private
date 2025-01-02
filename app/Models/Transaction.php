@@ -13,7 +13,11 @@ class Transaction extends Model
         'status',
         'type',
         'ref',
+        'created_at',
+        'updated_at'
     ];
+
+    public $timestamps = false;
 
     public function sender()
     {

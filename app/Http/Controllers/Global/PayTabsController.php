@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Global;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Services\TransactionCallback;
 use App\Traits\PayTabsPayment;
 use Illuminate\Http\Request;
 
 class PayTabsController extends Controller
 {
+    protected $transactionService;
+    public function __construct(TransactionCallback $transactionCallback)
+    {
+        $this->transactionService = $transactionCallback;
+    }
     use PayTabsPayment;
     public function handleCallBack(Request $request)
     {
@@ -22,11 +28,15 @@ class PayTabsController extends Controller
     
             // Process based on the response status
             if ($responseStatus === 'A') {
+                $this->transactionService->completePayment($transaction->id);
                 // Payment is authorized
-                return response()->json(['message' => 'Payment authorized successfully.'], 200);
+                return view('payment-success');
             } else {
+                $transaction->status = "failed";
+                $transaction->updated_at = now();
+                $transaction->save();
                 // Payment failed or other status
-                return response()->json(['message' => 'Payment not authorized.', 'status' => $responseStatus], 400);
+                return view('payment-failure');
             }
         }
     

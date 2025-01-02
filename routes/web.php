@@ -11,3 +11,11 @@ Route::get('/unauthorized', function () {
         'message'=> 'unauthorized',
         ], 401);
 });
+
+Route::get('/payment/success', function () {
+    return view('payment-success');
+});
+
+Route::get('/payment/failure', function () {
+    return view('payment-failure');
+});
