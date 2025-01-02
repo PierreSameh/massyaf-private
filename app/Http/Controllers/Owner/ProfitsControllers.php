@@ -6,25 +6,45 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\Transaction;
 use App\Models\Unit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfitsControllers extends Controller
 {
-    public function calculateProfits(){
+    public function calculateProfits()
+    {
         $user = auth()->user();
-        $profits = Reservation::whereRelation('unit', 'owner_id', $user->id)
-            ->where('paid', 1)->where('status', 'approved')->sum('owner_profit');
-        if($profits > 0){
-            return response()->json([
-                "success" => true,
-                "totalProfits" => $profits
-            ], 200);
-        }
+    
+        // Calculate total profits
+        $totalProfits = Reservation::whereRelation('unit', 'owner_id', $user->id)
+            ->where('paid', 1)
+            ->where('status', 'approved')
+            ->sum('owner_profit');
+    
+        // Calculate monthly profits
+        $monthlyProfits = Reservation::whereRelation('unit', 'owner_id', $user->id)
+            ->where('paid', 1)
+            ->where('status', 'approved')
+            ->select(DB::raw('YEAR(date_from) as year, MONTH(date_from) as month, SUM(owner_profit) as profit'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'year' => $row->year,
+                    'month' => Carbon::createFromDate($row->year, $row->month, 1)->format('F'),
+                    'profit' => $row->profit,
+                ];
+            });
+    
         return response()->json([
             "success" => true,
-            "totalProfits" => 0
+            "totalProfits" => $totalProfits,
+            "monthlyProfits" => $monthlyProfits,
         ], 200);
     }
+    
 
     public function unitsProfits()
     {
