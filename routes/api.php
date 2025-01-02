@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Global\BankAccountController;
+use App\Http\Controllers\Global\PayTabsController;
 use App\Http\Controllers\Global\WalletController;
 use App\Http\Controllers\Global\WithdrawController;
 use Illuminate\Http\Request;
@@ -19,6 +20,9 @@ Route::post('/account/login', [AuthController::class, 'login']);
 Route::get('/account/forget-password/send-code', [AuthController::class, 'sendForgetPassword']);
 Route::post('/account/forget-password/check-code', [AuthController::class, 'forgetPasswordCheckCode']);
 Route::post('/account/forget-password/reset', [AuthController::class, 'forgetPassword']);
+
+Route::post('/deposit', [WalletController::class, 'deposit'])->middleware('auth:sanctum');
+Route::get('/callback', [PayTabsController::class, 'handleCallBack']);
 Route::middleware('auth:sanctum')->group(function(){
     //Ask Code for email validation
     Route::get('account/ask-code', [AuthController::class, 'askCode']);
