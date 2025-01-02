@@ -11,11 +11,11 @@ trait PushNotificationTrait
     public function pushNotification($title, $body, $user_id = null, $data = null)
     {
         // Create a new notification record
-        $CreateNotification = Notification::create([
-            "user_id" => $user_id,
-            "title" => $title,
-            "body" => $body,
-        ]);
+        // $CreateNotification = Notification::create([
+        //     "user_id" => $user_id,
+        //     "title" => $title,
+        //     "body" => $body,
+        // ]);
 
         // // Initialize the Google Client
         // $client = new Google_Client();

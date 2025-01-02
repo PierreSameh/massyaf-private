@@ -143,6 +143,7 @@ class ReservationController extends Controller
                 "children_count" => $request->children_count ?? null,
                 "book_advance" => $bookAdvance,
                 "booking_price" => $price,
+                "owner_profit" => $price - 150, //Commission
                 "status" => $status,
             ]);
             if ($request->hasFile('ids')) {

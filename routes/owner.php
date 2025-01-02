@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Owner\ChatController;
+use App\Http\Controllers\Owner\ProfitsControllers;
 use App\Http\Controllers\Owner\ReservationController;
 use App\Http\Controllers\Owner\ReservationFilterController;
 use App\Http\Controllers\Owner\UnitController;
@@ -58,6 +59,13 @@ Route::prefix('owner')->group(function () {
             Route::put('/{id}', [ChatController::class,'seenMessages']);
             Route::put('/{id}/mute', [ChatController::class,'muteChat']);
             Route::delete('/{id}', [ChatController::class,'delete']);
+        });
+
+        //Profits
+        Route::prefix('profits')->group(function () {
+            Route::get('/', [ProfitsControllers::class, 'calculateProfits']);
+            Route::get('/units', [ProfitsControllers::class, 'unitsProfits']);
+            Route::get('/hotels', [ProfitsControllers::class, 'hotelsProfits']);
         });
     });
 });

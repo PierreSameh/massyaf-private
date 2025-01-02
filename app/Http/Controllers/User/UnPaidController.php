@@ -24,7 +24,7 @@ class UnPaidController extends Controller
         ], 200);
     }
 
-    public function pay(Request $request, $id){
+    public function pay($id){
         try{
         $user = auth()->user();
         $reservation = Reservation::where('user_id', $user->id)
