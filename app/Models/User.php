@@ -30,6 +30,7 @@ class User extends Authenticatable
         'last_otp_expire',
         'phone_verified_at',
         'password',
+        'fcm_token',
     ];
 
     public function getImageAttribute($value)
@@ -67,40 +68,48 @@ class User extends Authenticatable
         ];
     }
 
-    public function units(){
+    public function units()
+    {
         return $this->hasMany(Unit::class, 'owner_id');
     }
 
-    public function reservations(){
+    public function reservations()
+    {
         return $this->hasMany(Reservation::class);
     }
 
-    public function bankAccounts(){
+    public function bankAccounts()
+    {
         return $this->hasMany(BankAccount::class);
     }
 
-    public function withdraws(){
+    public function withdraws()
+    {
         return $this->hasMany(Withdraw::class);
     }
 
-    public function sentTransactions(){
+    public function sentTransactions()
+    {
         return $this->hasMany(Transaction::class, 'sender_id');
     }
 
-    public function receivedTransactions(){
+    public function receivedTransactions()
+    {
         return $this->hasMany(Transaction::class, 'receiver_id');
     }
 
-    public function wishlists(){
+    public function wishlists()
+    {
         return $this->hasMany(Wishlist::class);
     }
 
-    public function userChats(){
+    public function userChats()
+    {
         return $this->hasMany(Chat::class, 'user_id');
     }
 
-    public function ownerChats(){
+    public function ownerChats()
+    {
         return $this->hasMany(Chat::class, 'owner_id');
     }
-
 }

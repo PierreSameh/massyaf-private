@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reservation extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         "unit_id",
         "user_id",
@@ -25,27 +28,31 @@ class Reservation extends Model
     ];
     protected $appends = ['days_count'];
 
-    public function getDaysCountAttribute(){
+    public function getDaysCountAttribute()
+    {
         $dateFrom = Carbon::parse($this->date_from);
         $dateTo = Carbon::parse($this->date_to);
-        $daysCount = $dateFrom->diffInDays($dateTo) + 1; 
+        $daysCount = $dateFrom->diffInDays($dateTo) + 1;
 
         return $daysCount;
     }
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function unit(){
+    public function unit()
+    {
         return $this->belongsTo(Unit::class);
     }
 
-
-    public function ids(){
+    public function ids()
+    {
         return $this->hasMany(ReservationId::class);
     }
 
-    public function transaction(){
+    public function transaction()
+    {
         return $this->belongsTo(Transaction::class);
     }
 }
