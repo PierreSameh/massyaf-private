@@ -61,6 +61,8 @@ class WithdrawController extends Controller
             "type" => "withdraw",
             "created_at" => now()
         ]);
+        $withdraw->transaction_id = $transaction->id;
+        $withdraw->save();
         return response()->json([
             "success" => true,
             "data" => $withdraw

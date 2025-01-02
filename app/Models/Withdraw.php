@@ -17,4 +17,8 @@ class Withdraw extends Model
     public function bankAccount(){
         return $this->belongsTo(BankAccount::class);
     }
+
+    public function transaction(){
+        return $this->belongsTo(Transaction::class);
+    }
 }

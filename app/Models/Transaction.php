@@ -32,4 +32,8 @@ class Transaction extends Model
     public function reserve(){
         return $this->hasOne(Reservation::class);
     }
+
+    public function withdraw(){
+        return $this->hasOne(Withdraw::class);
+    }
 }
