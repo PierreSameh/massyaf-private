@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Owner\AmenitieController;
 use App\Http\Controllers\Owner\ChatController;
 use App\Http\Controllers\Owner\ProfitsControllers;
 use App\Http\Controllers\Owner\ReservationController;
@@ -29,6 +30,7 @@ Route::prefix('owner')->group(function () {
         Route::prefix('units')->group(function () {
             Route::get('/', [UnitController::class, 'getAll']);
             Route::get('/paginate', [UnitController::class, 'getPaginate']);
+            Route::post('/amenitie', [AmenitieController::class, 'store']);
             Route::post('/store', [UnitController::class, 'create']);
             Route::post('/{id}', [UnitController::class, 'update']);
             Route::get('/{id}', [UnitController::class, 'get']);

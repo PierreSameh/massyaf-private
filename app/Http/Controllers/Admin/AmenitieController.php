@@ -38,7 +38,12 @@ class AmenitieController extends Controller
                 "message" => $validator->errors()->first()
             ],422);
         }
-        $amenity = Amenitie::create($validator->validated());
+
+        $amenity = Amenitie::create([
+            "name" => $request->name,
+            "type" => $request->type,
+            "is_global" => true
+        ]);
 
         return response()->json([
             'success' => true,
@@ -80,6 +85,7 @@ class AmenitieController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'type' => 'required|in:unit,hotel,room,reception,kitchen',
+            'is_global' => 'required|in:0,1'
         ]);
 
         if ($validator->fails()) {

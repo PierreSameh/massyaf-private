@@ -59,7 +59,8 @@ class DropDownController extends Controller
             ], 400);
         }
 
-        $amenities = Amenitie::where('type', $type)->get();
+        $amenities = Amenitie::where('type', $type)
+            ->where('is_global', 1)->get();
 
         return response()->json([
             'success' => true,
