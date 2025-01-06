@@ -22,8 +22,26 @@ class ProfitsControllers extends Controller
             ->where('status', 'approved')
             ->sum('owner_profit');
     
-        // Calculate monthly profits
-        $monthlyProfits = Reservation::whereRelation('unit', 'owner_id', $user->id)
+        // Calculate monthly units profits
+        $monthlyUnitsProfits = Reservation::whereRelation('unit', 'owner_id', $user->id)
+            ->whereRelation('unit', 'type', 'unit')
+            ->where('paid', 1)
+            ->where('status', 'approved')
+            ->select(DB::raw('YEAR(date_from) as year, MONTH(date_from) as month, SUM(owner_profit) as profit'))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'year' => $row->year,
+                    'month' => Carbon::createFromDate($row->year, $row->month, 1)->format('F'),
+                    'profit' => $row->profit,
+                ];
+            });
+
+        // Calculate monthly hotels profits
+        $monthlyHotelsProfits = Reservation::whereRelation('unit', 'owner_id', $user->id)
+            ->whereRelation('unit', 'type', 'hotel')
             ->where('paid', 1)
             ->where('status', 'approved')
             ->select(DB::raw('YEAR(date_from) as year, MONTH(date_from) as month, SUM(owner_profit) as profit'))
@@ -41,7 +59,8 @@ class ProfitsControllers extends Controller
         return response()->json([
             "success" => true,
             "totalProfits" => $totalProfits,
-            "monthlyProfits" => $monthlyProfits,
+            "monthlyUnitsProfits" => $monthlyUnitsProfits,
+            "monthlyHotelsProfits" => $monthlyHotelsProfits
         ], 200);
     }
     

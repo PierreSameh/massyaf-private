@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Global\BankAccountController;
 use App\Http\Controllers\Global\PayTabsController;
+use App\Http\Controllers\Global\TransactionController;
 use App\Http\Controllers\Global\WalletController;
 use App\Http\Controllers\Global\WithdrawController;
 use Illuminate\Http\Request;
@@ -49,6 +50,9 @@ Route::middleware('auth:sanctum')->group(function(){
 
         //Balance
         Route::get('/balance', [WalletController::class, 'balance']);
+
+        //Transactions
+        Route::get('/transactions', [TransactionController::class, 'index']);
     });
 });
 

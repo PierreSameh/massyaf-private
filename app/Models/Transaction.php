@@ -17,6 +17,10 @@ class Transaction extends Model
         'updated_at'
     ];
 
+    protected $hidden = [
+        'ref'
+    ];
+
     public $timestamps = false;
 
     public function sender()

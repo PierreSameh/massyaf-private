@@ -18,13 +18,17 @@ class ReservationController extends Controller
         $user = auth()->user();
         $reservations = Reservation::whereRelation("unit", "owner_id", "=", $user->id)
             ->with('unit.images', 'unit.rooms')
+            ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
             ->where('paid', 1)
             ->latest()
             ->get();
 
         return response()->json([
             "success" => true,
-            "data" => $reservations
+            "data" => [
+                "reservations" => $reservations,
+                "count" => count($reservations)
+                ]
         ], 200);
     }
 

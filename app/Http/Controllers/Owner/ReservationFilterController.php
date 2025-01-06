@@ -21,7 +21,10 @@ class ReservationFilterController extends Controller
 
         return response()->json([
             "success" => true,
-            "data"=> $reservations
+            "data"=> [
+                "reservations" => $reservations,
+                "count" => count($reservations)
+                ]
         ], 200);
     }
     public function reserved(){
@@ -36,7 +39,10 @@ class ReservationFilterController extends Controller
 
         return response()->json([
             "success" => true,
-            "data"=> $reservations
+            "data"=> [
+                "reservations" => $reservations,
+                "count" => count($reservations)
+                ]
         ], 200);
     }
     public function approved(){
@@ -50,7 +56,10 @@ class ReservationFilterController extends Controller
 
         return response()->json([
             "success" => true,
-            "data"=> $reservations
+            "data"=> [
+                "reservations" => $reservations,
+                "count" => count($reservations)
+                ]
         ], 200);
     }
     public function cancelled(){
@@ -64,7 +73,10 @@ class ReservationFilterController extends Controller
 
         return response()->json([
             "success" => true,
-            "data"=> $reservations
+            "data"=> [
+                "reservations" => $reservations,
+                "count" => count($reservations)
+                ]
         ], 200);
     }
 
