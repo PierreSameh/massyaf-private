@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\UnitTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix("admin")->group(function () {
+Route::prefix("dashboard-api")->group(function () {
     //Auth
     Route::post('/login', [AuthController::class, 'login']);
 
