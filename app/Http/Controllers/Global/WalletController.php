@@ -24,7 +24,6 @@ class WalletController extends Controller
                 "type" => "deposit",
                 "created_at" => now()
             ]);
-            // dd([ (int) env('PAYTABS_PROFILE_ID'), env('PAYTABS_SERVER_KEY')]);
             $result = $this->createPayTabsPayment($transaction->amount, $transaction->id);
             return response()->json([
                 "success" => true,
