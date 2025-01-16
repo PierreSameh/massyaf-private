@@ -100,6 +100,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Unit::class, 'owner_id');
     }
 
+    public function ownerReservations()
+    {
+        return $this->hasManyThrough(Reservation::class, Unit::class, 'owner_id');
+    }
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class);

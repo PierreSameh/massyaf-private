@@ -29,8 +29,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandLogo(asset('logo.svg'))
+            ->brandLogoHeight('3rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#EE50FF'),
             ])
             ->plugin(
                 BreezyCore::make()
