@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\checkTypeUser;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -27,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->redirectGuestsTo('/unauthorized');
         $middleware->alias([
-            'checkTypeUser' => checkTypeUser::class,
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ]);
