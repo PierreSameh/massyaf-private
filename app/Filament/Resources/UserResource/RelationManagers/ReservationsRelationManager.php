@@ -28,6 +28,7 @@ class ReservationsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('unit_id')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('unit_id'),
                 Tables\Columns\TextColumn::make('unit.name'),
