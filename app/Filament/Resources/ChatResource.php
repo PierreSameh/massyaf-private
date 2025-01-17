@@ -39,7 +39,8 @@ class ChatResource extends Resource
                     ->label('Messages')
                     ->counts('messages'),
                 TextColumn::make('created_at')->label('Created At')->dateTime(),
-                TextColumn::make('deleted_at')->label('Deleted At')->dateTime(),
+                TextColumn::make('deleted_at')->label('Deleted At')->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(), // Add a filter for trashed records

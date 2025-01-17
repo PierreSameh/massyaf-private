@@ -24,11 +24,7 @@ class ViewChat extends Page
             // Actions\EditAction::make(),
         ];
     }
-    protected function resolveRecord(int | string $key): Chat
-    {
-        // Include soft-deleted records in the query
-        return Chat::withTrashed()->findOrFail($key);
-    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist

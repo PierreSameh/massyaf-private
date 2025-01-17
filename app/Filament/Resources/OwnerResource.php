@@ -24,7 +24,8 @@ class OwnerResource extends Resource
     public static function getPluralLabel(): ?string
     {
         return __('Owners');  // For plural label translations
-    }    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    }
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
