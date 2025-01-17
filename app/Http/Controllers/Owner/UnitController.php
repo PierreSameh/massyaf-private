@@ -15,6 +15,7 @@ use App\Models\SpecialReservationTimes;
 use App\Models\Unit;
 use App\Models\UnitImage;
 use App\Models\UnitVideo;
+use App\Services\CodeGeneratorService;
 use App\Traits\PushNotificationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,14 @@ use Illuminate\Support\Facades\Storage;
 class UnitController extends Controller
 {
     use PushNotificationTrait;
+
+    protected $codeGeneratorService;
+
+    public function __construct(CodeGeneratorService $codeGeneratorService)
+    {
+        $this->codeGeneratorService = $codeGeneratorService;
+    }
+
     public function getAll(Request $request)
     {
         $owner = $request->user();
@@ -142,9 +151,18 @@ class UnitController extends Controller
             $validated = $request->validated();
             $unitData = $validated;
             $owner = $request->user();
+            //generate unique code for units
+            $parentId = $unitData['compound_id'] ?: $unitData['hotel_id'];
+            $code = $this->codeGeneratorService->unit(
+            $unitData['type'],
+             $parentId,
+             $unitData['room_count'] ?: null,
+             $unitData['floors_count'] ?: null
+            );
 
             // Create the unit
             $unit = Unit::create([
+                'code' => $code,
                 'owner_id' => $owner->id,
                 'type' => $unitData['type'],
                 'name' => $unitData['name'],

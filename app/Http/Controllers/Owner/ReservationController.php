@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\User;
+use App\Services\CodeGeneratorService;
 use App\Traits\PushNotificationTrait;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -12,7 +13,12 @@ use Carbon\Carbon;
 class ReservationController extends Controller
 {
     use PushNotificationTrait;
+    protected $codeGeneratorService;
 
+    public function __construct(CodeGeneratorService $codeGeneratorService)
+    {
+        $this->codeGeneratorService = $codeGeneratorService;
+    }
     public function getAll()
     {
         $user = auth()->user();
@@ -130,7 +136,13 @@ class ReservationController extends Controller
                 "message" => "الحجز غير موجود"
             ], 404);
         }
+        $code = $this->codeGeneratorService->reservation(
+            $reservation->unit->code,
+            $reservation->date_from,
+            $reservation->days_count
+        );
         $reservation->status = "approved";
+        $reservation->code = $code;
         $reservation->approved_at = now();
         $reservation->save();
 

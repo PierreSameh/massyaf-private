@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->enum('type', ['unit', 'hotel']);
             $table->foreignId('unit_type_id')->constrained('types');

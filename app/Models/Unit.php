@@ -8,6 +8,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 class Unit extends Model
 {
     protected $fillable = [
+        'code',
         'owner_id',
         'ownership_documents',
         'type',
