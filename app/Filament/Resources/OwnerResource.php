@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OwnerResource\Pages;
 use App\Filament\Resources\OwnerResource\RelationManagers;
 use App\Models\User;
+use App\Policies\OwnerPolicy;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -27,6 +28,29 @@ class OwnerResource extends Resource
     }
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_owner'); // Restrict access to users with the 'view_admin' permission
+    }
+
+    // Restrict access to the create page
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_owner');
+    }
+
+    // Restrict access to the edit page
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update_owner');
+    }
+
+    // Restrict access to the delete action
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete_owner');
+    }
     public static function form(Form $form): Form
     {
         return $form

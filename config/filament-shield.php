@@ -22,7 +22,7 @@ return [
     'super_admin' => [
         'enabled' => true,
         'name' => 'super_admin',
-        'define_via_gate' => false,
+        'define_via_gate' => true,
         'intercept_gate' => 'before', // after
     ],
 
@@ -75,7 +75,13 @@ return [
             'AccountWidget', 'FilamentInfoWidget',
         ],
 
-        'resources' => [],
+        'resources' => [
+            \App\Filament\Resources\ChatResource::class,
+            \App\Filament\Resources\UserResource::class,
+            \App\Filament\Resources\AdminResource::class,
+            \App\Filament\Resources\OwnerResource::class,
+            \App\Filament\Resources\UnitResource::class,
+        ],
     ],
 
     'discovery' => [
