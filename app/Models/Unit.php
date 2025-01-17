@@ -9,6 +9,7 @@ class Unit extends Model
 {
     protected $fillable = [
         'owner_id',
+        'ownership_documents',
         'type',
         'name',
         'rate',
@@ -48,6 +49,10 @@ class Unit extends Model
     ];
 
     protected $appends = ['min_price', 'max_price', 'in_wishlist'];
+
+    protected $casts = [
+        'ownership_documents' => 'json',
+    ];
 
     public function getInWishlistAttribute()
     {

@@ -27,6 +27,18 @@ class UnitResource extends Resource
                 Forms\Components\TextInput::make('owner_id')
                     ->required()
                     ->numeric(),
+                Forms\Components\FileUpload::make('ownership_documents')
+                    ->label(__('Ownership Documents'))
+                    ->disk('public')
+                    ->directory('ownership_documents')
+                    ->multiple()
+                    ->columnSpanFull()
+                    ->reorderable()
+                    ->panelLayout('grid')
+                    ->image()
+                    ->openable()
+                    ->downloadable()
+                    ->required(),
                 Forms\Components\TextInput::make('type')
                     ->required(),
                 Forms\Components\TextInput::make('name')

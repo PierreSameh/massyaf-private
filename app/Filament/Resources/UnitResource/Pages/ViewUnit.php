@@ -22,7 +22,7 @@ class ViewUnit extends ViewRecord
             ->color('success')
             ->icon('heroicon-o-check-circle')
             ->requiresConfirmation()
-            ->visible(fn () => $this->record->status === 'waiting')
+            ->visible(fn () => $this->record->status === 'waiting' || $this->record->status === 'rejected')
             ->action(fn () => $this->activateUnit()),
         
             // Reject Action
@@ -31,7 +31,7 @@ class ViewUnit extends ViewRecord
                 ->color('danger')
                 ->icon('heroicon-o-x-circle')
                 ->requiresConfirmation()
-                ->visible(fn () => $this->record->status === 'waiting')
+                ->visible(fn () => $this->record->status === 'waiting' || $this->record->status === 'active')
                 ->action(fn () => $this->rejectUnit()),
         ];
     }

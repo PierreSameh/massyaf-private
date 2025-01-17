@@ -23,7 +23,9 @@ class HomeController extends Controller
             'images',
             'videos',
             'rooms',
-        ])->latest()->get();
+        ])
+        ->where('status', 'active')
+        ->latest()->get();
 
         return response()->json([
             "success" => true,
@@ -47,6 +49,7 @@ class HomeController extends Controller
             'videos',
             'rooms',
         ])
+        ->where('status', 'active')
         ->has('sales') // Filter units that have sales
         ->inRandomOrder() // Get the units in random order
         ->get();
@@ -72,7 +75,9 @@ class HomeController extends Controller
             'images',
             'videos',
             'rooms',
-        ])->orderBy('rate', 'desc')->get();
+        ])
+        ->where('status', 'active')
+        ->orderBy('rate', 'desc')->get();
 
         return response()->json([
             "success" => true,
@@ -100,6 +105,7 @@ class HomeController extends Controller
             'videos',
             'rooms',
         ])
+        ->where('status', 'active')
         ->where('type', $request->type)
         ->has('sales') // Filter units that have sales
         ->inRandomOrder() // Get the units in random order
@@ -156,7 +162,7 @@ class HomeController extends Controller
         }
     
         // Execute the query and get the results
-        $units = $query->get();
+        $units = $query->where('status', 'active')->get();
     
         // Return the filtered results
         return response()->json([
