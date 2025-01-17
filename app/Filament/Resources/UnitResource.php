@@ -126,6 +126,23 @@ class UnitResource extends Resource
                 // Basic Information
                 Section::make('Basic Information')
                     ->schema([
+                        Section::make(__("Owner Info"))
+                        ->schema([
+                            ImageEntry::make('owner.image')->label(__('Profile Photo'))
+                            ->circular()
+                            ->defaultImageUrl(url('/images/downloaded.jpeg'))
+                            ->extraImgAttributes([
+                                'loading' => 'lazy',
+                            ]),
+                            ImageEntry::make('owner.id_image')->label(__('National ID'))
+                            ->extraImgAttributes([
+                                'alt' => 'not set',
+                                'loading' => 'lazy',
+                            ]),
+                            TextEntry::make('owner.name')->label(__("Name")),
+                            TextEntry::make('owner.phone_number')->label(__("Phone")),
+                            TextEntry::make('owner.email')->label(__('Email')),
+                        ])->columns(2),
                         TextEntry::make('name')->label('Name'),
                         TextEntry::make('code')->label('Code'),
                         TextEntry::make('type')->label('Type'),
