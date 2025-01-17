@@ -206,7 +206,7 @@ class ReservationController extends Controller
         $user = auth()->user();
         $reservation = Reservation::where('id', $id)
             ->where('user_id', $user->id)
-            ->with('ids', 'unit.rooms', 'unit.images')
+            ->with('ids', 'unit.rooms', 'unit.images', 'user', 'unit.owner')
             ->first();
         if (!$reservation) {
             return response()->json([

@@ -21,4 +21,8 @@ class City extends Model
     public function units(){
         return $this->hasMany(Unit::class);
     }
+
+    public function compounds(){
+        return $this->hasMany(Compound::class);
+    }
 }

@@ -16,9 +16,14 @@ class Compound extends Model
         'lng_bottom_right',
         'lat_bottom_left',
         'lng_bottom_left',
+        'city_id'
     ];
 
     public function units(){
         return $this->hasMany(Unit::class);
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class);
     }
 }
