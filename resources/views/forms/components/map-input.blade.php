@@ -13,6 +13,7 @@
 
             initMap() {
                 window.initMapCallback = () => {
+                    console.log('Google Maps API loaded successfully!');
                     this.map = new google.maps.Map(document.getElementById('map'), {
                         center: { lat: 26.8206, lng: 30.8025 }, // Center on Egypt
                         zoom: 6, // Adjust zoom level for Egypt
@@ -22,14 +23,24 @@
                     console.log('Initial Coordinates:', this.coordinates);
 
                     // Load existing markers if coordinates are provided
-                    if (this.coordinates && this.coordinates.length > 0) {
+                    if (this.coordinates) {
                         try {
                             const coords = JSON.parse(this.coordinates);
+                            console.log('Parsed Coordinates:', coords); // Debugging
+
+                            // Clear existing markers
+                            this.markers.forEach(marker => marker.setMap(null));
+                            this.markers = [];
+
+                            // Add markers to the map
                             coords.forEach(coord => {
                                 if (coord.lat && coord.lng) {
-                                    this.addMarker({ lat: coord.lat, lng: coord.lng });
+                                    console.log('Adding marker:', coord); // Debugging
+                                    this.addMarker({ lat: parseFloat(coord.lat), lng: parseFloat(coord.lng) });
                                 }
                             });
+
+                            // Update the polygon
                             this.updateCoordinates();
                         } catch (e) {
                             console.error('Invalid coordinates format:', this.coordinates);
@@ -54,7 +65,7 @@
 
                 // Add a new marker
                 const marker = new google.maps.Marker({
-                    position: latLng,
+                    position: { lat: parseFloat(latLng.lat), lng: parseFloat(latLng.lng) },
                     map: this.map,
                     draggable: true, // Allow markers to be moved
                     zIndex: 1000, // Ensure markers are on top of the polygon
