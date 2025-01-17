@@ -9,8 +9,11 @@ class Amenitie extends Model
     protected $fillable = [
         'name',
         'type',
+        'is_global'
     ];
-
+    protected $casts = [
+        'is_global' => 'boolean',
+    ];
     public function rooms()
     {
         return $this->belongsToMany(Room::class, 'room_amenities');
