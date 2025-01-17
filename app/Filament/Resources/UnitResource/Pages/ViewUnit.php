@@ -15,7 +15,7 @@ class ViewUnit extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\EditAction::make()->label(__('Ownership Documents')),
             // Activate Action
             Action::make('activate')
             ->label('Activate Unit')

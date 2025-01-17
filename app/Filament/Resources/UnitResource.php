@@ -13,6 +13,14 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Grouping\Group;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists;
+use Filament\Infolists\Components\IconEntry;
 
 class UnitResource extends Resource
 {
@@ -24,9 +32,6 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('owner_id')
-                    ->required()
-                    ->numeric(),
                 Forms\Components\FileUpload::make('ownership_documents')
                     ->label(__('Ownership Documents'))
                     ->disk('public')
@@ -39,91 +44,7 @@ class UnitResource extends Resource
                     ->openable()
                     ->downloadable()
                     ->required(),
-                Forms\Components\TextInput::make('type')
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('rate')
-                    ->numeric(),
-                Forms\Components\TextInput::make('unit_type_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('city_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('compound_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('hotel_id')
-                    ->tel()
-                    ->numeric(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('address')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('lat')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('lng')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('unit_number')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('floors_count')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                Forms\Components\Toggle::make('elevator')
-                    ->required(),
-                Forms\Components\TextInput::make('area')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('distance_unit_beach')
-                    ->numeric(),
-                Forms\Components\TextInput::make('beach_unit_transportation')
-                    ->required(),
-                Forms\Components\TextInput::make('distance_unit_pool')
-                    ->numeric(),
-                Forms\Components\TextInput::make('pool_unit_transportation')
-                    ->required(),
-                Forms\Components\TextInput::make('room_count')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('toilet_count')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('reservation_roles')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('reservation_type')
-                    ->required(),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\TextInput::make('insurance_amount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('max_individuals')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Toggle::make('youth_only')
-                    ->required(),
-                Forms\Components\TextInput::make('min_reservation_days')
-                    ->numeric(),
-                Forms\Components\TextInput::make('deposit')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('upon_arival_price')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Toggle::make('weekend_prices')
-                    ->required(),
-                Forms\Components\TextInput::make('min_weekend_period')
-                    ->numeric(),
-                Forms\Components\TextInput::make('weekend_price')
-                    ->required()
-                    ->numeric(),
+                
             ]);
     }
 
@@ -197,11 +118,170 @@ class UnitResource extends Resource
                 // ]),
             ]);
     }
+    
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                // Basic Information
+                Section::make('Basic Information')
+                    ->schema([
+                        TextEntry::make('name')->label('Name'),
+                        TextEntry::make('code')->label('Code'),
+                        TextEntry::make('type')->label('Type'),
+                        TextEntry::make('status')->label('Status')
+                        ->badge()
+                        ->color(fn (string $state): string => match ($state) {
+                            'waiting' => 'warning',
+                            'active' => 'success',
+                            'rejected' => 'danger',
+                        }),
+                        TextEntry::make('unit_number')->label('Unit Number'),
+                        TextEntry::make('floors_count')->label('Floors Count')
+                            ->numeric(),
+                        IconEntry::make('elevator')->label('Elevator')
+                            ->icon(fn (string $state): string => match ($state) {
+                                '0' => 'heroicon-o-x-circle',
+                                '1' => 'heroicon-o-check-circle',
+                            })
+                            ->color(fn (string $state): string => match ($state) {
+                                '0' => 'danger',
+                                '1' => 'success',
+                            }),
+                        TextEntry::make('area')->label('Area'),
+                        TextEntry::make('room_count')->label('Room Count'),
+                        TextEntry::make('toilet_count')->label('Toilet Count'),
+                        TextEntry::make('description')->label('Description'),
+                    ])->columns(2),
+    
+                // Pricing Information
+                Section::make('Pricing Information')
+                    ->schema([
+                        TextEntry::make('price')->label('Price')->money('egp'),
+                        TextEntry::make('insurance_amount')->label('Insurance Amount')->money('egp'),
+                        TextEntry::make('deposit')->label('Deposit')->money('egp'),
+                        TextEntry::make('upon_arival_price')->label('Upon Arrival Price')->money('egp'),
+                        TextEntry::make('weekend_price')->label('Weekend Price')->money('egp'),
+                        TextEntry::make('min_price')->label('Min Price')->money('egp'),
+                        TextEntry::make('max_price')->label('Max Price')->money('egp'),
+                    ])->columns(2),
+    
+                // Location Information
+                Section::make('Location Information')
+                    ->schema([
+                        TextEntry::make('city.name')->label('City'),
+                        TextEntry::make('hotel.name')->label('Hotel'),
+                        TextEntry::make('address')->label('Address')
+                        ->formatStateUsing(function ($state, $record) {
+                            // If the hotel relationship is set and has an address, use the hotel address
+                            if ($record->hotel && $record->hotel->address) {
+                                return $record->hotel->address;
+                            }
+                            // Otherwise, use the unit's address
+                            return $state;
+                        }),
+                    ])->columns(2),
+    
+                // Additional Fees
+                Section::make('Additional Fees')
+                    ->schema([
+                        RepeatableEntry::make('additionalFees')
+                            ->schema([
+                                TextEntry::make('fees')->label('Fee Type'),
+                                TextEntry::make('amount')->label('Amount')->money('usd'),
+                            ])
+                            ->columns(2),
+                    ]),
+    
+                // Available Dates
+                Section::make('Available Dates')
+                    ->schema([
+                        RepeatableEntry::make('availableDates')
+                            ->schema([
+                                TextEntry::make('from')->label('From'),
+                                TextEntry::make('to')->label('To'),
+                            ])
+                            ->columns(2),
+                    ]),
+    
+                // Sales
+                Section::make('Sales')
+                    ->schema([
+                        RepeatableEntry::make('sales')
+                            ->schema([
+                                TextEntry::make('from')->label('From'),
+                                TextEntry::make('to')->label('To'),
+                                TextEntry::make('sale_percentage')->label('Sale Percentage'),
+                            ])
+                            ->columns(3),
+                    ]),
+    
+                // Cancel Policies
+                Section::make('Cancel Policies')
+                    ->schema([
+                        RepeatableEntry::make('cancelPolicies')
+                            ->schema([
+                                TextEntry::make('days')->label('Days'),
+                                TextEntry::make('penalty')->label('Penalty')->money('usd'),
+                            ])
+                            ->columns(2),
+                    ]),
+    
+                // Long Term Reservations
+                Section::make('Long Term Reservations')
+                    ->schema([
+                        RepeatableEntry::make('longTermReservations')
+                            ->schema([
+                                TextEntry::make('more_than_days')->label('More Than Days'),
+                                TextEntry::make('sale_percentage')->label('Sale Percentage'),
+                            ])
+                            ->columns(2),
+                    ]),
+    
+                // Special Reservation Times
+                Section::make('Special Reservation Times')
+                    ->schema([
+                        RepeatableEntry::make('specialReservationTimes')
+                            ->schema([
+                                TextEntry::make('from')->label('From'),
+                                TextEntry::make('to')->label('To'),
+                                TextEntry::make('price')->label('Price')->money('usd'),
+                                TextEntry::make('min_reservation_period')->label('Min Reservation Period'),
+                            ])
+                            ->columns(4),
+                    ]),
+    
+                // Rooms
+                Section::make('Rooms')
+                    ->schema([
+                        RepeatableEntry::make('rooms')
+                            ->schema([
+                                TextEntry::make('bed_count')->label('Bed Count'),
+                                TextEntry::make('bed_sizes')->label('Bed Sizes')
+                                    ->formatStateUsing(function ($state) {
+                                        // Ensure $state is an array before using implode
+                                        return is_array($state) ? implode(', ', $state) : $state;
+                                    }),
+                            ])
+                            ->columns(2),
+                    ]),
+    
+                // Amenities
+                Section::make('Amenities')
+                    ->schema([
+                        RepeatableEntry::make('amenities')
+                            ->schema([
+                                TextEntry::make('name')->label('Amenity Name'),
+                            ])
+                            ->columns(1),
+                    ]),
+            ]);
+    }
 
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ReservationsRelationManager::class
         ];
     }
 
