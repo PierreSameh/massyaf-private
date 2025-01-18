@@ -23,13 +23,13 @@ class SoftDeleteUnpaidReservations extends Command
 
         foreach ($reservations as $reservation) {
             $reservation->delete();
+            $this->pushNotification(
+                ' تم إلغاء الحجز لعدم إتمام الدفع',
+                "نأسف لإبلاغك أنه تم إلغاء حجزك لـ{$reservation->unit->name} بسبب عدم إتمام عملية الدفع خلال المهلة المحددة (4 ساعات).",
+                $reservation->user->id,
+            );
         }
 
-        $this->pushNotification(
-            ' تم إلغاء الحجز لعدم إتمام الدفع',
-            "نأسف لإبلاغك أنه تم إلغاء حجزك لـ{$reservations->unit->name} بسبب عدم إتمام عملية الدفع خلال المهلة المحددة (4 ساعات).",
-            $reservation->user->id,
-        );
 
         $this->info('Unpaid reservations older than 4 hours have been soft deleted.');
     }
