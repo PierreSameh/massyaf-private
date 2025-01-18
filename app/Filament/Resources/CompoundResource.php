@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CompoundResource\Pages;
 use App\Filament\Resources\CompoundResource\RelationManagers;
 use App\Forms\Components\MapBoundaryInput;
-use App\Forms\Components\SingleMarkerMap;
 use App\Models\Compound;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,8 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Forms\Components\MapInput;
-use Livewire\Livewire;
 
 class CompoundResource extends Resource
 {
@@ -30,14 +27,13 @@ class CompoundResource extends Resource
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
-                Forms\Components\Select::make('city_id')
+            Forms\Components\Select::make('city_id')
                 ->label('City')
                 ->options(\App\Models\City::all()->pluck('name', 'id'))
                 ->searchable()
                 ->required()
                 ->placeholder('Select a city')
-                ->reactive()
-,
+                ->reactive(),
             Forms\Components\TextInput::make('address')
                 ->required()
                 ->maxLength(255),

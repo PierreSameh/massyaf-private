@@ -25,4 +25,8 @@ class City extends Model
     public function compounds(){
         return $this->hasMany(Compound::class);
     }
+
+    public function hotels(){
+        return $this->hasMany(Hotel::class);
+    }
 }

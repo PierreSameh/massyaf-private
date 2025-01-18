@@ -12,9 +12,14 @@ class Hotel extends Model
         'details',
         'lat',
         'lng',
+        'city_id'
     ];
 
     public function units(){
         return $this->hasMany(Unit::class);
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class);
     }
 }
