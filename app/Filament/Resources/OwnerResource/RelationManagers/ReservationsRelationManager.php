@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\OwnerResource\RelationManagers;
 
+use App\Models\Reservation;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -9,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\Summarizers\Sum;
 
 class ReservationsRelationManager extends RelationManager
 {
@@ -26,9 +28,21 @@ class ReservationsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        $ownerId = $this->ownerRecord->id;
+
+        $totalOwnerProfit = Reservation::query()
+        ->whereRelation('unit.owner', 'owner_id', $ownerId) // Filter by owner ID
+        ->where('status', 'approved')
+        ->where('paid', true)
+        ->sum('owner_profit');
         return $table
             ->recordTitleAttribute('unit_id')
             ->defaultSort('created_at', 'desc')
+            ->header(function () use ($totalOwnerProfit) {
+                return view('filament.tables.custom-header', [
+                    'totalOwnerProfit' => $totalOwnerProfit,
+                ]);
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('unit_id'),
                 Tables\Columns\TextColumn::make('unit.name'),
@@ -36,6 +50,9 @@ class ReservationsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('book_advance')
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('booking_price')
+                    ->money('EGP'),
+                Tables\Columns\TextColumn::make('owner_profit')
+                    ->label(__("Owner Profits"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('status')
                     ->formatStateUsing(function ($state) {
@@ -82,8 +99,10 @@ class ReservationsRelationManager extends RelationManager
                 // Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('view')
+                ->label(__('View'))
+                ->url(fn(Reservation $record) => ( '/admin/reservations/' . $record->id))
+                ->openUrlInNewTab(false), // Ensure it doesn't open in a new tab
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([

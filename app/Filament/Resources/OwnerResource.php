@@ -107,7 +107,8 @@ class OwnerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ReservationsRelationManager::class
+            RelationManagers\ReservationsRelationManager::class,
+            RelationManagers\UnitsRelationManager::class
         ];
     }
 
