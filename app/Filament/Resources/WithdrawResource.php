@@ -33,11 +33,12 @@ class WithdrawResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('user.name')->label(__('User Name')),
                 Tables\Columns\TextColumn::make('user.phone_number')->label(__("User Phone")),
-                Tables\Columns\TextColumn::make('user.email')->label(__('User Email')),
+                // Tables\Columns\TextColumn::make('user.email')->label(__('User Email')),
                 // Tables\Columns\TextColumn::make('user.balance')->label(__('User Balance'))
                 //     ->money('egp'),
                 Tables\Columns\TextColumn::make('amount')->label(__('Amount'))
@@ -133,9 +134,9 @@ class WithdrawResource extends Resource
                     ->requiresConfirmation(), // Add confirmation dialog
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
