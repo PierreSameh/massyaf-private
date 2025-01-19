@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Spatie\Permission\Models\Role;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 class AdminResource extends Resource
 {
@@ -26,8 +27,12 @@ class AdminResource extends Resource
     {
         return __('Admins');  // For plural label translations
     }
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getNavigationGroup(): ?string
+    {
+        return Utils::isResourceNavigationGroupEnabled()
+            ? __('filament-shield::filament-shield.nav.group')
+            : '';
+    }
     public static function canViewAny(): bool
     {
         return auth()->user()->can('view_admin'); // Restrict access to users with the 'view_admin' permission

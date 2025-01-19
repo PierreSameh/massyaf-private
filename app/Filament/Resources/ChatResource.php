@@ -18,8 +18,10 @@ class ChatResource extends Resource
 {
     protected static ?string $model = Chat::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Accounts');
+    }
     public static function form(Form $form): Form
     {
         return $form

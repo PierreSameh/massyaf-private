@@ -25,8 +25,11 @@ class UnCompletedReservationsResource extends Resource
     {
         return __('Incompleted Reservations');  // For plural label translations
     }
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Reservations');
+    }
     public static function form(Form $form): Form
     {
         return $form

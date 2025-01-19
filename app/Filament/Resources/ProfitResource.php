@@ -17,8 +17,10 @@ class ProfitResource extends Resource
 {
     protected static ?string $model = Profit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Financial');
+    }
     public static function form(Form $form): Form
     {
         return $form

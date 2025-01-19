@@ -18,8 +18,10 @@ class CompoundResource extends Resource
 {
     protected static ?string $model = Compound::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Add Data');
+    }
     public static function form(Form $form): Form
     {
         return $form

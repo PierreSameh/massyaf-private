@@ -17,7 +17,10 @@ class AmenitieResource extends Resource
 {
     protected static ?string $model = Amenitie::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Add Data');
+    }
 
     public static function form(Form $form): Form
     {
