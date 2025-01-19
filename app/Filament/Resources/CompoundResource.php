@@ -22,21 +22,32 @@ class CompoundResource extends Resource
     {
         return __('Add Data');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Compound');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Compounds');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
         ->schema([
             Forms\Components\TextInput::make('name')
+                ->label(__('Name'))
                 ->required()
                 ->maxLength(255),
             Forms\Components\Select::make('city_id')
-                ->label('City')
+                ->label(__('City'))
                 ->options(\App\Models\City::all()->pluck('name', 'id'))
                 ->searchable()
                 ->required()
-                ->placeholder('Select a city')
+                ->placeholder(__('Select a city'))
                 ->reactive(),
             Forms\Components\TextInput::make('address')
+                ->label(__('Address'))
                 ->required()
                 ->maxLength(255),
             MapBoundaryInput::make('location')
@@ -60,10 +71,12 @@ class CompoundResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('city.name')
-                    ->label('City'),
+                    ->label(__('City')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

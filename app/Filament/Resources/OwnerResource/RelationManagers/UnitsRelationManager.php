@@ -10,11 +10,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class UnitsRelationManager extends RelationManager
 {
     protected static string $relationship = 'units';
-
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Units');
+    }
     public function form(Form $form): Form
     {
         return $form
@@ -32,24 +36,31 @@ class UnitsRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label(__("ID"))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('type')->label(__("Type")),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__("Name"))
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('unitType.name')
+                Tables\Columns\TextColumn::make('unitType.name')
+                    ->label(__("Unit Type"))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('city.name')
+                    ->label(__("City"))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('compound.name')
+                    ->label(__("Compound"))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('hotel.name')
+                ->label(__('Hotel'))
                 ->numeric()
                 ->sortable(),
                 Tables\Columns\IconColumn::make('status')
+                    ->label(__("Status"))
                     ->icon(fn (string $state): string => match ($state) {
                         'waiting' => 'heroicon-o-clock',
                         'active' => 'heroicon-o-check-circle',
@@ -61,13 +72,11 @@ class UnitsRelationManager extends RelationManager
                         'rejected' => 'danger'
                     }),                
                 Tables\Columns\TextColumn::make('rate')
+                    ->label(__('Rate'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

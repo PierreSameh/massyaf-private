@@ -22,6 +22,15 @@ class ChatResource extends Resource
     {
         return __('Accounts');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Chat');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Chats');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -34,14 +43,14 @@ class ChatResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->sortable()->searchable(),
-                TextColumn::make('user.name')->label('User')->searchable(),
-                TextColumn::make('owner.name')->label('Owner')->searchable(),
+                TextColumn::make('id')->label(__('ID'))->sortable()->searchable(),
+                TextColumn::make('user.name')->label(__('User'))->searchable(),
+                TextColumn::make('owner.name')->label(__('Owner'))->searchable(),
                 TextColumn::make('messages_count')
-                    ->label('Messages')
+                    ->label(__('Messages'))
                     ->counts('messages'),
-                TextColumn::make('created_at')->label('Created At')->dateTime(),
-                TextColumn::make('deleted_at')->label('Deleted At')->dateTime()
+                TextColumn::make('created_at')->label(__('Creation Date'))->dateTime(),
+                TextColumn::make('deleted_at')->label(__('Deleted At'))->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

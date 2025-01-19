@@ -30,6 +30,15 @@ class UnitResource extends Resource
     {
         return __('Accounts');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Unit');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Units');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -56,25 +65,32 @@ class UnitResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label(__('ID'))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('owner.name'),
-                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('owner.name')->label(__('Owner Name')),
+                Tables\Columns\TextColumn::make('type')->label(__('Type')),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('unitType.name')
+                Tables\Columns\TextColumn::make('unitType.name')
+                    ->label(__('Unit Type'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('city.name')
+                    ->label(__('City'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('compound.name')
+                    ->label(__('Compound'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('hotel.name')
-                ->numeric()
-                ->sortable(),
+                    ->label(__('Hotel'))
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('status')
+                    ->label(__('Status'))
                     ->icon(fn (string $state): string => match ($state) {
                         'waiting' => 'heroicon-o-clock',
                         'active' => 'heroicon-o-check-circle',
@@ -86,24 +102,24 @@ class UnitResource extends Resource
                         'rejected' => 'danger'
                     }),                
                 Tables\Columns\TextColumn::make('rate')
+                    ->label(__('Rate'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
+                    ->label(__('Type'))
                     ->options([
                         'hotel' => __('Hotel Rooms'),
                         'unit' => __('Units'),
                     ]),
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('Status'))
                     ->options([
                         'waiting' => __('Waiting'),
                         'active' => __('Active'),

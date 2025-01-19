@@ -9,10 +9,19 @@ use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewChat extends Page
 {
+    
     protected static string $resource = ChatResource::class;
+
+ 
+    public function getTitle(): string | Htmlable
+    {
+        return __('View Chat');
+    }
+
 
     protected static string $view = 'filament.resources.chat-resource.pages.view-chat';
 

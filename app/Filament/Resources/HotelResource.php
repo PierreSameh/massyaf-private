@@ -22,23 +22,34 @@ class HotelResource extends Resource
     {
         return __('Add Data');
     }
+    public static function getLabel(): ?string
+    {
+        return __('Hotel');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Hotels');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('address')
+                    ->label(__('Address'))
                     ->maxLength(255),
                 Forms\Components\Select::make('city_id')
-                    ->label('City')
+                    ->label(__('City'))
                     ->options(\App\Models\City::all()->pluck('name', 'id'))
                     ->searchable()
                     ->required()
-                    ->placeholder('Select a city')
+                    ->placeholder(__('Select a city'))
                     ->reactive(),
                 Forms\Components\Textarea::make('details')
+                    ->label(__('Details'))
                     ->columnSpanFull(),
                     MapBoundaryInput::make('location')
                     ->label(__("Location"))
@@ -61,6 +72,7 @@ class HotelResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('city.name')
                     ->label(__("City"))

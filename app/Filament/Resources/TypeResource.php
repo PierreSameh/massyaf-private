@@ -21,14 +21,25 @@ class TypeResource extends Resource
     {
         return __('Add Data');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Type');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Types');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('type_for')
+                    ->label(__('Type'))
                     ->options([
                         "unit" => __("Unit"),
                         "hotel" => __("Hotel"),
@@ -42,8 +53,10 @@ class TypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type_for')
+                    ->label(__('Type'))
                     ->formatStateUsing(function ($state) {
                         return $state == "unit" ? __("Unit") : __("Hotel");
                     }),

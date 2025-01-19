@@ -59,15 +59,19 @@ class OwnerResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('Email'))
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
+                    ->label(__('Image'))
                     ->image(),
                 Forms\Components\TextInput::make('phone_number')
+                    ->label(__('Phone Number'))
                     ->tel()
                     ->required()
                     ->maxLength(255),
@@ -80,15 +84,20 @@ class OwnerResource extends Resource
         ->defaultSort('created_at', 'desc')
         ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label(__('ID'))
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->label(__('Phone Number'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

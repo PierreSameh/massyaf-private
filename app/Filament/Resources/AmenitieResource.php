@@ -21,15 +21,24 @@ class AmenitieResource extends Resource
     {
         return __('Add Data');
     }
-
+    public static function getLabel(): ?string
+    {
+        return __('Amenitie');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Amenities');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
+                    ->label(__('Type'))
                     ->options([
                         "unit" => __("Unit"),
                         "hotel" => __("Hotel"),
@@ -39,6 +48,7 @@ class AmenitieResource extends Resource
                     ])
                     ->required(),
                 Forms\Components\Toggle::make('is_global')
+                    ->label(__('Global'))
                     ->onColor('success')
                     ->offColor('danger')
                     ->default(true)
@@ -52,9 +62,24 @@ class AmenitieResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\ToggleColumn::make('is_global')
+                Tables\Columns\TextColumn::make('type')->label(__("Type"))
+                    ->formatStateUsing(function ($state){
+                        switch ($state) {
+                            case "unit":
+                                return __("Unit");
+                            case "hotel":
+                                return __("Hotel");
+                            case "room":
+                                return __("Room");
+                            case "kitchen":
+                                return __("Kitchen");
+                            case "reception":
+                                return __("Reception");
+                        }
+                    }),
+                Tables\Columns\ToggleColumn::make('is_global')->label(__('Global'))
                     ->onColor('success')
                     ->offColor('danger'),
                 // Tables\Columns\TextColumn::make('created_at')

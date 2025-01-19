@@ -19,10 +19,11 @@ class ListCities extends ListRecords
         return [
             Actions\CreateAction::make(),
             Action::make('importCities')
-                ->label('Import')
+                ->label(__('Import'))
                 ->color('danger')
                 ->form([
                     FileUpload::make('attachment')
+                        ->label(__('Attachment'))
                         ->required()
                         ->directory('imports')
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']) // Accept only .xlsx files

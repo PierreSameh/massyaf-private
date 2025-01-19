@@ -22,14 +22,25 @@ class CityResource extends Resource
     {
         return __('Add Data');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('City');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Cities');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 MapInput::make('coordinates')
+                ->columnSpanFull()
                 ->afterStateUpdated(function ($state, $set) {
                     $coordinates = json_decode($state, true);
                     if (is_array($coordinates) && count($coordinates) === 4) {
@@ -60,8 +71,10 @@ class CityResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
