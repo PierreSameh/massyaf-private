@@ -39,6 +39,20 @@ class CityResource extends Resource
                     ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
+                Forms\Components\FileUpload::make('images')
+                    ->label(__('Images'))
+                    ->disk('public')
+                    ->directory('cities')
+                    ->multiple()
+                    ->columnSpanFull()
+                    ->reorderable()
+                    ->panelLayout('grid')
+                    ->image()
+                    ->required(),
+                Forms\Components\RichEditor::make('description')->label(__("Description"))
+                    ->columnSpanFull(),
+                Forms\Components\RichEditor::make('features')->label(__('Features'))
+                    ->columnSpanFull(),
                 MapInput::make('coordinates')
                 ->columnSpanFull()
                 ->afterStateUpdated(function ($state, $set) {

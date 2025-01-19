@@ -9,10 +9,17 @@ class Hotel extends Model
     protected $fillable = [
         'name',
         'address',
+        'images',
+        'description',
+        'features',
         'details',
         'lat',
         'lng',
         'city_id'
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function units(){

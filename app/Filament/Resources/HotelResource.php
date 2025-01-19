@@ -48,6 +48,20 @@ class HotelResource extends Resource
                     ->required()
                     ->placeholder(__('Select a city'))
                     ->reactive(),
+                Forms\Components\FileUpload::make('images')
+                    ->label(__('Images'))
+                    ->disk('public')
+                    ->directory('hotels')
+                    ->multiple()
+                    ->columnSpanFull()
+                    ->reorderable()
+                    ->panelLayout('grid')
+                    ->image()
+                    ->required(),
+                Forms\Components\RichEditor::make('description')->label(__("Description"))
+                    ->columnSpanFull(),
+                Forms\Components\RichEditor::make('features')->label(__('Features'))
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('details')
                     ->label(__('Details'))
                     ->columnSpanFull(),

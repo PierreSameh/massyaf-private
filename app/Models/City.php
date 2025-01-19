@@ -8,6 +8,9 @@ class City extends Model
 {
     protected $fillable = [
         'name',
+        'images',
+        'description',
+        'features',
         'lat_top_right',
         'lng_top_right',
         'lat_top_left',
@@ -16,6 +19,10 @@ class City extends Model
         'lng_bottom_right',
         'lat_bottom_left',
         'lng_bottom_left',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function units(){

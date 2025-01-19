@@ -8,10 +8,17 @@ class Compound extends Model
 {
     protected $fillable = [
         'name',
+        'images',
+        'description',
+        'features',
         'city_id',
         'address',
         'lng',
         'lat'
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function units(){
