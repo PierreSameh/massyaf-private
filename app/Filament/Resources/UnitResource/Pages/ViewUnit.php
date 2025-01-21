@@ -18,7 +18,7 @@ class ViewUnit extends ViewRecord
             Actions\EditAction::make()->label(__('Ownership Documents')),
             // Activate Action
             Action::make('activate')
-            ->label('Activate Unit')
+            ->label(__('Activate Unit'))
             ->color('success')
             ->icon('heroicon-o-check-circle')
             ->requiresConfirmation()
@@ -27,7 +27,7 @@ class ViewUnit extends ViewRecord
         
             // Reject Action
             Action::make('reject')
-                ->label('Reject Unit')
+                ->label(__('Reject Unit'))
                 ->color('danger')
                 ->icon('heroicon-o-x-circle')
                 ->requiresConfirmation()
@@ -43,8 +43,8 @@ class ViewUnit extends ViewRecord
 
         // Notify the user
         Notification::make()
-            ->title('Unit Activated')
-            ->body('The unit has been activated successfully.')
+            ->title(__('Unit Activated'))
+            ->body(__('The unit has been activated successfully.'))
             ->success()
             ->send();
     }
@@ -56,8 +56,8 @@ class ViewUnit extends ViewRecord
 
         // Notify the user
         Notification::make()
-            ->title('Unit Rejected')
-            ->body('The unit has been rejected successfully.')
+            ->title(__('Unit Rejected'))
+            ->body(__('The unit has been rejected successfully.'))
             ->danger()
             ->send();
     }

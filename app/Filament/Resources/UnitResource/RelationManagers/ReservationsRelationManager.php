@@ -9,11 +9,16 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class ReservationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'reservations';
 
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('Reservations');
+    }
     public function form(Form $form): Form
     {
         return $form
@@ -27,6 +32,7 @@ class ReservationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->emptyStateHeading(__('No reservations yet'))
             ->recordTitleAttribute('unit_id')
             ->defaultSort('created_at', 'desc')
             ->columns([

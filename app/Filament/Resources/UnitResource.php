@@ -142,7 +142,7 @@ class UnitResource extends Resource
         return $infolist
             ->schema([
                 // Basic Information
-                Section::make('Basic Information')
+                Section::make(__('Basic Information'))
                     ->schema([
                         Section::make(__("Owner Info"))
                         ->schema([
@@ -161,20 +161,32 @@ class UnitResource extends Resource
                             TextEntry::make('owner.phone_number')->label(__("Phone")),
                             TextEntry::make('owner.email')->label(__('Email')),
                         ])->columns(2),
-                        TextEntry::make('name')->label('Name'),
-                        TextEntry::make('code')->label('Code'),
-                        TextEntry::make('type')->label('Type'),
-                        TextEntry::make('status')->label('Status')
+                        TextEntry::make('name')->label(__('Name')),
+                        TextEntry::make('code')->label(__('Code')),
+                        TextEntry::make('type')->label(__('Type')),
+                        TextEntry::make('status')->label(__('Status'))
                         ->badge()
+                        ->formatStateUsing(function ($state){
+                            switch($state){
+                                case 'waiting':
+                                    return __("Waiting");
+                                case 'active':
+                                    return __("Active");
+                                case 'rejected':
+                                    return __("Rejected");
+                                default:
+                                    return __("Unkown");
+                            }
+                        })
                         ->color(fn (string $state): string => match ($state) {
                             'waiting' => 'warning',
                             'active' => 'success',
                             'rejected' => 'danger',
                         }),
-                        TextEntry::make('unit_number')->label('Unit Number'),
-                        TextEntry::make('floors_count')->label('Floors Count')
+                        TextEntry::make('unit_number')->label(__('Unit Number')),
+                        TextEntry::make('floors_count')->label(__('Floors Count'))
                             ->numeric(),
-                        IconEntry::make('elevator')->label('Elevator')
+                        IconEntry::make('elevator')->label(__('Elevator'))
                             ->icon(fn (string $state): string => match ($state) {
                                 '0' => 'heroicon-o-x-circle',
                                 '1' => 'heroicon-o-check-circle',
@@ -183,30 +195,28 @@ class UnitResource extends Resource
                                 '0' => 'danger',
                                 '1' => 'success',
                             }),
-                        TextEntry::make('area')->label('Area'),
-                        TextEntry::make('room_count')->label('Room Count'),
-                        TextEntry::make('toilet_count')->label('Toilet Count'),
-                        TextEntry::make('description')->label('Description'),
+                        TextEntry::make('area')->label(__('Area')),
+                        TextEntry::make('room_count')->label(__('Room Count')),
+                        TextEntry::make('toilet_count')->label(__('Toilet Count')),
+                        TextEntry::make('description')->label(__('Description')),
                     ])->columns(2),
     
                 // Pricing Information
-                Section::make('Pricing Information')
+                Section::make(__('Pricing Information'))
                     ->schema([
-                        TextEntry::make('price')->label('Price')->money('egp'),
-                        TextEntry::make('insurance_amount')->label('Insurance Amount')->money('egp'),
-                        TextEntry::make('deposit')->label('Deposit')->money('egp'),
-                        TextEntry::make('upon_arival_price')->label('Upon Arrival Price')->money('egp'),
-                        TextEntry::make('weekend_price')->label('Weekend Price')->money('egp'),
-                        TextEntry::make('min_price')->label('Min Price')->money('egp'),
-                        TextEntry::make('max_price')->label('Max Price')->money('egp'),
+                        TextEntry::make('price')->label(__('Price'))->money('egp'),
+                        TextEntry::make('insurance_amount')->label(__('Insurance Amount'))->money('egp'),
+                        TextEntry::make('deposit')->label(__('Deposit'))->money('egp'),
+                        TextEntry::make('upon_arival_price')->label(__('Upon Arrival Price'))->money('egp'),
+                        TextEntry::make('weekend_price')->label(__('Weekend Price'))->money('egp'),
                     ])->columns(2),
     
                 // Location Information
-                Section::make('Location Information')
+                Section::make(__('Location Information'))
                     ->schema([
-                        TextEntry::make('city.name')->label('City'),
-                        TextEntry::make('hotel.name')->label('Hotel'),
-                        TextEntry::make('address')->label('Address')
+                        TextEntry::make('city.name')->label(__('City')),
+                        TextEntry::make('hotel.name')->label(__('Hotel')),
+                        TextEntry::make('address')->label(__('Address'))
                         ->formatStateUsing(function ($state, $record) {
                             // If the hotel relationship is set and has an address, use the hotel address
                             if ($record->hotel && $record->hotel->address) {
@@ -218,81 +228,81 @@ class UnitResource extends Resource
                     ])->columns(2),
     
                 // Additional Fees
-                Section::make('Additional Fees')
+                Section::make(__('Additional Fees'))
                     ->schema([
                         RepeatableEntry::make('additionalFees')
                             ->schema([
-                                TextEntry::make('fees')->label('Fee Type'),
-                                TextEntry::make('amount')->label('Amount')->money('usd'),
+                                TextEntry::make('fees')->label(__('Fee Type')),
+                                TextEntry::make('amount')->label(__('Amount'))->money('usd'),
                             ])
                             ->columns(2),
                     ]),
     
                 // Available Dates
-                Section::make('Available Dates')
+                Section::make(__('Available Dates'))
                     ->schema([
                         RepeatableEntry::make('availableDates')
                             ->schema([
-                                TextEntry::make('from')->label('From'),
-                                TextEntry::make('to')->label('To'),
+                                TextEntry::make('from')->label(__('From')),
+                                TextEntry::make('to')->label(__('To')),
                             ])
                             ->columns(2),
                     ]),
     
                 // Sales
-                Section::make('Sales')
+                Section::make(__('Sales'))
                     ->schema([
                         RepeatableEntry::make('sales')
                             ->schema([
-                                TextEntry::make('from')->label('From'),
-                                TextEntry::make('to')->label('To'),
-                                TextEntry::make('sale_percentage')->label('Sale Percentage'),
+                                TextEntry::make('from')->label(__('From')),
+                                TextEntry::make('to')->label(__('To')),
+                                TextEntry::make('sale_percentage')->label(__('Sale Percentage')),
                             ])
                             ->columns(3),
                     ]),
     
                 // Cancel Policies
-                Section::make('Cancel Policies')
+                Section::make(__('Cancel Policies'))
                     ->schema([
                         RepeatableEntry::make('cancelPolicies')
                             ->schema([
-                                TextEntry::make('days')->label('Days'),
-                                TextEntry::make('penalty')->label('Penalty')->money('usd'),
+                                TextEntry::make('days')->label(__('Days')),
+                                TextEntry::make('penalty')->label(__('Penalty'))->money('egp'),
                             ])
                             ->columns(2),
                     ]),
     
                 // Long Term Reservations
-                Section::make('Long Term Reservations')
+                Section::make(__('Long Term Reservations'))
                     ->schema([
                         RepeatableEntry::make('longTermReservations')
                             ->schema([
-                                TextEntry::make('more_than_days')->label('More Than Days'),
-                                TextEntry::make('sale_percentage')->label('Sale Percentage'),
+                                TextEntry::make('more_than_days')->label(__('More Than (Days)')),
+                                TextEntry::make('sale_percentage')->label(__('Sale Percentage')),
                             ])
                             ->columns(2),
                     ]),
     
                 // Special Reservation Times
-                Section::make('Special Reservation Times')
+                Section::make(__('Special Reservation Times'))
                     ->schema([
                         RepeatableEntry::make('specialReservationTimes')
                             ->schema([
-                                TextEntry::make('from')->label('From'),
-                                TextEntry::make('to')->label('To'),
-                                TextEntry::make('price')->label('Price')->money('usd'),
-                                TextEntry::make('min_reservation_period')->label('Min Reservation Period'),
+                                TextEntry::make('from')->label(__('From')),
+                                TextEntry::make('to')->label(__('To')),
+                                TextEntry::make('price')->label(__('Price'))->money('egp'),
+                                TextEntry::make('min_reservation_period')->label(__('Min Reservation Period')),
                             ])
                             ->columns(4),
                     ]),
     
                 // Rooms
-                Section::make('Rooms')
+                Section::make(__('Rooms'))
                     ->schema([
                         RepeatableEntry::make('rooms')
                             ->schema([
-                                TextEntry::make('bed_count')->label('Bed Count'),
-                                TextEntry::make('bed_sizes')->label('Bed Sizes')
+                                TextEntry::make('bed_count')->label(__('Bed Count')),
+                                TextEntry::make('bed_sizes')->label(__('Bed Sizes'))
                                     ->formatStateUsing(function ($state) {
                                         // Ensure $state is an array before using implode
                                         return is_array($state) ? implode(', ', $state) : $state;
@@ -302,11 +312,11 @@ class UnitResource extends Resource
                     ]),
     
                 // Amenities
-                Section::make('Amenities')
+                Section::make(__('Amenities'))
                     ->schema([
                         RepeatableEntry::make('amenities')
                             ->schema([
-                                TextEntry::make('name')->label('Amenity Name'),
+                                TextEntry::make('name')->label(__('Amenity Name')),
                             ])
                             ->columns(1),
                     ]),

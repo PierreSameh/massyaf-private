@@ -42,6 +42,7 @@ class ReservationsRelationManager extends RelationManager
         ->where('paid', true)
         ->sum('owner_profit');
         return $table
+            ->emptyStateHeading(__('No reservations yet'))
             ->recordTitleAttribute('unit_id')
             ->defaultSort('created_at', 'desc')
             ->header(function () use ($totalOwnerProfit) {
