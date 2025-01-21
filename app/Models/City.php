@@ -19,10 +19,14 @@ class City extends Model
         'lng_bottom_right',
         'lat_bottom_left',
         'lng_bottom_left',
+        'coordinates'
     ];
+    
 
     protected $casts = [
         'images' => 'array',
+        'coordinates' => 'array',
+
     ];
 
     public function units(){

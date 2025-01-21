@@ -54,35 +54,17 @@ class CityResource extends Resource
                 Forms\Components\RichEditor::make('features')->label(__('Features'))
                     ->columnSpanFull(),
                 MapInput::make('coordinates')
-                ->columnSpanFull()
-                ->afterStateUpdated(function ($state, $set) {
-                    $coordinates = json_decode($state, true);
-                    if (is_array($coordinates) && count($coordinates) === 4) {
-                        $set('lat_top_right', $coordinates[0]['lat']);
-                        $set('lng_top_right', $coordinates[0]['lng']);
-                        $set('lat_top_left', $coordinates[1]['lat']);
-                        $set('lng_top_left', $coordinates[1]['lng']);
-                        $set('lat_bottom_right', $coordinates[2]['lat']);
-                        $set('lng_bottom_right', $coordinates[2]['lng']);
-                        $set('lat_bottom_left', $coordinates[3]['lat']);
-                        $set('lng_bottom_left', $coordinates[3]['lng']);
-                    }
-                }),
-                Forms\Components\Hidden::make('lat_top_right'),
-                Forms\Components\Hidden::make('lng_top_right'),
-                Forms\Components\Hidden::make('lat_top_left'),
-                Forms\Components\Hidden::make('lng_top_left'),
-                Forms\Components\Hidden::make('lat_bottom_right'),
-                Forms\Components\Hidden::make('lng_bottom_right'),
-                Forms\Components\Hidden::make('lat_bottom_left'),
-                Forms\Components\Hidden::make('lng_bottom_left'),
-    
+                    ->label(__("Zone Boundaries"))
+                    ->apiKey(env('GOOGLE_MAPS_API_KEY'))
+                    ->reactive()
+                    ->columnSpanFull(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('Name'))
