@@ -24,6 +24,15 @@ class WithdrawResource extends Resource
     {
         return __('Financial');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Withdraw');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Withdraws');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -39,13 +48,14 @@ class WithdrawResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('user.name')->label(__('User Name')),
-                Tables\Columns\TextColumn::make('user.phone_number')->label(__("User Phone")),
+                Tables\Columns\TextColumn::make('user.phone_number')->label(__("Phone Number")),
                 // Tables\Columns\TextColumn::make('user.email')->label(__('User Email')),
                 // Tables\Columns\TextColumn::make('user.balance')->label(__('User Balance'))
                 //     ->money('egp'),
                 Tables\Columns\TextColumn::make('amount')->label(__('Amount'))
                     ->money('egp'),
                 Tables\Columns\IconColumn::make('status')
+                    ->label(__("Status"))
                     ->icon(fn (string $state): string => match ($state) {
                         'pending' => 'heroicon-o-clock',
                         'approved' => 'heroicon-o-check-circle',
@@ -63,10 +73,12 @@ class WithdrawResource extends Resource
                     ->copyable()
                     ->copyMessage(__("Account Number Copied!")),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__("Creation Date"))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__("Status"))
                     ->options([
                         "pending" => __("Pending"),
                         "approved" => __("Approved"),
@@ -131,7 +143,7 @@ class WithdrawResource extends Resource
                         $userId = $record->user->id;
     
                         // Use the PushNotificationTrait
-                        app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
+                        // app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
             ])

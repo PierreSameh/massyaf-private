@@ -21,6 +21,15 @@ class ProfitResource extends Resource
     {
         return __('Financial');
     }
+
+    public static function getLabel(): ?string
+    {
+        return __('Profit');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Profits');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -74,6 +83,7 @@ class ProfitResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
+                    ->label(__("Type"))
                     ->options([
                         "unit" => __("Unit"),
                         "hotel" => __("Hotel"),

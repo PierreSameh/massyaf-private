@@ -61,16 +61,20 @@ class AdminResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__("Name"))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__("Email"))
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone_number')
+                    ->label(__("Phone Number"))
                     ->tel()
                     ->required(),
                 Forms\Components\TextInput::make('password')
+                    ->label(__("Password"))
                     ->password()
                     ->required()
                     ->maxLength(255),
@@ -78,7 +82,7 @@ class AdminResource extends Resource
                     ->hidden()
                     ->default('admin'),   
                 Forms\Components\Select::make('roles')
-                    ->label('Roles')
+                    ->label(__('Roles'))
                     ->options(Role::all()->pluck('name', 'id')) // Fetch all roles
                     ->multiple() // Allow multiple roles to be selected
                     ->preload(), // Enable searching for roles
@@ -89,11 +93,12 @@ class AdminResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('id')->sortable()->label(__("ID")),
+                Tables\Columns\TextColumn::make('name')->searchable()->label(__("Name")),
+                Tables\Columns\TextColumn::make('email')->searchable()
+                    ->label(__("Email")),
                 Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(__('Roles'))
                     ->formatStateUsing(function ($state) {
                         // Ensure $state is an array before using implode
                         return is_array($state) ? implode(', ', $state) : $state;
