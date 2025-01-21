@@ -22,20 +22,33 @@ class UserResource extends Resource
         return __('Accounts');
     }
 
+    public static function getLabel(): ?string
+    {
+        return __('User');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Users');  // For plural label translations
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('Email'))
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
+                    ->label(__('Image'))
                     ->image(),
                 Forms\Components\TextInput::make('phone_number')
+                    ->label(__('Phone Number'))
                     ->tel()
                     ->required()
                     ->maxLength(255),
@@ -48,15 +61,20 @@ class UserResource extends Resource
         ->defaultSort('created_at', 'desc')
         ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label(__('ID'))
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('Name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
+                    ->label(__('Phone Number'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

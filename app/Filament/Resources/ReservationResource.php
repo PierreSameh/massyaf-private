@@ -23,21 +23,36 @@ class ReservationResource extends Resource
     {
         return __('Reservations');
     }
+    public static function getLabel(): ?string
+    {
+        return __('Reservation');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Reservations');  // For plural label translations
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\DateTimePicker::make('date_from')
+                    ->label(__("Start Date"))
                     ->required(),
                 Forms\Components\DateTimePicker::make('date_to')
+                    ->label(__("End Date"))
                     ->required(),
                 Forms\Components\TextInput::make('adults_count')
+                    ->label(__("Adults Count"))
                     ->numeric(),
                 Forms\Components\TextInput::make('children_count')
+                    ->label(__("Children Count"))
                     ->numeric(),
                 Forms\Components\Toggle::make('paid')
+                    ->label(__("Paid"))
                     ->required(),
                 Forms\Components\Select::make('status')
+                    ->label(__("Status"))
                     ->options([
                         "pending" => __("Pending"),
                         "accepted" => __("Accepted"),
@@ -55,19 +70,21 @@ class ReservationResource extends Resource
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('unit_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('unit.name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('unit.owner.name')->label(__("Owner"))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('unit_id')->label(__("Unit ID")),
+                Tables\Columns\TextColumn::make('unit.name')->label(__("Unit Name")),
+                Tables\Columns\TextColumn::make('unit.owner.name')->label(__("Owner"))->searchable(),
+                Tables\Columns\TextColumn::make('user.name')->label(__("User Name"))->searchable(),
                 Tables\Columns\TextColumn::make('book_advance')
+                    ->label(__("Book Advance"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('booking_price')
+                    ->label(__("Booking Price"))
+                    ->money('EGP'),
+                Tables\Columns\TextColumn::make('owner_profit')
+                    ->label(__("Owner Profits"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__("Status"))
                     ->formatStateUsing(function ($state) {
                         switch ($state) {
                             case 'pending':
@@ -87,6 +104,7 @@ class ReservationResource extends Resource
                         }     
                     }),
                 Tables\Columns\IconColumn::make('paid')
+                    ->label(__("Paid"))
                     ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-o-clock',
                         '1' => 'heroicon-o-check-circle',
@@ -96,15 +114,17 @@ class ReservationResource extends Resource
                         '1' => 'success',
                     }),
                 Tables\Columns\TextColumn::make('date_from')
+                    ->label(__("Start Date"))
                     ->date('d/m/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_to')
+                    ->label(__("End Date"))
                     ->date('d/m/y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('code')
-                    ->searchable()
-                    ->placeholder('N/A'),
+                Tables\Columns\TextColumn::make('code')->label(__("Reservation Code"))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__("Creation Date"))
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -136,66 +156,84 @@ class ReservationResource extends Resource
         return $infolist
             ->schema([
                 // Reservation Details
-                Section::make('Reservation Details')
+                Section::make(__('Reservation Details'))
                     ->schema([
                         TextEntry::make('code')
-                            ->label('Reservation Code'),
+                            ->label(__('Reservation Code')),
                         TextEntry::make('date_from')
-                            ->label('Check-In Date')
+                            ->label(__('Start Date'))
                             ->dateTime(),
                         TextEntry::make('date_to')
-                            ->label('Check-Out Date')
+                            ->label(__('End Date'))
                             ->dateTime(),
                         TextEntry::make('adults_count')
-                            ->label('Adults'),
+                            ->label(__("Adults Count")),
                         TextEntry::make('children_count')
-                            ->label('Children')
-                            ->placeholder('N/A'),
+                            ->label(__('Children Count'))
+                            ->placeholder(__('N/A')),
                         TextEntry::make('book_advance')
-                            ->label('Advance Payment')
+                            ->label(__('Book Advance'))
                             ->money('egp'),
                         TextEntry::make('booking_price')
-                            ->label('Total Price')
+                            ->label(__('Booking Price'))
                             ->money('egp'),
                         TextEntry::make('status')
-                            ->label('Status')
+                            ->label(__('Status'))
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'approved' => 'success',
                                 'cancelled' => 'danger',
                                 default => 'gray',
+                            })
+                            ->formatStateUsing(function ($state) {
+                                switch ($state) {
+                                    case 'pending':
+                                        return __("Pending");
+                                    case 'approved':
+                                        return __("Approved");
+                                    case 'rejected':
+                                        return __("Rejected");
+                                    case 'accepted':
+                                        return __("Accepted");
+                                    case 'canceled_user':
+                                        return __('Cancelled By User');
+                                    case 'canceled_owner':
+                                        return __('Cancelled By Owner');
+                                    default:
+                                         return __('Undefinded');
+                                }     
                             }),
                         TextEntry::make('approved_at')
-                            ->label('Approved At')
+                            ->label(__('Approved At'))
                             ->dateTime(),
                         TextEntry::make('cancelled_at')
-                            ->label('Cancelled At')
+                            ->label(__('Cancelled At'))
                             ->dateTime()
-                            ->placeholder('N/A'),
+                            ->placeholder(__('N/A')),
                     ])
                     ->columns(2),
     
                 // Unit Details
-                Section::make('Unit Details')
+                Section::make(__('Unit Details'))
                     ->schema([
                         TextEntry::make('unit.code')
-                            ->label('Unit Code'),
+                            ->label(__('Unit Code')),
                         TextEntry::make('unit.name')
-                            ->label('Unit Name'),
+                            ->label(__('Unit Name')),
                         TextEntry::make('unit.type')
-                            ->label('Unit Type'),
+                            ->label(__('Unit Type')),
                         TextEntry::make('unit.address')
-                            ->label('Address')
+                            ->label(__('Address'))
                             ->formatStateUsing(function ($record) {
                                 return $record->unit->address ?: $record->unit->hotel->address;
                             })
-                            ->placeholder('N/A'),
+                            ->placeholder(__('N/A')),
                         TextEntry::make('unit.description')
-                            ->label('Description')
+                            ->label(__('Description'))
                             ->html()
-                            ->placeholder('N/A'),
+                            ->placeholder(__('N/A')),
                         TextEntry::make('unit.rooms')
-                            ->label('Rooms')
+                            ->label(__('Rooms'))
                             ->formatStateUsing(function ($state) {
                                 // Decode JSON if $state is a string
                                 if (is_string($state)) {
@@ -207,39 +245,39 @@ class ReservationResource extends Resource
                                     return collect($state)->map(function ($room) {
                                         // Ensure $room is an array and has the required keys
                                         if (is_array($room) && isset($room['id'], $room['bed_count'], $room['bed_sizes'])) {
-                                            return "Room ID: {$room['id']}, Beds: {$room['bed_count']}, Sizes: " . implode(', ', $room['bed_sizes']);
+                                            return __("Room ID") . ": {$room['id']}, " . __("Beds") . ": {$room['bed_count']}, " . __("Sizes") . ":" . implode(', ', $room['bed_sizes']);
                                         }
-                                        return 'Invalid room data';
+                                        return __('Invalid room data');
                                     })->implode('<br>');
                                 }
     
-                                return 'No room data available';
+                                return __('No room data available');
                             })
                             ->html(), // Allow HTML for line breaks
                     ])
                     ->columns(2),
     
                 // User Details
-                Section::make('User Details')
+                Section::make(__('User Details'))
                     ->schema([
                         TextEntry::make('user.name')
-                            ->label('User Name'),
+                            ->label(__('User Name')),
                         TextEntry::make('user.email')
-                            ->label('Email'),
+                            ->label(__('Email')),
                         TextEntry::make('user.phone_number')
-                            ->label('Phone Number'),
+                            ->label(__('Phone Number')),
                     ])
                     ->columns(2),
     
                 // Owner Details
-                Section::make('Owner Details')
+                Section::make(__('Owner Details'))
                     ->schema([
                         TextEntry::make('unit.owner.name')
-                            ->label('Owner Name'),
+                            ->label(__('Owner Name')),
                         TextEntry::make('unit.owner.email')
-                            ->label('Owner Email'),
+                            ->label(__('Email')),
                         TextEntry::make('unit.owner.phone_number')
-                            ->label('Owner Phone Number'),
+                            ->label(__('Phone Number')),
                     ])
                     ->columns(2),
             ]);

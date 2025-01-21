@@ -36,12 +36,20 @@ class ReservationsRelationManager extends RelationManager
             ->recordTitleAttribute('unit_id')
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name'),
+                Tables\Columns\TextColumn::make('unit_id')->label(__("Unit ID")),
+                Tables\Columns\TextColumn::make('unit.name')->label(__("Unit Name")),
+                Tables\Columns\TextColumn::make('user.name')->label(__("User Name")),
                 Tables\Columns\TextColumn::make('book_advance')
+                    ->label(__("Book Advance"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('booking_price')
+                    ->label(__("Booking Price"))
+                    ->money('EGP'),
+                Tables\Columns\TextColumn::make('owner_profit')
+                    ->label(__("Owner Profits"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__("Status"))
                     ->formatStateUsing(function ($state) {
                         switch ($state) {
                             case 'pending':
@@ -61,6 +69,7 @@ class ReservationsRelationManager extends RelationManager
                         }     
                     }),
                 Tables\Columns\IconColumn::make('paid')
+                    ->label(__("Paid"))
                     ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-o-clock',
                         '1' => 'heroicon-o-check-circle',
@@ -70,12 +79,15 @@ class ReservationsRelationManager extends RelationManager
                         '1' => 'success',
                     }),
                 Tables\Columns\TextColumn::make('date_from')
+                    ->label(__("Start Date"))
                     ->date('d/m/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_to')
+                    ->label(__("End Date"))
                     ->date('d/m/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__("Creation Date"))
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

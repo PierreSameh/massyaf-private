@@ -1,3 +1,4 @@
-<div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-    <strong>{{ __('Total Owner Profits') }}:</strong> {{ number_format($totalOwnerProfit, 2) }} {{__("EGP")}}
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4">
+    <strong class="text-black dark:text-white">{{ __('Total Owner Profits') }}:</strong>
+    <span class="text-black dark:text-white">{{ number_format($totalOwnerProfit, 2) }} {{__("EGP")}}</span>
 </div>

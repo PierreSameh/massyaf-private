@@ -43,25 +43,38 @@ class UnCompletedReservationsResource extends Resource
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('unit_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('unit.name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('unit.owner.name')->label(__("Owner"))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.phone_number')
-                    ->label(__('User Phone'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.email')
-                    ->label(__("User Email"))
-                    ->searchable(),      
+                Tables\Columns\TextColumn::make('unit_id')->label(__("Unit ID")),
+                Tables\Columns\TextColumn::make('unit.name')->label(__("Unit Name")),
+                Tables\Columns\TextColumn::make('unit.owner.name')->label(__("Owner"))->searchable(),
+                Tables\Columns\TextColumn::make('user.name')->label(__("User Name"))->searchable(),
                 Tables\Columns\TextColumn::make('book_advance')
+                    ->label(__("Book Advance"))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('booking_price')
+                    ->label(__("Booking Price"))
                     ->money('EGP'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label(__("Status"))
+                    ->formatStateUsing(function ($state) {
+                        switch ($state) {
+                            case 'pending':
+                                return __("Pending");
+                            case 'approved':
+                                return __("Approved");
+                            case 'rejected':
+                                return __("Rejected");
+                            case 'accepted':
+                                return __("Accepted");
+                            case 'canceled_user':
+                                return __('Cancelled By User');
+                            case 'canceled_owner':
+                                return __('Cancelled By Owner');
+                            default:
+                                 return __('Undefinded');
+                        }     
+                    }),
                 Tables\Columns\IconColumn::make('paid')
+                    ->label(__("Paid"))
                     ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-o-clock',
                         '1' => 'heroicon-o-check-circle',
@@ -71,12 +84,17 @@ class UnCompletedReservationsResource extends Resource
                         '1' => 'success',
                     }),
                 Tables\Columns\TextColumn::make('date_from')
+                    ->label(__("Start Date"))
                     ->date('d/m/y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_to')
+                    ->label(__("End Date"))
                     ->date('d/m/y')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('code')->label(__("Reservation Code"))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__("Creation Date"))
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
