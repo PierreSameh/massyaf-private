@@ -41,6 +41,11 @@ class ChatController extends Controller
                 'created_at' => now()
             ]);
 
+            //Uncheck admin notified for admin unrepeated notifications
+            if ($chat->admin_notified == 1){
+                $chat->admin_notified = 0;
+                $chat->save();
+            }
             broadcast(new LiveChat($message))->toOthers();
 
             $this->pushNotification(

@@ -14,7 +14,8 @@ class Chat extends Model
         'owner_id',
         'muted_for_owner',
         'muted_for_user',
-        'created_at'
+        'created_at',
+        'admin_notified'
     ];
 
     public function messages(){
@@ -33,4 +34,9 @@ class Chat extends Model
 
     protected $hidden = [ 'updated_at'];
 
+    // Chat.php (Model)
+    public function lastMessage()
+    {
+        return $this->hasOne(Message::class)->latest();
+    }
 }

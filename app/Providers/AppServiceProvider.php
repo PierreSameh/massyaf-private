@@ -45,9 +45,12 @@ class AppServiceProvider extends ServiceProvider
                 NavigationGroup::make()
                       ->label(__('Financial'))
                       ->icon('heroicon-o-banknotes'),
+                      NavigationGroup::make()
+                      ->label(__('Admins'))
+                      ->icon('heroicon-o-shield-check'),
                 NavigationGroup::make()
-                    ->label(__('Admins'))
-                    ->icon('heroicon-o-shield-check'),
+                      ->label(__('Configuration'))
+                       ->icon('heroicon-o-cog-8-tooth'),
             ]);
         });
     }

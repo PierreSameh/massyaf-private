@@ -163,5 +163,14 @@
     "Images": "الصور",
     "Features": "الميزات",
     "Cancel Policies": "سياسة الالغاء",
-    "Unit Details": "تفاصيل الوحدة"
+    "Unit Details": "تفاصيل الوحدة",
+    "Last Message Sent": "اخر رسالة",
+    "Unanswered Chat Alert": "تنبيه لمحادثة غير مجاب عليها",
+    " has an unresponded message from ": " لديه محادثة غير مجاب عنها من ",
+    " sent at ": " ارسل في ",
+    "Chat response timer": "وقت الاستجابة للدردشة",
+    "Minute": "دقيقة",
+    "Settings": "الاعدادات",
+    "Setting": "اعداد",
+    "Configuration": "الضبط"
 }

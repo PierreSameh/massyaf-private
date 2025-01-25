@@ -49,7 +49,11 @@ class ChatResource extends Resource
                 TextColumn::make('messages_count')
                     ->label(__('Messages'))
                     ->counts('messages'),
-                TextColumn::make('created_at')->label(__('Creation Date'))->dateTime(),
+                TextColumn::make('lastMessage.created_at')
+                    ->label(__('Last Message Sent'))
+                    ->dateTime()
+                    ->sortable()
+                    ->default(__('No messages yet')),
                 TextColumn::make('deleted_at')->label(__('Deleted At'))->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

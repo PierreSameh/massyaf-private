@@ -12,3 +12,4 @@ Artisan::command('inspire', function () {
 
 // check on payment expiration on reservation
 Schedule::command('reservations:soft-delete-unpaid')->everyMinute();
+Schedule::command('app:check-unanswered-chats')->everyMinute();

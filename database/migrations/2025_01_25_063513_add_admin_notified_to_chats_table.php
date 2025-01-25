@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->text('body');
-            $table->timestamps();
+        Schema::table('chats', function (Blueprint $table) {
+            $table->boolean('admin_notified')->default(0);
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::table('chats', function (Blueprint $table) {
+            $table->dropColumn('admin_notified');
+        });
     }
 };
