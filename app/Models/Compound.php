@@ -13,12 +13,12 @@ class Compound extends Model
         'features',
         'city_id',
         'address',
-        'lng',
-        'lat'
+        'coordinates'
     ];
 
     protected $casts = [
         'images' => 'array',
+        'coordinates' => 'array',
     ];
 
     public function units(){

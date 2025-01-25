@@ -74,10 +74,10 @@
                     lng: marker.getPosition().lng(),
                 }));
 
-                if (coords.length !== 4) {
-                    alert("Please set exactly 4 markers to form a rectangle.");
-                    return;
-                }
+                // if (coords.length !== 4) {
+                //     alert("Please set exactly 4 markers to form a rectangle.");
+                //     return;
+                // }
 
                 // Emit the updated coordinates to Livewire
                 this.$wire.set('coordinates', coords, true);

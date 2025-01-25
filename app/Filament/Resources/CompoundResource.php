@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CompoundResource\Pages;
 use App\Filament\Resources\CompoundResource\RelationManagers;
-use App\Forms\Components\MapBoundaryInput;
 use App\Models\Compound;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Forms\Components\MapInput;
 
 class CompoundResource extends Resource
 {
@@ -64,19 +64,11 @@ class CompoundResource extends Resource
                 ->label(__('Address'))
                 ->required()
                 ->maxLength(255),
-            MapBoundaryInput::make('location')
-                ->label(__("Location"))
+            MapInput::make('coordinates')
+                ->label(__("Zone Boundaries"))
                 ->apiKey(env('GOOGLE_MAPS_API_KEY'))
                 ->reactive()
-                ->afterStateUpdated(function (Forms\Set $set, $state) {
-                    $set('lng', $state->detail->lng);
-                    $set('lat', $state->detail->lat);
-                })
-                ->columnSpanFull()
-                ->latField('lat')
-                ->lngField('lng'),
-            Forms\Components\Hidden::make('lng'),
-            Forms\Components\Hidden::make('lat'), 
+                ->columnSpanFull(),
         ]);
     }
 

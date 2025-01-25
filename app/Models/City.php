@@ -11,14 +11,6 @@ class City extends Model
         'images',
         'description',
         'features',
-        'lat_top_right',
-        'lng_top_right',
-        'lat_top_left',
-        'lng_top_left',
-        'lat_bottom_right',
-        'lng_bottom_right',
-        'lat_bottom_left',
-        'lng_bottom_left',
         'coordinates'
     ];
     

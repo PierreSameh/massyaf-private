@@ -13,13 +13,13 @@ class Hotel extends Model
         'description',
         'features',
         'details',
-        'lat',
-        'lng',
-        'city_id'
+        'city_id',
+        'coordinates'
     ];
 
     protected $casts = [
         'images' => 'array',
+        'coordinates' => 'array',
     ];
 
     public function units(){
