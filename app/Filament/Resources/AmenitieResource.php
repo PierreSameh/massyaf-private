@@ -88,7 +88,7 @@ class AmenitieResource extends Resource
                 //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_global'),
+                Tables\Filters\TernaryFilter::make('is_global')->label(__("Global")),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

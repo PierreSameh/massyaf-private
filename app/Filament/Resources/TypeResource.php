@@ -63,6 +63,7 @@ class TypeResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type_for')
+                    ->label(__("Type"))
                     ->options([
                         "unit" => __("Unit"),
                         "hotel" => __("Hotel"),

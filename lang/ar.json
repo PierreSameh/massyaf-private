@@ -89,7 +89,7 @@
     "Additional Fees": "مصاريف اضافية",
     "Fee Type": "نوع المصاريف",
     "Amount": "القيمة",
-    "Availabe Dates": "اوقات الحجز المسجلة",
+    "Available Dates": "اوقات الحجز المسجلة",
     "From": "من",
     "To": "إلى",
     "Sales": "العروض",
@@ -156,5 +156,12 @@
     "Your withdrawal request has been rejected.": "تم رفض طلب السحب الخاص بك.",
     "Password": "كلمة المرور",
     "Roles": "الادوار",
-    "Admin": "المشرف"
+    "Admin": "المشرف",
+    "App Profits": "ارباح التطبيق",
+    "Nights": "عدد الليالي",
+    "Payment Method": "وسيلة الدفع",
+    "Images": "الصور",
+    "Features": "الميزات",
+    "Cancel Policies": "سياسة الالغاء",
+    "Unit Details": "تفاصيل الوحدة"
 }

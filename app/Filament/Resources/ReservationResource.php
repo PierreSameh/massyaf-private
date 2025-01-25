@@ -138,6 +138,7 @@ class ReservationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                ->label(__("Status"))
                 ->options([
                     "pending" => __("Pending"),
                     "accepted" => __("Accepted"),
@@ -146,7 +147,7 @@ class ReservationResource extends Resource
                     "canceled_user" => __("Cancelled By User"),
                     "canceled_owner" => __("Cancelled By Owner"), 
                 ]),
-                Tables\Filters\TernaryFilter::make('paid'),
+                Tables\Filters\TernaryFilter::make('paid')->label(__("Paid")),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

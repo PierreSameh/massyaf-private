@@ -163,7 +163,10 @@ class UnitResource extends Resource
                         ])->columns(2),
                         TextEntry::make('name')->label(__('Name')),
                         TextEntry::make('code')->label(__('Code')),
-                        TextEntry::make('type')->label(__('Type')),
+                        TextEntry::make('type')->label(__('Type'))
+                            ->formatStateUsing(function ($record){
+                                return $record->type == "unit" ? __("Unit") : __("Hotel");
+                            }),
                         TextEntry::make('status')->label(__('Status'))
                         ->badge()
                         ->formatStateUsing(function ($state){
@@ -207,7 +210,7 @@ class UnitResource extends Resource
                         TextEntry::make('price')->label(__('Price'))->money('egp'),
                         TextEntry::make('insurance_amount')->label(__('Insurance Amount'))->money('egp'),
                         TextEntry::make('deposit')->label(__('Deposit'))->money('egp'),
-                        TextEntry::make('upon_arival_price')->label(__('Upon Arrival Price'))->money('egp'),
+                        TextEntry::make('upon_arival_price')->label(__('Upon Arrival Amount'))->money('egp'),
                         TextEntry::make('weekend_price')->label(__('Weekend Price'))->money('egp'),
                     ])->columns(2),
     
@@ -233,7 +236,7 @@ class UnitResource extends Resource
                         RepeatableEntry::make('additionalFees')
                             ->schema([
                                 TextEntry::make('fees')->label(__('Fee Type')),
-                                TextEntry::make('amount')->label(__('Amount'))->money('usd'),
+                                TextEntry::make('amount')->label(__('Amount'))->money('egp'),
                             ])
                             ->columns(2),
                     ]),
