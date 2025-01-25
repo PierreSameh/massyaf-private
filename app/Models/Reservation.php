@@ -20,6 +20,7 @@ class Reservation extends Model
         "book_advance",
         "booking_price",
         "owner_profit",
+        "app_profit",
         "paid",
         "status",
         "approved_at",

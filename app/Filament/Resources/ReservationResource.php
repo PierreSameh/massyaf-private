@@ -72,6 +72,7 @@ class ReservationResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('unit_id')->label(__("Unit ID")),
                 Tables\Columns\TextColumn::make('unit.name')->label(__("Unit Name")),
+                Tables\Columns\TextColumn::make('unit.city.name')->label(__("City")),
                 Tables\Columns\TextColumn::make('unit.owner.name')->label(__("Owner"))->searchable(),
                 Tables\Columns\TextColumn::make('user.name')->label(__("User Name"))->searchable(),
                 Tables\Columns\TextColumn::make('book_advance')
@@ -82,6 +83,9 @@ class ReservationResource extends Resource
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('owner_profit')
                     ->label(__("Owner Profits"))
+                    ->money('EGP'),
+                Tables\Columns\TextColumn::make('app_profit')
+                    ->label(__('App Profits'))
                     ->money('EGP'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__("Status"))
@@ -113,6 +117,10 @@ class ReservationResource extends Resource
                         '0' => 'warning',
                         '1' => 'success',
                     }),
+                Tables\Columns\TextColumn::make('transaction.payment_method')
+                    ->label(__('Payment Method')),
+                Tables\Columns\TextColumn::make('days_count')
+                    ->label(__('Nights')),
                 Tables\Columns\TextColumn::make('date_from')
                     ->label(__("Start Date"))
                     ->date('d/m/y')

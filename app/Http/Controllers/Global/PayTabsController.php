@@ -29,6 +29,8 @@ class PayTabsController extends Controller
             // Process based on the response status
             if ($responseStatus === 'A') {
                 $this->transactionService->completePayment($transaction->id);
+                $transaction->payment_method = $callback['data']['payment_info']['card_scheme'];
+                $transaction->save();
                 // Payment is authorized
                 return view('payment-success');
             } else {

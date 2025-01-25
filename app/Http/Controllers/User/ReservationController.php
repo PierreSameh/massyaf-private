@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\AvailableDate;
+use App\Models\Profit;
 use App\Models\Reservation;
 use App\Models\ReservationId;
 use App\Models\Transaction;
@@ -27,11 +28,12 @@ class ReservationController extends Controller
                 "date_to" => "required|date",
                 "adults_count" => "required|integer|min:1",
                 "children_count" => "nullable|integer|min:0",
-                "ids.*" => "required|image|max:2048"
+                "ids.*" => "required|image|max:10284"
             ]);
             $user = $request->user();
             // Get Unit
             $unit = Unit::find($request->unit_id);
+
             // Units Data to Check
             $unitSales = $unit->sales()->get();
             $unitSpecialPrices = $unit->specialReservationTimes()->get();
@@ -134,6 +136,11 @@ class ReservationController extends Controller
             }
 
             $bookAdvance = ($price * $unit->deposit) / 100;
+            //App Profit
+            $appProfit = Profit::where("type", $unit->type)
+            ->where("from", "<=", "$price")->where("to", ">=", $price)
+            ->latest()->first();
+            $appProfitAmount = $price * ($appProfit->percentage / 100);
             $reservation = Reservation::create([
                 "user_id" => $user->id,
                 "unit_id" => $request->unit_id,
@@ -143,7 +150,8 @@ class ReservationController extends Controller
                 "children_count" => $request->children_count ?? null,
                 "book_advance" => $bookAdvance,
                 "booking_price" => $price,
-                "owner_profit" => $price - 150, //Commission
+                "owner_profit" => $price - $appProfitAmount,
+                "app_profit" => $appProfitAmount,
                 "status" => $status,
             ]);
             if ($request->hasFile('ids')) {

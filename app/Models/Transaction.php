@@ -13,6 +13,7 @@ class Transaction extends Model
         'status',
         'type',
         'ref',
+        'payment_method',
         'created_at',
         'updated_at'
     ];
