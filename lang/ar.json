@@ -172,5 +172,16 @@
     "Minute": "دقيقة",
     "Settings": "الاعدادات",
     "Setting": "اعداد",
-    "Configuration": "الضبط"
+    "Configuration": "الضبط",
+    "Base Code Generator": "الرمز الاساسي",
+    "(English)": "(إنجليزي)",
+    "(Arabic)": "(عربي)",
+    "Name (English)": "الاسم (إنجليزي)",
+    "Name (Arabic)": "الاسم (عربي)",
+    "Description (English)": "الوصف (إنجليزي)",
+    "Description (Arabic)": "الوصف (عربي)",
+    "Features (English)": "الميزات (إنجليزي)",
+    "Features (Arabic)": "الميزات (عربي)",
+    "Details (English)": "التفاصيل (إنجليزي)",
+    "Details (Arabic)": "التفاصيل (عربي)"
 }

@@ -20,7 +20,7 @@ class CodeGeneratorService
                 break;
         }
         // Generate the base code (without sequence)
-        $baseCode = $parent->name . $rooms . $floor;
+        $baseCode = $parent->base_code . $rooms . $floor;
         // Initialize the sequence number
         $sequence = 1;
         $uniqueCode = $baseCode . $sequence;

@@ -15,7 +15,8 @@ class Compound extends Model
         'features',
         'city_id',
         'address',
-        'coordinates'
+        'coordinates',
+        'base_code',
     ];
 
     protected $casts = [

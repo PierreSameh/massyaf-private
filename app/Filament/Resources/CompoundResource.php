@@ -76,7 +76,11 @@ class CompoundResource extends Resource
                 ->required()
                 ->placeholder(__('Select a city'))
                 ->reactive(),
-                Forms\Components\FileUpload::make('images')
+            TextInput::make('base_code')
+                ->label(__('Base Code'))
+                ->required()
+                ->maxLength(255),
+            Forms\Components\FileUpload::make('images')
                 ->label(__('Images'))
                 ->disk('public')
                 ->directory('compounds')

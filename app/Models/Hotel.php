@@ -16,7 +16,8 @@ class Hotel extends Model
         'features',
         'details',
         'city_id',
-        'coordinates'
+        'coordinates',
+        'base_code',
     ];
 
     protected $casts = [
