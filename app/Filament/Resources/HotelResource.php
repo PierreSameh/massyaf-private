@@ -13,7 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Forms\Components\MapInput;
-
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 class HotelResource extends Resource
 {
     protected static ?string $model = Hotel::class;
@@ -34,10 +38,42 @@ class HotelResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('Name'))
-                    ->required()
-                    ->maxLength(255),
+                Tabs::make('Translations')
+                ->tabs([
+                    Tab::make('English')
+                        ->schema([
+                            TextInput::make('name.en')
+                                ->label(__('Name (English)'))
+                                ->required()
+                                ->maxLength(255),
+                            RichEditor::make('description.en')
+                                ->label(__('Description (English)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('features.en')
+                                ->label(__('Features (English)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('Details.en')
+                                ->label(__('Details (English)'))
+                                ->columnSpanFull(),
+                        ]),
+                    Tab::make('Arabic')
+                        ->schema([
+                            TextInput::make('name.ar')
+                                ->label(__('Name (Arabic)'))
+                                ->required()
+                                ->maxLength(255),
+                            RichEditor::make('description.ar')
+                                ->label(__('Description (Arabic)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('features.ar')
+                                ->label(__('Features (Arabic)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('details.ar')
+                                ->label(__('Details (Arabic)'))
+                                ->columnSpanFull(),
+                        ]),
+                ])
+                ->columnSpanFull(),
                 Forms\Components\TextInput::make('address')
                     ->label(__('Address'))
                     ->maxLength(255),
@@ -58,13 +94,6 @@ class HotelResource extends Resource
                     ->panelLayout('grid')
                     ->image()
                     ->required(),
-                Forms\Components\RichEditor::make('description')->label(__("Description"))
-                    ->columnSpanFull(),
-                Forms\Components\RichEditor::make('features')->label(__('Features'))
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('details')
-                    ->label(__('Details'))
-                    ->columnSpanFull(),
                 MapInput::make('coordinates')
                     ->label(__("Zone Boundaries"))
                     ->apiKey(env('GOOGLE_MAPS_API_KEY'))

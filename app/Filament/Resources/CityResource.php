@@ -13,7 +13,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 class CityResource extends Resource
 {
     protected static ?string $model = City::class;
@@ -35,29 +39,53 @@ class CityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('Name'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\FileUpload::make('images')
-                    ->label(__('Images'))
-                    ->disk('public')
-                    ->directory('cities')
-                    ->multiple()
-                    ->columnSpanFull()
-                    ->reorderable()
-                    ->panelLayout('grid')
-                    ->image()
-                    ->required(),
-                Forms\Components\RichEditor::make('description')->label(__("Description"))
-                    ->columnSpanFull(),
-                Forms\Components\RichEditor::make('features')->label(__('Features'))
-                    ->columnSpanFull(),
-                MapInput::make('coordinates')
-                    ->label(__("Zone Boundaries"))
-                    ->apiKey(env('GOOGLE_MAPS_API_KEY'))
-                    ->reactive()
-                    ->columnSpanFull(),
+                Tabs::make('Translations')
+                ->tabs([
+                    Tab::make('English')
+                        ->schema([
+                            TextInput::make('name.en')
+                                ->label(__('Name (English)'))
+                                ->required()
+                                ->maxLength(255),
+                            RichEditor::make('description.en')
+                                ->label(__('Description (English)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('features.en')
+                                ->label(__('Features (English)'))
+                                ->columnSpanFull(),
+                        ]),
+                    Tab::make('Arabic')
+                        ->schema([
+                            TextInput::make('name.ar')
+                                ->label(__('Name (Arabic)'))
+                                ->required()
+                                ->maxLength(255),
+                            RichEditor::make('description.ar')
+                                ->label(__('Description (Arabic)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('features.ar')
+                                ->label(__('Features (Arabic)'))
+                                ->columnSpanFull(),
+                        ]),
+                ])
+                ->columnSpanFull(), // Makes sure the tabs take the full width
+
+            FileUpload::make('images')
+                ->label(__('Images'))
+                ->disk('public')
+                ->directory('cities')
+                ->multiple()
+                ->columnSpanFull()
+                ->reorderable()
+                ->panelLayout('grid')
+                ->image()
+                ->required(),
+
+            MapInput::make('coordinates')
+                ->label(__("Zone Boundaries"))
+                ->apiKey(env('GOOGLE_MAPS_API_KEY'))
+                ->reactive()
+                ->columnSpanFull(),
             ]);
     }
 
