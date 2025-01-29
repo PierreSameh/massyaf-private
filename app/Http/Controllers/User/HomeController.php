@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Compound;
+use App\Models\Hotel;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 
@@ -171,4 +174,43 @@ class HomeController extends Controller
         ]);
     }
     
+    public function getCity($id){
+        $city = City::find($id);
+        if (!$city) {
+            return response()->json([
+                "success" => false,
+                "message" => "City not found"
+            ], 404);
+        }
+        return response()->json([
+            "success" => true,
+            "city" => $city
+        ], 200);
+    }
+    public function getCompound($id){
+        $compound = Compound::find($id);
+        if (!$compound) {
+            return response()->json([
+                "success" => false,
+                "message" => "compound not found"
+            ], 404);
+        }
+        return response()->json([
+            "success" => true,
+            "compound" => $compound
+        ], 200);
+    }
+    public function getHotel($id){
+        $hotel = Hotel::find($id);
+        if (!$hotel) {
+            return response()->json([
+                "success" => false,
+                "message" => "hotel not found"
+            ], 404);
+        }
+        return response()->json([
+            "success" => true,
+            "hotel" => $hotel
+        ], 200);
+    }
 }

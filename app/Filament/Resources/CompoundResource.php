@@ -41,7 +41,7 @@ class CompoundResource extends Resource
         ->schema([
             Tabs::make('Translations')
                 ->tabs([
-                    Tab::make('English')
+                    Tab::make(__('English'))
                         ->schema([
                             TextInput::make('name.en')
                                 ->label(__('Name (English)'))
@@ -54,7 +54,7 @@ class CompoundResource extends Resource
                                 ->label(__('Features (English)'))
                                 ->columnSpanFull(),
                         ]),
-                    Tab::make('Arabic')
+                    Tab::make(__('Arabic'))
                         ->schema([
                             TextInput::make('name.ar')
                                 ->label(__('Name (Arabic)'))

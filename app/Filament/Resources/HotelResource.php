@@ -40,7 +40,7 @@ class HotelResource extends Resource
             ->schema([
                 Tabs::make('Translations')
                 ->tabs([
-                    Tab::make('English')
+                    Tab::make(__('English'))
                         ->schema([
                             TextInput::make('name.en')
                                 ->label(__('Name (English)'))
@@ -56,7 +56,7 @@ class HotelResource extends Resource
                                 ->label(__('Details (English)'))
                                 ->columnSpanFull(),
                         ]),
-                    Tab::make('Arabic')
+                    Tab::make(__('Arabic'))
                         ->schema([
                             TextInput::make('name.ar')
                                 ->label(__('Name (Arabic)'))
