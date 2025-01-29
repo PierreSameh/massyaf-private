@@ -27,7 +27,7 @@ class AuthController extends Controller
                 'name' => $request->post('name'),
                 'email' => $request->post('email'),
                 'phone_number' => $request->post('phone_number'),
-                'password' => $request->post('password'),
+                'password' => Hash::make($request->password),
             ]);
             if ($request->hasFile('image')) {
                 // Delete old picture if exists
