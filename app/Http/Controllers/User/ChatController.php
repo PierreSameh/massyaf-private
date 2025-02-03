@@ -6,8 +6,10 @@ use App\Events\LiveChat;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\Message;
+use App\Models\User;
 use App\Traits\PushNotificationTrait;
 use Illuminate\Http\Request;
+use Pusher\Pusher;
 
 class ChatController extends Controller
 {
@@ -29,6 +31,9 @@ class ChatController extends Controller
                     "message" => "لا يمكنك ارسال رسالة إلى نفسك"
                 ], 400);
             }
+            if(!User::where('id', $request->receiver_id)->exists()){
+                return responseApi(400, 'Receiver not found');
+            }
             $chat = Chat::where('owner_id', $request->receiver_id)
                 ->where('user_id', $user->id)->firstOrCreate([
                     'user_id' => $user->id,
@@ -42,7 +47,15 @@ class ChatController extends Controller
                 'created_at' => now()
             ]);
 
-            broadcast(new LiveChat($message))->toOthers();
+            // broadcast(new LiveChat($message))->toOthers();
+
+            $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
+
+            $pusher->trigger(
+            "channel_" . $request->receiver_id,
+            "chat",
+            $message
+            );
 
             $this->pushNotification(
                 ' لديك رسالة جديدة!',

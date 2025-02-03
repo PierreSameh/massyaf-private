@@ -5,6 +5,7 @@ namespace App\Traits;
 use Google\Client as Google_Client;  // Ensure the correct namespace
 use Illuminate\Support\Facades\Http;
 use App\Models\Notification;
+use Pusher\Pusher;
 
 trait PushNotificationTrait
 {
@@ -16,7 +17,17 @@ trait PushNotificationTrait
         //     "title" => $title,
         //     "body" => $body,
         // ]);
+        $notificationObj = [
+            "title"=> $title,
+            "body" => $body
+        ];
+        $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
 
+        $pusher->trigger(
+        "channel_" . $user_id,
+        "notification",
+        $notificationObj
+        );
         // // Initialize the Google Client
         // $client = new Google_Client();
         // $client->setAuthConfig(storage_path('toola-driver-e7c9a-firebase-adminsdk-2fu1o-4d4c072b1e.json'));  // Load the service account JSON file

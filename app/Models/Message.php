@@ -18,7 +18,7 @@ class Message extends Model
 
     protected $hidden = [ 'updated_at'];
     protected $casts = [
-        'created_at' => 'datetime', // Cast created_at to a Carbon instance
+        'created_at' => 'datetime:Y-m-d H:i:s', // Keep the format without timezone conversion
     ];
     public function chat(){
         return $this->belongsTo(Chat::class);

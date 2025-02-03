@@ -8,6 +8,7 @@ use App\Events\LiveChat;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Traits\PushNotificationTrait;
+use Pusher\Pusher;
 
 class ChatController extends Controller
 {
@@ -46,7 +47,15 @@ class ChatController extends Controller
                 $chat->admin_notified = 0;
                 $chat->save();
             }
-            broadcast(new LiveChat($message))->toOthers();
+            // broadcast(new LiveChat($message))->toOthers();
+
+            $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
+
+            $pusher->trigger(
+            "channel_" . $request->receiver_id,
+            "chat",
+            $message
+            );
 
             $this->pushNotification(
                 ' لديك رسالة جديدة!',
