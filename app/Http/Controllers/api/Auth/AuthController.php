@@ -116,8 +116,9 @@ class AuthController extends Controller
                         "message" => "تم انتهاء صلاحية الرمز"
                     ], 400);
                 } else {
-                    $user->phone_verified_at = 1;
-                    $user->save();
+                    $user->update([
+                        'phone_verified_at' => 1
+                    ]);
 
                     return response()->json([
                         "success" => true,
