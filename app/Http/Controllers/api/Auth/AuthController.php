@@ -63,7 +63,7 @@ class AuthController extends Controller
         try {
             $user = $request->user();
             if ($user) {
-                $code = rand(10000, 99999);
+                $code = rand(1000, 9999);
 
                 $user->last_otp = Hash::make($code);
                 $user->last_otp_expire = Carbon::now()->addMinutes(10)->timezone('Africa/Cairo');
