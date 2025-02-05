@@ -12,6 +12,7 @@ use App\Http\Requests\AdminRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -70,6 +71,8 @@ class AuthController extends Controller
 
                 $message = "الرمز التعريفي الخاص بك هو " . $code;
 
+                Log::info($message);
+
                 return response()->json([
                     "success" => true,
                     "message" => "تم ارسال الرمز بنجاح",
@@ -116,9 +119,8 @@ class AuthController extends Controller
                         "message" => "تم انتهاء صلاحية الرمز"
                     ], 400);
                 } else {
-                    $user->update([
-                        'phone_verified_at' => 1
-                    ]);
+                    $user->phone_verified_at = 1;
+                    $user->save();
 
                     return response()->json([
                         "success" => true,
