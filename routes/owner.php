@@ -18,11 +18,13 @@ Route::prefix('owner')->group(function () {
         Route::get('/cities', [DropDownController::class, 'cities']);
         Route::get('/compounds', [DropDownController::class, 'compounds']);
         Route::get('/hotels', [DropDownController::class, 'hotels']);
-        Route::get('/amenities/unit', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'unit');
-        Route::get('/amenities/hotel', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'hotel');
-        Route::get('/amenities/room', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'room');
-        Route::get('/amenities/reception', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'reception');
-        Route::get('/amenities/kitchen', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'kitchen');
+        Route::middleware('auth:sanctum')->group(function (){
+            Route::get('/amenities/unit', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'unit');
+            Route::get('/amenities/hotel', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'hotel');
+            Route::get('/amenities/room', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'room');
+            Route::get('/amenities/reception', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'reception');
+            Route::get('/amenities/kitchen', [DropDownController::class, 'getAmenitiesByType'])->defaults('type', 'kitchen');
+        });
     });
     Route::middleware('auth:sanctum')->group(function () {
 

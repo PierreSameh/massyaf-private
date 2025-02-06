@@ -13,10 +13,11 @@ class AmenitieController extends Controller
             "name" => "required|string|max:255",
             "type" => "required|in:unit,hotel,room,reception,kitchen"
         ]);
-
+        $userId = auth()->user()->id;
         $amenitie = Amenitie::create([
             "name"=> $request->name,
-            "type"=> $request->type
+            "type"=> $request->type,
+            "user_id" => $userId
         ]);
         return response()->json([
             "success" => true,

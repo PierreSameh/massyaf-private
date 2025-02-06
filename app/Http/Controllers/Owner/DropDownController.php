@@ -59,8 +59,13 @@ class DropDownController extends Controller
             ], 400);
         }
 
+        $userId = auth()->user()->id;
+        
         $amenities = Amenitie::where('type', $type)
-            ->where('is_global', 1)->get();
+        ->where(function ($query) use ($userId) {
+            $query->where('is_global', 1)
+                  ->orWhere('user_id', $userId);
+        })->get();
 
         return response()->json([
             'success' => true,

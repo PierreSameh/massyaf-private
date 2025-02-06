@@ -9,7 +9,8 @@ class Amenitie extends Model
     protected $fillable = [
         'name',
         'type',
-        'is_global'
+        'is_global',
+        "user_id"
     ];
     protected $casts = [
         'is_global' => 'boolean',
