@@ -18,6 +18,141 @@ class ReservationController extends Controller
 {
     use PushNotificationTrait, PayTabsPayment;
 
+    public function calculatePrice(Request $request)
+{
+    try {
+        // Inputs Validation
+        $request->validate([
+            "unit_id" => "required|exists:units,id",
+            "date_from" => "required|date",
+            "date_to" => "required|date|after_or_equal:date_from",
+        ]);
+
+        // Get Unit
+        $unit = Unit::findOrFail($request->unit_id);
+
+        // Calculate Days Count
+        $dateFrom = Carbon::parse($request->date_from);
+        $dateTo = Carbon::parse($request->date_to);
+        $daysCount = $dateFrom->diffInDays($dateTo) + 1;
+
+        // Check Availability
+        $isAvailable = AvailableDate::where('unit_id', $unit->id)
+            ->whereDate('from', '<=', $dateFrom)
+            ->whereDate('to', '>=', $dateTo)
+            ->exists();
+
+        if (!$isAvailable) {
+            return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
+        }
+
+        // Check Existing Reservations
+        $reservations = Reservation::where('unit_id', $unit->id)
+            ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
+            ->whereDate('date_from', '<=', $dateFrom)
+            ->whereDate('date_to', '>=', $dateTo)
+            ->exists();
+
+        if ($reservations) {
+            return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
+        }
+
+        // Check Minimum Reservation Days
+        if ($daysCount < $unit->min_reservation_days) {
+            return response()->json([
+                "success" => false,
+                "message" => "يجب الا تقل مدة الحجز عن " . $unit->min_reservation_days . " ايام"
+            ], 400);
+        }
+
+        // Initialize Price
+        $salePercentage = 0;
+        $price = $unit->price;
+
+        // Apply Sales
+        foreach ($unit->sales as $sale) {
+            if ($sale->from <= $dateFrom && $sale->to >= $dateTo) {
+                $salePercentage += $sale->sale_percentage;
+            }
+        }
+
+        // Apply Long-Term Discounts
+        foreach ($unit->longTermReservations as $longTerm) {
+            if ($daysCount >= $longTerm->more_than_days) {
+                $salePercentage += $longTerm->sale_percentage;
+            }
+        }
+
+        // Weekend Pricing
+        if ($unit->weekend_price) {
+            $friday = Carbon::FRIDAY;
+            $saturday = Carbon::SATURDAY;
+
+            if (($dateFrom->dayOfWeek === $friday || $dateFrom->dayOfWeek === $saturday) &&
+                ($dateTo->dayOfWeek === $friday || $dateTo->dayOfWeek === $saturday) && $daysCount <= 2
+            ) {
+                if ($daysCount < $unit->min_weekend_period) {
+                    return response()->json([
+                        "success" => false,
+                        "message" => "يجب الا تقل مدة الحجز عن " . $unit->min_weekend_period . " ايام"
+                    ], 400);
+                }
+                $price = $unit->weekend_price;
+            }
+        }
+
+        // Special Prices
+        foreach ($unit->specialReservationTimes as $specialPrice) {
+            if ($specialPrice->from <= $dateFrom && $specialPrice->to >= $dateTo) {
+                if ($daysCount < $specialPrice->min_reservation_period) {
+                    return response()->json([
+                        "success" => false,
+                        "message" => "يجب الا تقل مدة الحجز عن " . $specialPrice->min_reservation_period . " ايام"
+                    ], 400);
+                }
+                $price = $specialPrice->price;
+            }
+        }
+
+        // Additional Fees
+        foreach ($unit->additionalFees as $fee) {
+            $price += $fee->amount;
+        }
+
+        // Apply Discounts
+        if ($salePercentage > 0) {
+            $saleAmount = ($price * $salePercentage) / 100;
+            $price -= $saleAmount;
+        }
+
+        // Deposit Calculation
+        $bookAdvance = ($price * $unit->deposit) / 100;
+
+        // App Profit Calculation
+        $appProfit = Profit::where("type", $unit->type)
+            ->where("from", "<=", "$price")->where("to", ">=", $price)
+            ->latest()->first();
+
+        $appProfitAmount = $price * ($appProfit->percentage / 100);
+
+        return response()->json([
+            "success" => true,
+            "message" => "تم حساب السعر بنجاح",
+            "price" => $price,
+            "book_advance" => $bookAdvance,
+            "owner_profit" => $price - $appProfitAmount,
+            "app_profit" => $appProfitAmount,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            "success" => false,
+            "message" => "حدث خطاء في الخادم",
+            "error" => $e->getMessage()
+        ], 500);
+    }
+}
+
+
     public function reserve(Request $request)
     {
         try {

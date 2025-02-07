@@ -22,6 +22,7 @@ Route::prefix('user')->group(function () {
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix("reservations")->group(function () {
+            Route::get('/price/calculate', [ReservationController::class, 'calculatePrice']);
             Route::post('/create', [ReservationController::class, 'reserve']);
             Route::get('/all', [ReservationController::class, 'getAll']);
             Route::get('/{id}', [ReservationController::class,'get']);
