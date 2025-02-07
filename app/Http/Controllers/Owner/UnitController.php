@@ -117,7 +117,8 @@ class UnitController extends Controller
 
         foreach ($unit->amenities as $amenity) {
             switch ($amenity->type) {
-                case 'unit' || 'hotel':
+                case 'unit':
+                case 'hotel':
                     $unitAmenities[] = $amenity;
                     break;
                 case 'reception':
