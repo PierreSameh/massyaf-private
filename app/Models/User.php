@@ -143,4 +143,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Chat::class, 'owner_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ReservationController;
+use App\Http\Controllers\User\ReviewController;
 use App\Http\Controllers\User\UnPaidController;
 use App\Http\Controllers\User\WishlistController;
 use Illuminate\Http\Request;
@@ -50,5 +51,7 @@ Route::prefix('user')->group(function () {
             Route::put('/{id}/mute', [ChatController::class,'muteChat']);
             Route::delete('/{id}', [ChatController::class,'delete']);
         });
+        //Review
+        Route::post('/review', [ReviewController::class, 'store']);
     });
 });
