@@ -48,7 +48,7 @@ class UnitController extends Controller
             'specialReservationTimes',
             'images',
             'videos',
-            'rooms',
+            'rooms.amenities',
             'amenities',
             'reservations'
         ])->where('owner_id', $owner->id)
