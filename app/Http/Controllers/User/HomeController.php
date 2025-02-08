@@ -35,6 +35,63 @@ class HomeController extends Controller
             "units" => $units
         ], 200);
     }
+
+    public function get($id)
+    {
+        $unit = Unit::with([
+            'owner',
+            'city',
+            'compound',
+            'hotel',
+            'unitType',
+            'additionalFees',
+            'availableDates',
+            'sales',
+            'cancelPolicies',
+            'longTermReservations',
+            'specialReservationTimes',
+            'images',
+            'videos',
+            'rooms.amenities',
+            'amenities',
+            'reservations'
+        ])->find($id);
+        if (!$unit) {
+            return response()->json(['message' => 'Unit not found'], 404);
+        }
+
+        // Divide amenities into categories based on type
+        $unitAmenities = [];
+        $receptionAmenities = [];
+        $kitchenAmenities = [];
+
+        foreach ($unit->amenities as $amenity) {
+            switch ($amenity->type) {
+                case 'unit':
+                case 'hotel':
+                    $unitAmenities[] = $amenity;
+                    break;
+                case 'reception':
+                    $receptionAmenities[] = $amenity;
+                    break;
+                case 'kitchen':
+                    $kitchenAmenities[] = $amenity;
+                    break;
+            }
+        }
+
+        // Add categorized amenities to the response
+        $unitData = $unit->toArray();
+        $unitData['unit_amenities'] = $unitAmenities;
+        $unitData['reception_amenities'] = $receptionAmenities;
+        $unitData['kitchen_amenities'] = $kitchenAmenities;
+
+        // Remove the original amenities array
+        unset($unitData['amenities']);
+
+        return response()->json($unitData);
+    }
+
     public function sales()
     {
         $units = Unit::with([
