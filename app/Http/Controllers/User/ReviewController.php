@@ -14,6 +14,7 @@ class ReviewController extends Controller
             $request->validate([
                 "rate"=> "required|numeric|min:1|max:5",
                 "unit_id"=> "required|exists:units,id",
+                "comment" => "nullable|string|max:1000"
             ]);
 
             $userId = auth()->user()->id;
@@ -22,6 +23,7 @@ class ReviewController extends Controller
                 "user_id" => $userId,
                 "unit_id" => $request->unit_id,
                 "rate" => $request->rate,
+                "comment"=> $request->comment ?? null
             ]);
 
             $unit = Unit::find($request->unit_id);
