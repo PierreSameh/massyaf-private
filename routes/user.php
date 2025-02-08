@@ -15,6 +15,7 @@ Route::prefix('user')->group(function () {
         Route::get("/sales", [HomeController::class,"sales"]);
         Route::get("/sales-type", [HomeController::class,"typeSales"]);
         Route::get("/top-rated", [HomeController::class,"topRated"]);
+        Route::get("/best-seller", [HomeController::class,"bestSeller"]);
         Route::get("/filter", [HomeController::class,"filter"]);
         Route::get("/city/{id}", [HomeController::class,"getCity"]);
         Route::get("/compound/{id}", [HomeController::class,"getCompound"]);

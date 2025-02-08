@@ -87,6 +87,37 @@ class HomeController extends Controller
             "units" => $units
         ], 200);
     }
+    public function bestSeller(){
+        $units = Unit::with([
+            'city',
+            'compound',
+            'hotel',
+            'unitType',
+            'additionalFees',
+            'availableDates',
+            'sales',
+            'cancelPolicies',
+            'longTermReservations',
+            'specialReservationTimes',
+            'images',
+            'videos',
+            'rooms',
+        ])
+        ->where('status', 'active')
+        ->withCount(['reservations' => function($query) {
+            $query->where('status', 'approved')
+                ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
+        }])
+        ->orderByDesc('reservations_count')
+        ->take(10)  // Limit results
+        ->get();
+    
+
+        return response()->json([
+            "success" => true,
+            "units" => $units
+        ], 200);
+    }
 
     public function typeSales(Request $request)
     {
