@@ -124,7 +124,7 @@ class ReservationController extends Controller
             $saleAmount = ($price * $salePercentage) / 100;
             $price -= $saleAmount;
         }
-
+        $price *= $daysCount;
         // Deposit Calculation
         $bookAdvance = ($price * $unit->deposit) / 100;
 
@@ -269,6 +269,7 @@ class ReservationController extends Controller
                 $saleAmount = ($price * $salePercentage) / 100;
                 $price -= $saleAmount;
             }
+            $price *= $daysCount;
 
             $bookAdvance = ($price * $unit->deposit) / 100;
             //App Profit
