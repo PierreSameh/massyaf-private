@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Global\BankAccountController;
+use App\Http\Controllers\Global\NotificationController;
 use App\Http\Controllers\Global\PayTabsController;
 use App\Http\Controllers\Global\TransactionController;
 use App\Http\Controllers\Global\WalletController;
@@ -53,6 +54,14 @@ Route::middleware('auth:sanctum')->group(function(){
 
         //Transactions
         Route::get('/transactions', [TransactionController::class, 'index']);
+
+        Route::prefix('notifications')->group(function(){
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::put('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead']);
+            Route::put('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+            Route::delete('/{notification}', [NotificationController::class, 'destroy']);
+            Route::delete('/', [NotificationController::class, 'destroyAll']);
+        });
     });
 });
 

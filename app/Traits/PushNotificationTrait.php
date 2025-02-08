@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Google\Client as Google_Client;  // Ensure the correct namespace
 use Illuminate\Support\Facades\Http;
-use App\Models\Notification;
+use App\Models\AppNotification;
 use Pusher\Pusher;
 
 trait PushNotificationTrait
@@ -12,7 +12,7 @@ trait PushNotificationTrait
     public function pushNotification($title, $body, $user_id = null, $data = null)
     {
         // Create a new notification record
-        // $CreateNotification = Notification::create([
+        // $CreateNotification = AppNotification::create([
         //     "user_id" => $user_id,
         //     "title" => $title,
         //     "body" => $body,

@@ -156,6 +156,11 @@ class User extends Authenticatable implements FilamentUser
     public function getUnitsCountAttribute()
 {
     return $this->type === 'owner' ? $this->units()->count() : null;
-}
+}   
+
+    public function appNotifications()
+    {
+        return $this->hasMany(AppNotification::class);
+    }
 
 }
