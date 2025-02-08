@@ -44,6 +44,10 @@ class User extends Authenticatable implements FilamentUser
         'fcm_token',
     ];
 
+    protected $appends = [
+        'units_count',
+    ];
+    
     public function getImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
@@ -148,4 +152,10 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Review::class);
     }
+
+    public function getUnitsCountAttribute()
+{
+    return $this->type === 'owner' ? $this->units()->count() : null;
+}
+
 }
