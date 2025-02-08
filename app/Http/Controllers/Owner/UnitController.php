@@ -76,7 +76,7 @@ class UnitController extends Controller
             'specialReservationTimes',
             'images',
             'videos',
-            'rooms',
+            'rooms.amenities',
             'amenities',
             'reservations'
         ])->where('owner_id', $owner->id)->paginate((int) $request->per_page ?: 10);
@@ -102,7 +102,7 @@ class UnitController extends Controller
             'specialReservationTimes',
             'images',
             'videos',
-            'rooms',
+            'rooms.amenities',
             'amenities',
             'reservations'
         ])->find($id);
