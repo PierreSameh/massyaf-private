@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\Auth;
 
 use App\Models\User;
 use App\Models\Admin;
+use App\Traits\SendMailTrait;
 use App\Utils\ImageManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    use SendMailTrait;
     public function register(UserRequest $request)
     {
         $request->validated();
@@ -72,6 +74,11 @@ class AuthController extends Controller
                 $message = "الرمز التعريفي الخاص بك هو " . $code;
 
                 Log::info($message);
+                $msg_title = "Here's your Authentication Code";
+                $msg_content = "<h1>";
+                $msg_content .= "Your Authentication code is<span style='color: blue'> " . $code . "</span>";
+                $msg_content .= "</h1>";
+                $email = $this->sendEmail($user->email, $msg_title, $msg_content);
 
                 return response()->json([
                     "success" => true,
@@ -156,7 +163,11 @@ class AuthController extends Controller
             $user->save();
 
             $message = "رمز التحقق الخاص بك هو " . $code;
-
+            $msg_title = "Here's your Authentication Code";
+            $msg_content = "<h1>";
+            $msg_content .= "Your Authentication code is<span style='color: blue'> " . $code . "</span>";
+            $msg_content .= "</h1>";
+            $email = $this->sendEmail($user->email, $msg_title, $msg_content);
             return response()->json([
                 "success" => true,
                 "message" => "تم إرسال رمز التحقق.",
