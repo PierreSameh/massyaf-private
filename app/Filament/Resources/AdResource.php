@@ -17,16 +17,28 @@ class AdResource extends Resource
 {
     protected static ?string $model = Ad::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Add Data');
+    }
+    public static function getLabel(): ?string
+    {
+        return __('Ad');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Ads');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('image')
+                    ->label(__('Image'))
                     ->image()
                     ->required(),
                 Forms\Components\TextInput::make('url')
+                    ->label(__('Url'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -36,10 +48,13 @@ class AdResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label(__('Image')),
                 Tables\Columns\TextColumn::make('url')
+                    ->label(__('Url'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Creation Date'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
