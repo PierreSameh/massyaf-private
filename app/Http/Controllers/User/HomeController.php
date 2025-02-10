@@ -219,6 +219,7 @@ class HomeController extends Controller
             "area" => "nullable|numeric",
             "min_price" => "nullable|numeric",
             "max_price" => "nullable|numeric",
+            "search" => "nullable|string|max:255"
         ]);
         // Start building the query
         $query = Unit::query();
@@ -250,6 +251,13 @@ class HomeController extends Controller
     
         if ($request->input('max_price')) {
             $query->where('price', '<=', $request->max_price);
+        }
+        if ($request->search) {
+            $searchTerm = "%{$request->input('search')}%";
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', $searchTerm)
+                  ->orWhere('description', 'like', $searchTerm);
+            });
         }
     
         // Execute the query and get the results
