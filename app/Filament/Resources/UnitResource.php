@@ -151,7 +151,7 @@ class UnitResource extends Resource
                         ->schema([
                             ImageEntry::make('owner.image')->label(__('Profile Photo'))
                             ->circular()
-                            ->defaultImageUrl(url('/images/downloaded.jpeg'))
+                            ->defaultImageUrl(url('public/images/download.jpeg'))
                             ->extraImgAttributes([
                                 'loading' => 'lazy',
                             ]),
