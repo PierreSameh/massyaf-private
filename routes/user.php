@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\CompinedHomeController;
 use App\Http\Controllers\User\ReservationController;
 use App\Http\Controllers\User\ReviewController;
 use App\Http\Controllers\User\UnPaidController;
@@ -22,6 +23,7 @@ Route::prefix('user')->group(function () {
         Route::get("/city/{id}", [HomeController::class,"getCity"]);
         Route::get("/compound/{id}", [HomeController::class,"getCompound"]);
         Route::get("/hotel/{id}", [HomeController::class,"getHotel"]);
+        Route::get("/", [CompinedHomeController::class, 'index']);
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix("reservations")->group(function () {

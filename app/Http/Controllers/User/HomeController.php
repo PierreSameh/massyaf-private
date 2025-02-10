@@ -7,10 +7,16 @@ use App\Models\City;
 use App\Models\Compound;
 use App\Models\Hotel;
 use App\Models\Unit;
+use App\Services\HomeService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    protected $service;
+
+    public function __construct(HomeService $service){
+        $this->service = $service;
+    }
     public function index(){
         $units = Unit::with([
             'city',
@@ -94,25 +100,7 @@ class HomeController extends Controller
 
     public function sales()
     {
-        $units = Unit::with([
-            'city',
-            'compound',
-            'hotel',
-            'unitType',
-            'additionalFees',
-            'availableDates',
-            'sales',
-            'cancelPolicies',
-            'longTermReservations',
-            'specialReservationTimes',
-            'images',
-            'videos',
-            'rooms',
-        ])
-        ->where('status', 'active')
-        ->has('sales') // Filter units that have sales
-        ->inRandomOrder() // Get the units in random order
-        ->get();
+        $units = $this->service->sales();
     
         return response()->json([
             "success" => true,
@@ -121,23 +109,7 @@ class HomeController extends Controller
     }
 
     public function topRated(){
-        $units = Unit::with([
-            'city',
-            'compound',
-            'hotel',
-            'unitType',
-            'additionalFees',
-            'availableDates',
-            'sales',
-            'cancelPolicies',
-            'longTermReservations',
-            'specialReservationTimes',
-            'images',
-            'videos',
-            'rooms',
-        ])
-        ->where('status', 'active')
-        ->orderBy('rate', 'desc')->get();
+        $units = $this->service->topRated();
 
         return response()->json([
             "success" => true,
@@ -145,30 +117,7 @@ class HomeController extends Controller
         ], 200);
     }
     public function bestSeller(){
-        $units = Unit::with([
-            'city',
-            'compound',
-            'hotel',
-            'unitType',
-            'additionalFees',
-            'availableDates',
-            'sales',
-            'cancelPolicies',
-            'longTermReservations',
-            'specialReservationTimes',
-            'images',
-            'videos',
-            'rooms',
-        ])
-        ->where('status', 'active')
-        ->withCount(['reservations' => function($query) {
-            $query->where('status', 'approved')
-                ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
-        }])
-        ->orderByDesc('reservations_count')
-        ->take(10)  // Limit results
-        ->get();
-    
+        $units = $this->service->bestSeller();
 
         return response()->json([
             "success" => true,
@@ -178,29 +127,10 @@ class HomeController extends Controller
 
     public function typeSales(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             "type" => "required|in:unit,hotel"
         ]);
-        $units = Unit::with([
-            'city',
-            'compound',
-            'hotel',
-            'unitType',
-            'additionalFees',
-            'availableDates',
-            'sales',
-            'cancelPolicies',
-            'longTermReservations',
-            'specialReservationTimes',
-            'images',
-            'videos',
-            'rooms',
-        ])
-        ->where('status', 'active')
-        ->where('type', $request->type)
-        ->has('sales') // Filter units that have sales
-        ->inRandomOrder() // Get the units in random order
-        ->get();
+        $units = $this->service->typeSales($data);
     
         return response()->json([
             "success" => true,
