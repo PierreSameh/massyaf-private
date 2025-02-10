@@ -105,6 +105,9 @@ class UnitResource extends Resource
                     ->label(__('Rate'))
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('code')
+                    ->label(__("Code"))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Creation Date'))
                     ->dateTime()
