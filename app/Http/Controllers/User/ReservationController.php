@@ -42,7 +42,7 @@ class ReservationController extends Controller
             ->whereDate('to', '>=', $dateTo)
             ->exists();
 
-        if (!$isAvailable) {
+        if ($isAvailable) {
             return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
         }
 
@@ -186,7 +186,7 @@ class ReservationController extends Controller
                 ->whereDate('to', '>=', $dateTo)
                 ->exists();
 
-            if (!$isAvailable) {
+            if ($isAvailable) {
                 return response()->json(['message' => 'الفترة المحددة غير متاحة للحجز'], 400);
             }
             //Check on Current reservations on Unit

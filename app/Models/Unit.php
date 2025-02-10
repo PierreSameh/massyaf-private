@@ -49,7 +49,7 @@ class Unit extends Model
         'weekend_price',
     ];
 
-    protected $appends = ['min_price', 'max_price', 'in_wishlist'];
+    protected $appends = ['min_price', 'max_price', 'in_wishlist', 'unavailable_dates'];
 
     protected $casts = [
         'ownership_documents' => 'json',
@@ -142,6 +142,11 @@ public function getMinPriceAttribute()
     public function additionalFees(){
         return $this->hasMany(AdditionalFee::class);
     }
+
+    public function getUnavailableDatesAttribute()
+{
+    return $this->availableDates;
+}
 
     public function availableDates(){
         return $this->hasMany(AvailableDate::class);
