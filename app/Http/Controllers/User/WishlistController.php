@@ -16,22 +16,24 @@ class WishlistController extends Controller
             ->get();
 
         return response()->json([
-                "success" => true, "data" => $wishlists
-            ], 200);
+            "success" => true,
+            "data" => $wishlists
+        ], 200);
     }
 
-    public function store(Request $request)
+    public function toggle(Request $request)
     {
         $validated = $request->validate([
             'unit_id' => 'required|exists:units,id',
         ]);
-        $exists = Wishlist::where('user_id', auth()->id())
+        $unit = Wishlist::where('user_id', auth()->id())
             ->where('unit_id', $validated['unit_id'])->first();
-        if($exists){
+        if ($unit) {
+            $unit->delete();
             return response()->json([
                 "success" => false,
-                "message" => "الوحدة موجودة في قائمة المفضلة"
-            ], 400);
+                "message" => "تم حذف الوحدة من المفضلة"
+            ], 201);
         }
         $wishlist = Wishlist::create([
             'user_id' => auth()->id(),
@@ -39,7 +41,9 @@ class WishlistController extends Controller
         ]);
 
         return response()->json([
-            "success" => true, 'message' => 'تم اضافة الوحدة لقائمة المفضلة', 'wishlist' => $wishlist
+            "success" => true,
+            'message' => 'تم اضافة الوحدة لقائمة المفضلة',
+            'wishlist' => $wishlist
         ], 201);
     }
 
@@ -54,7 +58,8 @@ class WishlistController extends Controller
         $wishlist->delete();
 
         return response()->json([
-            "success" => true, 'message' => 'تم ازالة العنصر من قائمة المفضلة'
+            "success" => true,
+            'message' => 'تم ازالة العنصر من قائمة المفضلة'
         ], 200);
     }
 }
