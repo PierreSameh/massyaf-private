@@ -21,7 +21,7 @@ class WishlistController extends Controller
         ], 200);
     }
 
-    public function toggle(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'unit_id' => 'required|exists:units,id',
