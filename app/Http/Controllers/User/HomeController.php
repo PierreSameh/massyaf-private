@@ -15,10 +15,12 @@ class HomeController extends Controller
 {
     protected $service;
 
-    public function __construct(HomeService $service){
+    public function __construct(HomeService $service)
+    {
         $this->service = $service;
     }
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $request->validate([
             "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads",
         ]);
@@ -40,10 +42,10 @@ class HomeController extends Controller
                     'videos',
                     'rooms',
                 ])
-                ->where('status', 'active')
-                ->has('sales') // Filter units that have sales
-                ->latest() // Get the units in random order
-                ->paginate($perPage);
+                    ->where('status', 'active')
+                    ->has('sales') // Filter units that have sales
+                    ->latest() // Get the units in random order
+                    ->paginate($perPage);
                 break;
             case "best_seller":
                 $units = Unit::with([
@@ -61,13 +63,13 @@ class HomeController extends Controller
                     'videos',
                     'rooms',
                 ])
-                ->where('status', 'active')
-                ->withCount(['reservations' => function($query) {
-                    $query->where('status', 'approved')
-                        ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
-                }])
-                ->orderByDesc('reservations_count')
-                ->paginate($perPage);
+                    ->where('status', 'active')
+                    ->withCount(['reservations' => function ($query) {
+                        $query->where('status', 'approved')
+                            ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
+                    }])
+                    ->orderByDesc('reservations_count')
+                    ->paginate($perPage);
                 break;
             case "top_rated":
                 $units = Unit::with([
@@ -85,8 +87,8 @@ class HomeController extends Controller
                     'videos',
                     'rooms',
                 ])
-                ->where('status', 'active')
-                ->orderBy('rate', 'desc')->paginate($perPage);
+                    ->where('status', 'active')
+                    ->orderBy('rate', 'desc')->paginate($perPage);
                 break;
             case "cities":
                 $units = City::inRandomOrder()->paginate($perPage);
@@ -116,9 +118,8 @@ class HomeController extends Controller
                     'videos',
                     'rooms',
                 ])
-                ->where('status', 'active')
-                ->latest()->paginate($perPage);
-
+                    ->where('status', 'active')
+                    ->latest()->paginate($perPage);
         }
 
         return response()->json([
@@ -186,14 +187,15 @@ class HomeController extends Controller
     public function sales()
     {
         $units = $this->service->sales();
-    
+
         return response()->json([
             "success" => true,
             "units" => $units
         ], 200);
     }
 
-    public function topRated(){
+    public function topRated()
+    {
         $units = $this->service->topRated();
 
         return response()->json([
@@ -201,7 +203,8 @@ class HomeController extends Controller
             "units" => $units
         ], 200);
     }
-    public function bestSeller(){
+    public function bestSeller()
+    {
         $units = $this->service->bestSeller();
 
         return response()->json([
@@ -216,7 +219,7 @@ class HomeController extends Controller
             "type" => "required|in:unit,hotel"
         ]);
         $units = $this->service->typeSales($data);
-    
+
         return response()->json([
             "success" => true,
             "units" => $units
@@ -238,32 +241,32 @@ class HomeController extends Controller
         ]);
         // Start building the query
         $query = Unit::query();
-    
+
         // Apply filters based on the request parameters
         if ($request->input('type')) {
             $query->where('type', $request->type);
         }
-    
+
         if ($request->input('unit_type_id')) {
             $query->where('unit_type_id', $request->unit_type_id);
         }
-    
+
         if ($request->input('city_id')) {
             $query->where('city_id', $request->city_id);
         }
-    
+
         if ($request->input('compound_id')) {
             $query->where('compound_id', $request->compound_id);
         }
-    
+
         if ($request->input('area')) {
-            $query->where('area', ">=",$request->area);
+            $query->where('area', ">=", $request->area);
         }
-    
+
         if ($request->input('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
-    
+
         if ($request->input('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
@@ -271,22 +274,44 @@ class HomeController extends Controller
             $searchTerm = "%{$request->input('search')}%";
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', $searchTerm)
-                  ->orWhere('description', 'like', $searchTerm);
+                    ->orWhere('description', 'like', $searchTerm);
             });
         }
-    
+
         // Execute the query and get the results
         $units = $query->where('status', 'active')->get();
-    
+
         // Return the filtered results
         return response()->json([
             'success' => true,
             'units' => $units,
         ]);
     }
-    
-    public function getCity($id){
-        $city = City::find($id);
+
+    public function getCity($id)
+    {
+        $city = City::with([
+            'units' => function ($units) {
+                $units->with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                    ->where('status', 'active');
+            },
+            'compounds',
+            'hotels',
+        ])->find($id);
         if (!$city) {
             return response()->json([
                 "success" => false,
@@ -298,7 +323,8 @@ class HomeController extends Controller
             "city" => $city
         ], 200);
     }
-    public function getCompound($id){
+    public function getCompound($id)
+    {
         $compound = Compound::find($id);
         if (!$compound) {
             return response()->json([
@@ -311,7 +337,8 @@ class HomeController extends Controller
             "compound" => $compound
         ], 200);
     }
-    public function getHotel($id){
+    public function getHotel($id)
+    {
         $hotel = Hotel::find($id);
         if (!$hotel) {
             return response()->json([
