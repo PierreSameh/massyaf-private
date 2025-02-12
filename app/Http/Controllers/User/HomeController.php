@@ -22,6 +22,7 @@ class HomeController extends Controller
         $request->validate([
             "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads",
         ]);
+        $perPage = (int) $request->per_page ?: 10;
         switch ($request->filter) {
             case "sales":
                 $units = Unit::with([
@@ -42,7 +43,7 @@ class HomeController extends Controller
                 ->where('status', 'active')
                 ->has('sales') // Filter units that have sales
                 ->latest() // Get the units in random order
-                ->paginate((int) $request->per_page ?: 10);
+                ->paginate($perPage);
                 break;
             case "best_seller":
                 $units = Unit::with([
@@ -66,7 +67,7 @@ class HomeController extends Controller
                         ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
                 }])
                 ->orderByDesc('reservations_count')
-                ->paginate((int) $request->per_page ?: 10);
+                ->paginate($perPage);
                 break;
             case "top_rated":
                 $units = Unit::with([
@@ -85,19 +86,19 @@ class HomeController extends Controller
                     'rooms',
                 ])
                 ->where('status', 'active')
-                ->orderBy('rate', 'desc')->paginate((int) $request->per_page ?: 10);
+                ->orderBy('rate', 'desc')->paginate($perPage);
                 break;
             case "cities":
-                $units = City::inRandomOrder()->paginate((int) $request->per_page ?: 10);
+                $units = City::inRandomOrder()->paginate($perPage);
                 break;
             case "compounds":
-                $units = Compound::inRandomOrder()->paginate((int) $request->per_page ?: 10);
+                $units = Compound::inRandomOrder()->paginate($perPage);
                 break;
             case "hotels":
-                $units = Hotel::inRandomOrder()->paginate((int) $request->per_page ?: 10);
+                $units = Hotel::inRandomOrder()->paginate($perPage);
                 break;
             case "ads":
-                $units = Ad::latest()->paginate((int) $request->per_page ?: 10);
+                $units = Ad::latest()->paginate($perPage);
                 break;
             default:
                 $units = Unit::with([
@@ -116,7 +117,7 @@ class HomeController extends Controller
                     'rooms',
                 ])
                 ->where('status', 'active')
-                ->latest()->paginate((int) $request->per_page ?: 10);
+                ->latest()->paginate($perPage);
 
         }
 
