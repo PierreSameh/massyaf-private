@@ -21,7 +21,6 @@ class HomeController extends Controller
     public function index(Request $request){
         $request->validate([
             "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads",
-            "per_page" => "nullable|numeric"
         ]);
         switch ($request->filter) {
             case "sales":
