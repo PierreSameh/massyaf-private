@@ -326,7 +326,27 @@ class HomeController extends Controller
     }
     public function getCompound($id)
     {
-        $compound = Compound::find($id);
+        $compound = Compound::with([
+            'units' => function ($units) {
+                $units->with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                    ->where('status', 'active')
+                    ->take(10);
+            },
+        ])->find($id);
         if (!$compound) {
             return response()->json([
                 "success" => false,
@@ -340,7 +360,27 @@ class HomeController extends Controller
     }
     public function getHotel($id)
     {
-        $hotel = Hotel::find($id);
+        $hotel = Hotel::with([
+            'units' => function ($units) {
+                $units->with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                    ->where('status', 'active')
+                    ->take(10);
+            },
+        ])->find($id);
         if (!$hotel) {
             return response()->json([
                 "success" => false,
