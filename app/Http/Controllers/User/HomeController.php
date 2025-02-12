@@ -307,7 +307,8 @@ class HomeController extends Controller
                     'videos',
                     'rooms',
                 ])
-                    ->where('status', 'active');
+                    ->where('status', 'active')
+                    ->take(10);
             },
             'compounds',
             'hotels',
