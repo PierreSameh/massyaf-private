@@ -11,7 +11,23 @@ class WishlistController extends Controller
     public function index()
     {
         $userId = auth()->id(); // Get the logged-in user's ID
-        $wishlists = Wishlist::with('unit.images')->where('user_id', $userId)
+        $wishlists = Wishlist::with(['unit' => function ($q) {
+            $q->with([
+                'city',
+                'compound',
+                'hotel',
+                'unitType',
+                'additionalFees',
+                'availableDates',
+                'sales',
+                'cancelPolicies',
+                'longTermReservations',
+                'specialReservationTimes',
+                'images',
+                'videos',
+                'rooms',
+            ]);
+        }])->where('user_id', $userId)
             ->latest()
             ->get();
 
