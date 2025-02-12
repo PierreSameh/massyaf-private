@@ -20,29 +20,85 @@ class HomeController extends Controller
     }
     public function index(Request $request){
         $request->validate([
-            "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads"
+            "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads",
+            "per_page" => "nullable|numeric"
         ]);
         switch ($request->filter) {
             case "sales":
-                $units = $this->service->sales();
+                $units = Unit::with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                ->where('status', 'active')
+                ->has('sales') // Filter units that have sales
+                ->latest() // Get the units in random order
+                ->paginate((int) $request->per_page ?: 10);
                 break;
             case "best_seller":
-                $units = $this->service->bestSeller();
+                $units = Unit::with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                ->where('status', 'active')
+                ->withCount(['reservations' => function($query) {
+                    $query->where('status', 'approved')
+                        ->where('created_at', '>=', now()->subMonths(3)); // Last 3 months
+                }])
+                ->orderByDesc('reservations_count')
+                ->paginate((int) $request->per_page ?: 10);
                 break;
             case "top_rated":
-                $units = $this->service->topRated();
+                $units = Unit::with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                ->where('status', 'active')
+                ->orderBy('rate', 'desc')->paginate((int) $request->per_page ?: 10);
                 break;
             case "cities":
-                $units = City::inRandomOrder()->get();
+                $units = City::inRandomOrder()->paginate((int) $request->per_page ?: 10);
                 break;
             case "compounds":
-                $units = Compound::inRandomOrder()->get();
+                $units = Compound::inRandomOrder()->paginate((int) $request->per_page ?: 10);
                 break;
             case "hotels":
-                $units = Hotel::inRandomOrder()->get();
+                $units = Hotel::inRandomOrder()->paginate((int) $request->per_page ?: 10);
                 break;
             case "ads":
-                $units = Ad::latest()->get();
+                $units = Ad::latest()->paginate((int) $request->per_page ?: 10);
                 break;
             default:
                 $units = Unit::with([
@@ -61,14 +117,10 @@ class HomeController extends Controller
                     'rooms',
                 ])
                 ->where('status', 'active')
-                ->latest()->get();
+                ->latest()->paginate((int) $request->per_page ?: 10);
 
         }
 
-        $ads = Ad::latest()->get();
-        $compounds = Compound::inRandomOrder()->get();
-        $cities = City::inRandomOrder()->get();
-        $hotels = Hotel::inRandomOrder()->get();
         return response()->json([
             "success" => true,
             "data" => $units

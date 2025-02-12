@@ -49,7 +49,7 @@ class HomeService
         ])
         ->where('status', 'active')
         ->has('sales') // Filter units that have sales
-        ->inRandomOrder() // Get the units in random order
+        ->latest() // Get the units in random order
         ->get();
 
         return $units;
