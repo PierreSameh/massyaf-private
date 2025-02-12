@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\City;
 use App\Models\Compound;
 use App\Models\Hotel;
@@ -17,28 +18,60 @@ class HomeController extends Controller
     public function __construct(HomeService $service){
         $this->service = $service;
     }
-    public function index(){
-        $units = Unit::with([
-            'city',
-            'compound',
-            'hotel',
-            'unitType',
-            'additionalFees',
-            'availableDates',
-            'sales',
-            'cancelPolicies',
-            'longTermReservations',
-            'specialReservationTimes',
-            'images',
-            'videos',
-            'rooms',
-        ])
-        ->where('status', 'active')
-        ->latest()->get();
+    public function index(Request $request){
+        $request->validate([
+            "filter" => "nullable|in:sales,best_seller,top_rated,cities,compounds,hotels,ads"
+        ]);
+        switch ($request->filter) {
+            case "sales":
+                $units = $this->service->sales();
+                break;
+            case "best_seller":
+                $units = $this->service->bestSeller();
+                break;
+            case "top_rated":
+                $units = $this->service->topRated();
+                break;
+            case "cities":
+                $units = City::inRandomOrder()->get();
+                break;
+            case "compounds":
+                $units = Compound::inRandomOrder()->get();
+                break;
+            case "hotels":
+                $units = Hotel::inRandomOrder()->get();
+                break;
+            case "ads":
+                $units = Ad::latest()->get();
+                break;
+            default:
+                $units = Unit::with([
+                    'city',
+                    'compound',
+                    'hotel',
+                    'unitType',
+                    'additionalFees',
+                    'availableDates',
+                    'sales',
+                    'cancelPolicies',
+                    'longTermReservations',
+                    'specialReservationTimes',
+                    'images',
+                    'videos',
+                    'rooms',
+                ])
+                ->where('status', 'active')
+                ->latest()->get();
 
+        }
+
+        $ads = Ad::latest()->get();
+        $compounds = Compound::inRandomOrder()->get();
+        $cities = City::inRandomOrder()->get();
+        $hotels = Hotel::inRandomOrder()->get();
         return response()->json([
             "success" => true,
-            "units" => $units
+            "data" => $units
         ], 200);
     }
 
