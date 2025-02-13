@@ -33,15 +33,15 @@ class DropDownController extends Controller
             "data"=> $cities
         ], 200);
     }
-    public function compounds(){
-        $compounds = Compound::all();
+    public function compounds(Request $request){
+        $compounds = Compound::where('city_id', $request->city_id)->get();
         return response()->json([
             "success" => true,
             "data"=> $compounds
         ], 200);
     }
-    public function hotels(){
-        $hotels = Hotel::all();
+    public function hotels(Request $request){
+        $hotels = Hotel::where('city_id', $request->city_id)->get();
         return response()->json([
             "success" => true,
             "data"=> $hotels
