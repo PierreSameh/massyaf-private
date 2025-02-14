@@ -14,11 +14,13 @@ class CompinedHomeController extends Controller
 {
     protected $service;
 
-    public function __construct(HomeService $service){
+    public function __construct(HomeService $service)
+    {
         $this->service = $service;
     }
 
-    public function index() {
+    public function index()
+    {
 
         $sales = $this->service->sales();
         $ads = Ad::latest()->get();
@@ -32,13 +34,13 @@ class CompinedHomeController extends Controller
         return response()->json([
             "success" => true,
             "data" => [
-                "sales"=> $sales,
+                "sales" => $sales,
                 "best_seller" => $bestSeller,
                 "ads" => $ads,
-                "cities"=> $cities,
-                "compounds"=> $compounds,
+                "cities" => $cities,
+                "compounds" => $compounds,
                 "hotels" => $hotels,
-                "topRated" => $topRated   
+                "topRated" => $topRated
             ]
         ]);
     }

@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\Auth\password\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\password\ForgetPasswordController;
 use App\Http\Controllers\Chat\Owner\LiveChatOwnerController;
 use App\Http\Controllers\Chat\User\LiveChatUserController;
-
+use App\Http\Controllers\Global\ChatController;
 
 Route::post('/account/register', [AuthController::class, 'register']);
 Route::post('/account/login', [AuthController::class, 'login']);
@@ -25,7 +25,7 @@ Route::post('/account/forget-password/reset', [AuthController::class, 'forgetPas
 
 Route::post('/deposit', [WalletController::class, 'deposit'])->middleware('auth:sanctum');
 Route::get('/callback', [PayTabsController::class, 'handleCallBack']);
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware('auth:sanctum')->group(function () {
     //Ask Code for email validation
     Route::get('account/ask-code', [AuthController::class, 'askCode']);
     Route::post('account/verify', [AuthController::class, 'verify']);
@@ -33,13 +33,13 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::delete('account/destroy', [AuthController::class, 'deleteAccount']);
 
     //Profile
-    Route::prefix('profile')->group(function(){
+    Route::prefix('profile')->group(function () {
         Route::post('/change-password', [ProfileController::class, 'changePassword']);
         Route::get('/', [ProfileController::class, 'get']);
-        Route::post('/update', [ProfileController::class,'update']);
+        Route::post('/update', [ProfileController::class, 'update']);
     });
     //Wallet
-    Route::prefix('wallet')->group(function(){
+    Route::prefix('wallet')->group(function () {
         //Bank Account
         Route::post('/bank-account', [BankAccountController::class, 'store']);
         Route::get('/bank-account', [BankAccountController::class, 'index']);
@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function(){
         //Transactions
         Route::get('/transactions', [TransactionController::class, 'index']);
 
-        Route::prefix('notifications')->group(function(){
+        Route::prefix('notifications')->group(function () {
             Route::get('/', [NotificationController::class, 'index']);
             Route::put('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead']);
             Route::put('/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
@@ -63,5 +63,9 @@ Route::middleware('auth:sanctum')->group(function(){
             Route::delete('/', [NotificationController::class, 'destroyAll']);
         });
     });
+    Route::post('/chats/send-message', [ChatController::class, 'sendMessage']);
+    Route::get('/chats', [ChatController::class, 'getChats']);
+    Route::get('/chats/{id}/messages', [ChatController::class, 'getMessages']);
+    Route::post('/chats/{id}/seen-messages', [ChatController::class, 'seenMessages']);
+    Route::delete('/chats/{id}', [ChatController::class, 'deleteChat']);
 });
-

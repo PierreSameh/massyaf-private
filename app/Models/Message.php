@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $fillable = [
-        'sender_type',
+        'sender_id',
         'chat_id',
         'message',
         'seen',
@@ -16,11 +16,19 @@ class Message extends Model
 
     public $timestamps = false;
 
-    protected $hidden = [ 'updated_at'];
+    protected $hidden = ['updated_at'];
+
     protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s', // Keep the format without timezone conversion
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
-    public function chat(){
+
+    public function chat()
+    {
         return $this->belongsTo(Chat::class);
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
     }
 }
