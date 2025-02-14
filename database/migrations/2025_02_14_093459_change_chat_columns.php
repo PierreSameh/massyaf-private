@@ -11,15 +11,10 @@ return new class extends Migration {
             $table->unsignedBigInteger('user1_id')->after('id');
             $table->unsignedBigInteger('user2_id')->after('user1_id');
             $table->boolean('muted_for_user1')->default(false)->after('user2_id');
-            $table->boolean('muted_for_user2')->default(false)->after('muted_for_user1');
-
-            $table->foreign('user1_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('user2_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::table('messages', function (Blueprint $table) {
             $table->unsignedBigInteger('sender_id')->after('id');
-            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
