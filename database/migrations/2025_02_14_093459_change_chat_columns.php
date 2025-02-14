@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user1_id')->after('id');
             $table->unsignedBigInteger('user2_id')->after('user1_id');
             $table->boolean('muted_for_user1')->default(false)->after('user2_id');
+            $table->boolean('muted_for_user2')->default(false)->after('muted_for_user1');
         });
 
         Schema::table('messages', function (Blueprint $table) {
