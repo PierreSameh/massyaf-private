@@ -278,6 +278,22 @@ class HomeController extends Controller
             });
         }
 
+        $query->with([
+            'city',
+            'compound',
+            'hotel',
+            'unitType',
+            'additionalFees',
+            'availableDates',
+            'sales',
+            'cancelPolicies',
+            'longTermReservations',
+            'specialReservationTimes',
+            'images',
+            'videos',
+            'rooms',
+        ]);
+
         // Execute the query and get the results
         $units = $query->where('status', 'active')->get();
 
