@@ -34,7 +34,7 @@ class ReservationController extends Controller
             "data" => [
                 "reservations" => $reservations,
                 "count" => count($reservations)
-                ]
+            ]
         ], 200);
     }
 
@@ -43,7 +43,7 @@ class ReservationController extends Controller
         $user = auth()->user();
         $reservation = Reservation::where('id', $id)
             ->whereRelation("unit", "owner_id", "=", $user->id)
-            ->with('unit.images', 'unit.rooms')
+            ->with('unit.images', 'unit.rooms', 'user')
             ->first();
         if (!$reservation) {
             return response()->json([
