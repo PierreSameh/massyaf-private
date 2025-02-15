@@ -41,6 +41,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->has('sales') // Filter units that have sales
@@ -62,6 +63,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->withCount(['reservations' => function ($query) {
@@ -86,6 +88,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->orderBy('rate', 'desc')->paginate($perPage);
@@ -117,6 +120,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->latest()->paginate($perPage);
@@ -306,6 +310,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->take(10);
@@ -342,6 +347,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->take(10);
@@ -376,6 +382,7 @@ class HomeController extends Controller
                     'images',
                     'videos',
                     'rooms',
+                    'owner'
                 ])
                     ->where('status', 'active')
                     ->take(10);
