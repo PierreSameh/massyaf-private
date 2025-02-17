@@ -53,6 +53,9 @@ class CompoundResource extends Resource
                             RichEditor::make('features.en')
                                 ->label(__('Features (English)'))
                                 ->columnSpanFull(),
+                            RichEditor::make('policies.en')
+                                ->label(__('Reservation Policies (English)'))
+                                ->columnSpanFull(),
                         ]),
                     Tab::make(__('Arabic'))
                         ->schema([
@@ -65,6 +68,9 @@ class CompoundResource extends Resource
                                 ->columnSpanFull(),
                             RichEditor::make('features.ar')
                                 ->label(__('Features (Arabic)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('policies.ar')
+                                ->label(__('Reservation Policies (Arabic)'))
                                 ->columnSpanFull(),
                         ]),
                 ])

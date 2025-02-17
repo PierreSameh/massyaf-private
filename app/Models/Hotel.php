@@ -19,13 +19,14 @@ class Hotel extends Model
         'city_id',
         'coordinates',
         'base_code',
+        'policies'
     ];
 
     protected $casts = [
         'images' => 'array',
         'coordinates' => 'array',
     ];
-    public $translatable = ['name', 'description', 'features', 'details'];
+    public $translatable = ['name', 'description', 'features', 'details', 'policies'];
 
     public function toArray()
     {

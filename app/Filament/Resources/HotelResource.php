@@ -55,6 +55,9 @@ class HotelResource extends Resource
                             RichEditor::make('Details.en')
                                 ->label(__('Details (English)'))
                                 ->columnSpanFull(),
+                            RichEditor::make('policies.en')
+                                ->label(__('Reservation Policies (English)'))
+                                ->columnSpanFull(),
                         ]),
                     Tab::make(__('Arabic'))
                         ->schema([
@@ -70,6 +73,9 @@ class HotelResource extends Resource
                                 ->columnSpanFull(),
                             RichEditor::make('details.ar')
                                 ->label(__('Details (Arabic)'))
+                                ->columnSpanFull(),
+                            RichEditor::make('policies.ar')
+                                ->label(__('Reservation Policies (English)'))
                                 ->columnSpanFull(),
                         ]),
                 ])

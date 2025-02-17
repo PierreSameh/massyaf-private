@@ -18,13 +18,14 @@ class Compound extends Model
         'address',
         'coordinates',
         'base_code',
+        'policies'
     ];
 
     protected $casts = [
         'images' => 'array',
         'coordinates' => 'array',
     ];
-    public $translatable = ['name', 'description', 'features'];
+    public $translatable = ['name', 'description', 'features', 'policies'];
 
     public function toArray()
     {
