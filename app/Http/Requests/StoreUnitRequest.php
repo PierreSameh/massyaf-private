@@ -32,7 +32,7 @@ class StoreUnitRequest extends FormRequest
             'lat' => ['nullable', 'required_if:type,unit', 'string'],
             'lng' => ['nullable', 'required_if:type,unit', 'string'],
             'unit_number' => ['required', 'string', 'max:255'],
-            'floors_count' => ['required', 'integer', 'min:1'],
+            'floors_count' => ['required', 'integer'],
             'elevator' => ['required', 'in:0,1'],
             'area' => ['required', 'integer', 'min:1'],
             'distance_unit_beach' => ['nullable', 'numeric', 'min:0'],
