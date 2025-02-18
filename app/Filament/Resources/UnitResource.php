@@ -164,6 +164,7 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('additionalFees')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Additional Fees"))
         ->schema([
             TextInput::make('fees')
                 ->label(__('Fee Type'))
@@ -183,6 +184,7 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('availableDates')
         ->relationship()
+        ->addActionLabel(__("Add Booked Times"))
         ->schema([
             DatePicker::make('from')
                 ->label(__('From'))
@@ -200,6 +202,8 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('sales')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Sales"))
+
         ->schema([
             DatePicker::make('from')
                 ->label(__('From'))
@@ -221,6 +225,8 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('cancelPolicies')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Cancel Policies"))
+
         ->schema([
             TextInput::make('days')
                 ->label(__('Days'))
@@ -240,6 +246,7 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('longTermReservations')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Long Term Reservations"))
         ->schema([
             TextInput::make('more_than_days')
                 ->label(__('More Than (Days)'))
@@ -259,6 +266,8 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('specialReservationTimes')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Special Reservation Times"))
+
         ->schema([
             DatePicker::make('from')
                 ->label(__('From'))
@@ -284,6 +293,8 @@ class UnitResource extends Resource
 ->schema([
     Repeater::make('rooms')
         ->relationship()
+        ->addActionLabel(__("Add ") . __("Rooms"))
+
         ->schema([
             TextInput::make('bed_count')
                 ->label(__('Bed Count'))
