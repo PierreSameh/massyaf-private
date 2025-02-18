@@ -124,16 +124,28 @@ class ReservationController extends Controller
             $saleAmount = ($price * $salePercentage) / 100;
             $price -= $saleAmount;
         }
-        $price *= $daysCount;
         // Deposit Calculation
         $bookAdvance = ($price * $unit->deposit) / 100;
 
-        // App Profit Calculation
+        //App Profit
         $appProfit = Profit::where("type", $unit->type)
-            ->where("from", "<=", "$price")->where("to", ">=", $price)
-            ->latest()->first();
+        ->where("from", "<=", $price)
+        ->where("to", ">=", $price)
+        ->latest()
+        ->first();
+                    
 
-        $appProfitAmount = $price * ($appProfit->percentage / 100);
+        if (!$appProfit) {
+            // Try to get the nearest lower range
+            $appProfit = Profit::where("type", $unit->type)
+                ->where("to", "<=", $price)
+                ->latest()
+                ->first();
+        }
+            
+            // If no profit entry is found, set the profit amount to 0
+        $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
+        $price *= $daysCount;
 
         return response()->json([
             "success" => true,
@@ -269,8 +281,7 @@ class ReservationController extends Controller
                 $saleAmount = ($price * $salePercentage) / 100;
                 $price -= $saleAmount;
             }
-            $price *= $daysCount;
-
+            
             $bookAdvance = ($price * $unit->deposit) / 100;
             //App Profit
             $appProfit = Profit::where("type", $unit->type)
@@ -278,7 +289,7 @@ class ReservationController extends Controller
             ->where("to", ">=", $price)
             ->latest()
             ->first();
-        
+            
             if (!$appProfit) {
                 // Try to get the nearest lower range
                 $appProfit = Profit::where("type", $unit->type)
@@ -286,9 +297,10 @@ class ReservationController extends Controller
                     ->latest()
                     ->first();
             }
-            
-            // If no profit entry is found, set the profit amount to 0
+                
+                // If no profit entry is found, set the profit amount to 0
             $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
+            $price *= $daysCount;
         
             $reservation = Reservation::create([
                 "user_id" => $user->id,
