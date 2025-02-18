@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Owner\AmenitieController;
 use App\Http\Controllers\Owner\ChatController;
+use App\Http\Controllers\Owner\IcalController;
 use App\Http\Controllers\Owner\ProfitsControllers;
 use App\Http\Controllers\Owner\ReservationController;
 use App\Http\Controllers\Owner\ReservationFilterController;
@@ -38,6 +39,11 @@ Route::prefix('owner')->group(function () {
             Route::get('/{id}', [UnitController::class, 'get']);
             Route::delete('/{id}', [UnitController::class, 'destroy']);
             
+            // Export iCal
+            Route::get('/{unitId}/export-ical', [IcalController::class, 'exportIcal']);
+
+            // Import iCal
+            Route::post('/{unitId}/import-ical', [IcalController::class, 'importIcal']);
         });
 
         Route::prefix('reservations')->group(function () {
@@ -72,4 +78,6 @@ Route::prefix('owner')->group(function () {
             Route::get('/hotels', [ProfitsControllers::class, 'hotelsProfits']);
         });
     });
+
+
 });
