@@ -124,8 +124,7 @@ class ReservationController extends Controller
             $saleAmount = ($price * $salePercentage) / 100;
             $price -= $saleAmount;
         }
-        // Deposit Calculation
-        $bookAdvance = ($price * $unit->deposit) / 100;
+
 
         //App Profit
         $appProfit = Profit::where("type", $unit->type)
@@ -143,10 +142,11 @@ class ReservationController extends Controller
                 ->first();
         }
             
-            // If no profit entry is found, set the profit amount to 0
+        // If no profit entry is found, set the profit amount to 0
         $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
         $price *= $daysCount;
-
+        // Deposit Calculation
+        $bookAdvance = ($price * $unit->deposit) / 100;
         return response()->json([
             "success" => true,
             "message" => "تم حساب السعر بنجاح",
@@ -282,7 +282,6 @@ class ReservationController extends Controller
                 $price -= $saleAmount;
             }
             
-            $bookAdvance = ($price * $unit->deposit) / 100;
             //App Profit
             $appProfit = Profit::where("type", $unit->type)
             ->where("from", "<=", $price)
@@ -301,7 +300,8 @@ class ReservationController extends Controller
                 // If no profit entry is found, set the profit amount to 0
             $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
             $price *= $daysCount;
-        
+            $bookAdvance = ($price * $unit->deposit) / 100;
+
             $reservation = Reservation::create([
                 "user_id" => $user->id,
                 "unit_id" => $request->unit_id,
