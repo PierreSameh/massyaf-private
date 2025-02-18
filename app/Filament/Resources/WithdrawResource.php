@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Traits\PushNotificationTrait;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\DB;
+use Pusher\Pusher;
 
 class WithdrawResource extends Resource
 {
@@ -57,12 +58,12 @@ class WithdrawResource extends Resource
                     ->money('egp'),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__("Status"))
-                    ->icon(fn (string $state): string => match ($state) {
+                    ->icon(fn(string $state): string => match ($state) {
                         'pending' => 'heroicon-o-clock',
                         'approved' => 'heroicon-o-check-circle',
                         'rejected' => 'heroicon-o-x-circle',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'pending' => 'warning',
                         'approved' => 'success',
                         'rejected' => 'danger',
@@ -91,7 +92,7 @@ class WithdrawResource extends Resource
                 // Approve Action
                 Action::make('approve')
                     ->label(__('Approve'))
-                    ->visible(fn ($record) => $record->status === 'pending')
+                    ->visible(fn($record) => $record->status === 'pending')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->action(function ($record) {
@@ -100,19 +101,19 @@ class WithdrawResource extends Resource
                             if ($record->status !== 'pending') {
                                 throw new \Exception(__('This withdrawal request has already been processed.'));
                             }
-                
+
                             // Update the status to "approved"
                             $record->status = 'approved';
                             $record->save();
-                
+
                             // Deduct the withdrawal amount from the user's balance
                             $user = $record->user;
                             $withdrawalAmount = $record->amount;
-                
+
                             if ($user->balance < $withdrawalAmount) {
                                 throw new \Exception(__('The user does not have sufficient balance to complete this withdrawal.'));
                             }
-                
+
                             $user->balance -= $withdrawalAmount;
                             $user->save();
 
@@ -123,24 +124,34 @@ class WithdrawResource extends Resource
                             $title = __('Withdrawal Approved');
                             $body = __('Your withdrawal request has been approved. The amount has been deducted from your balance.');
                             $userId = $record->user->id;
-                
+
                             // Use the PushNotificationTrait
-                            app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
+                            $notificationObj = [
+                                "title" => $title,
+                                "body" => $body
+                            ];
+                            $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
+
+                            $pusher->trigger(
+                                "channel_" . $userId,
+                                "notification",
+                                $notificationObj
+                            );
                         });
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
-            
+
                 // Reject Action
                 Action::make('reject')
                     ->label(__('Reject'))
-                    ->visible(fn ($record) => $record->status === 'pending')
+                    ->visible(fn($record) => $record->status === 'pending')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->action(function ($record) {
                         // Update the status to "rejected"
                         $record->status = 'rejected';
                         $record->save();
-    
+
                         // Send notification to the user
                         $title = __('Withdrawal Rejected');
                         $body = __('Your withdrawal request has been rejected.');
@@ -149,7 +160,17 @@ class WithdrawResource extends Resource
                         $transaction->status = 'failed';
                         $transaction->save();
                         // Use the PushNotificationTrait
-                        app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
+                        $notificationObj = [
+                            "title" => $title,
+                            "body" => $body
+                        ];
+                        $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
+
+                        $pusher->trigger(
+                            "channel_" . $userId,
+                            "notification",
+                            $notificationObj
+                        );
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
             ])
