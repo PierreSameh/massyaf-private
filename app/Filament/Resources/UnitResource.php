@@ -6,7 +6,14 @@ use App\Filament\Resources\UnitResource\Pages;
 use App\Filament\Resources\UnitResource\RelationManagers;
 use App\Models\Unit;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,10 +25,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists;
 use Filament\Infolists\Components\IconEntry;
-
+use Filament\Forms\Get;
 class UnitResource extends Resource
 {
     protected static ?string $model = Unit::class;
@@ -43,19 +49,273 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('ownership_documents')
-                    ->label(__('Ownership Documents'))
-                    ->disk('public')
-                    ->directory('ownership_documents')
-                    ->multiple()
-                    ->columnSpanFull()
-                    ->reorderable()
-                    ->panelLayout('grid')
-                    ->image()
-                    ->openable()
-                    ->downloadable()
-                    ->required(),
-                
+                \Filament\Forms\Components\Section::make(__('Ownership Documents'))
+                    ->schema([
+                        Forms\Components\FileUpload::make('ownership_documents')
+                        ->label(__('Ownership Documents'))
+                        ->disk('public')
+                        ->directory('ownership_documents')
+                        ->multiple()
+                        ->columnSpanFull()
+                        ->reorderable()
+                        ->panelLayout('grid')
+                        ->image()
+                        ->openable()
+                        ->downloadable()
+                        // ->required(),
+                    ]),
+                // Basic Information
+                \Filament\Forms\Components\Section::make(__('Basic Information'))
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(__('Name'))
+                            ->required(),
+                        TextInput::make('code')
+                            ->label(__('Code'))
+                            ->required(),
+                        Select::make('type')
+                            ->label(__('Type'))
+                            ->options([
+                                'unit' => __('Unit'),
+                                'hotel' => __('Hotel'),
+                            ])
+                            ->required(),
+                        Select::make('status')
+                            ->label(__('Status'))
+                            ->options([
+                                'waiting' => __('Waiting'),
+                                'active' => __('Active'),
+                                'rejected' => __('Rejected'),
+                            ])
+                            ->required(),
+                        TextInput::make('unit_number')
+                            ->label(__('Unit Number'))
+                            ->required(),
+                        TextInput::make('floors_count')
+                            ->label(__('Floors Count'))
+                            ->numeric()
+                            ->required(),
+                        Toggle::make('elevator')
+                            ->label(__('Elevator')),
+                        TextInput::make('area')
+                            ->label(__('Area'))
+                            ->required(),
+                        TextInput::make('room_count')
+                            ->label(__('Room Count'))
+                            ->numeric()
+                            ->required(),
+                        TextInput::make('toilet_count')
+                            ->label(__('Toilet Count'))
+                            ->numeric()
+                            ->required(),
+                        Textarea::make('description')
+                            ->label(__('Description'))
+                            ->rows(3),
+                    ])->columns(2),
+    
+                // Pricing Information
+                \Filament\Forms\Components\Section::make(__('Pricing Information'))
+                    ->schema([
+                        TextInput::make('price')
+                            ->label(__('Price'))
+                            ->numeric()
+                            ->prefix('EGP')
+                            ->required(),
+                        TextInput::make('insurance_amount')
+                            ->label(__('Insurance Amount'))
+                            ->numeric()
+                            ->prefix('EGP')
+                            ->required(),
+                        TextInput::make('deposit')
+                            ->label(__('Deposit'))
+                            ->numeric()
+                            ->prefix('EGP')
+                            ->required(),
+                        TextInput::make('upon_arival_price')
+                            ->label(__('Upon Arrival Amount'))
+                            ->numeric()
+                            ->prefix('EGP')
+                            ->required(),
+                        TextInput::make('weekend_price')
+                            ->label(__('Weekend Price'))
+                            ->numeric()
+                            ->prefix('EGP')
+                            ->required(),
+                    ])->columns(2),
+    
+                // Location Information
+                \Filament\Forms\Components\Section::make(__('Location Information'))
+                    ->schema([
+                        Select::make('city_id')
+                            ->label(__('City'))
+                            ->relationship('city', 'name')
+                            ->required(),
+                        Select::make('hotel_id')
+                            ->label(__('Hotel'))
+                            ->relationship('hotel', 'name')
+                            ->visible(fn (Get $get) => $get('type') === 'hotel'),
+                        Textarea::make('address')
+                            ->label(__('Address'))
+                            ->visible(fn (Get $get) => $get('type') === 'unit'),
+                    ])->columns(2),
+    
+                // Additional Fees
+\Filament\Forms\Components\Section::make(__('Additional Fees'))
+->schema([
+    Repeater::make('additionalFees')
+        ->relationship()
+        ->schema([
+            TextInput::make('fees')
+                ->label(__('Fee Type'))
+                ->required(),
+            TextInput::make('amount')
+                ->label(__('Amount'))
+                ->numeric()
+                ->prefix('EGP')
+                ->required(),
+        ])
+        ->columns(2)
+        ->defaultItems(1),
+]),
+
+// Available Dates
+\Filament\Forms\Components\Section::make(__('Available Dates'))
+->schema([
+    Repeater::make('availableDates')
+        ->relationship()
+        ->schema([
+            DatePicker::make('from')
+                ->label(__('From'))
+                ->required(),
+            DatePicker::make('to')
+                ->label(__('To'))
+                ->required(),
+        ])
+        ->columns(2)
+        ->defaultItems(1),
+]),
+
+// Sales
+\Filament\Forms\Components\Section::make(__('Sales'))
+->schema([
+    Repeater::make('sales')
+        ->relationship()
+        ->schema([
+            DatePicker::make('from')
+                ->label(__('From'))
+                ->required(),
+            DatePicker::make('to')
+                ->label(__('To'))
+                ->required(),
+            TextInput::make('sale_percentage')
+                ->label(__('Sale Percentage'))
+                ->numeric()
+                ->suffix('%')
+                ->required(),
+        ])
+        ->columns(3),
+]),
+
+// Cancel Policies
+\Filament\Forms\Components\Section::make(__('Cancel Policies'))
+->schema([
+    Repeater::make('cancelPolicies')
+        ->relationship()
+        ->schema([
+            TextInput::make('days')
+                ->label(__('Days'))
+                ->numeric()
+                ->required(),
+            TextInput::make('penalty')
+                ->label(__('Penalty'))
+                ->numeric()
+                ->prefix('EGP')
+                ->required(),
+        ])
+        ->columns(2),
+]),
+
+// Long Term Reservations
+\Filament\Forms\Components\Section::make(__('Long Term Reservations'))
+->schema([
+    Repeater::make('longTermReservations')
+        ->relationship()
+        ->schema([
+            TextInput::make('more_than_days')
+                ->label(__('More Than (Days)'))
+                ->numeric()
+                ->required(),
+            TextInput::make('sale_percentage')
+                ->label(__('Sale Percentage'))
+                ->numeric()
+                ->suffix('%')
+                ->required(),
+        ])
+        ->columns(2),
+]),
+
+// Special Reservation Times
+\Filament\Forms\Components\Section::make(__('Special Reservation Times'))
+->schema([
+    Repeater::make('specialReservationTimes')
+        ->relationship()
+        ->schema([
+            DatePicker::make('from')
+                ->label(__('From'))
+                ->required(),
+            DatePicker::make('to')
+                ->label(__('To'))
+                ->required(),
+            TextInput::make('price')
+                ->label(__('Price'))
+                ->numeric()
+                ->prefix('EGP')
+                ->required(),
+            TextInput::make('min_reservation_period')
+                ->label(__('Min Reservation Period'))
+                ->numeric()
+                ->required(),
+        ])
+        ->columns(4),
+]),
+
+// Rooms
+\Filament\Forms\Components\Section::make(__('Rooms'))
+->schema([
+    Repeater::make('rooms')
+        ->relationship()
+        ->schema([
+            TextInput::make('bed_count')
+                ->label(__('Bed Count'))
+                ->numeric()
+                ->required(),
+            Select::make('bed_sizes')
+                ->label(__('Bed Sizes'))
+                ->multiple()
+                ->options([
+                    'single' => __('Single'),
+                    'double' => __('Double'),
+                    'queen' => __('Queen'),
+                    'king' => __('King'),
+                ])
+                ->required(),
+        ])
+        ->columns(2),
+]),
+    
+                // Amenities
+                \Filament\Forms\Components\Section::make(__('Amenities'))
+                    ->schema([
+                        Select::make('amenities')
+                            ->label(__('Amenities'))
+                            ->multiple()
+                            ->relationship('amenities', 'name')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label(__('Amenity Name'))
+                                    ->required(),
+                            ]),
+                    ]),
             ]);
     }
 
