@@ -12,13 +12,15 @@ trait PushNotificationTrait
     public function pushNotification($title, $body, $user_id = null, $type = null, $ref_id = null,$data = null)
     {
         // Create a new notification record
-        $CreateNotification = AppNotification::create([
-            "user_id" => $user_id,
-            "title" => $title,
-            "body" => $body,
-            'type' => $type,
-            'ref_id' => $ref_id,
-        ]);
+        if($user_id){
+            $CreateNotification = AppNotification::create([
+                "user_id" => $user_id,
+                "title" => $title,
+                "body" => $body,
+                'type' => $type,
+                'ref_id' => $ref_id,
+            ]);
+        }
         $notificationObj = [
             "title"=> $title,
             "body" => $body
