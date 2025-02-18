@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\AvailableDate;
 use App\Models\Profit;
+use App\Models\Promocode;
 use App\Models\Reservation;
 use App\Models\ReservationId;
 use App\Models\Transaction;
@@ -26,6 +27,8 @@ class ReservationController extends Controller
             "unit_id" => "required|exists:units,id",
             "date_from" => "required|date",
             "date_to" => "required|date|after_or_equal:date_from",
+            "promocode" => "nullable|exists:promocodes,promocode",
+
         ]);
 
         // Get Unit
@@ -143,16 +146,27 @@ class ReservationController extends Controller
         }
             
         // If no profit entry is found, set the profit amount to 0
-        $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
-        $price *= $daysCount;
+        $totalPrice = $price * $daysCount;
+        if ($request->promocode){
+            $promocode = Promocode::where('promocode', $request->promocode)->first();
+            if ($promocode->percentage > 0) {
+                $totalPrice -= ($totalPrice * $promocode->percentage) / 100;
+            } elseif($promocode->amount_total > 0) {
+                $totalPrice -= $promocode->amount_total;
+            } elseif($promocode->amount_night > 0) {
+                $price -= $promocode->amount_night;
+                $totalPrice = $price * $daysCount;
+            }
+        }
+        $appProfitAmount = $appProfit ? ($totalPrice * ($appProfit->percentage / 100)) : 0;
         // Deposit Calculation
-        $bookAdvance = ($price * $unit->deposit) / 100;
+        $bookAdvance = ($totalPrice * $unit->deposit) / 100;
         return response()->json([
             "success" => true,
             "message" => "تم حساب السعر بنجاح",
             "price" => $price,
             "book_advance" => $bookAdvance,
-            "owner_profit" => $price - $appProfitAmount,
+            "owner_profit" => $totalPrice - $appProfitAmount,
             "app_profit" => $appProfitAmount,
         ]);
     } catch (\Exception $e) {
@@ -175,6 +189,7 @@ class ReservationController extends Controller
                 "date_to" => "required|date",
                 "adults_count" => "required|integer|min:1",
                 "children_count" => "nullable|integer|min:0",
+                "promocode" => "nullable|exists:promocodes,promocode",
                 "ids.*" => "nullable|image|max:10284"
             ]);
             $user = $request->user();
@@ -281,7 +296,7 @@ class ReservationController extends Controller
                 $saleAmount = ($price * $salePercentage) / 100;
                 $price -= $saleAmount;
             }
-            
+
             //App Profit
             $appProfit = Profit::where("type", $unit->type)
             ->where("from", "<=", $price)
@@ -297,10 +312,21 @@ class ReservationController extends Controller
                     ->first();
             }
                 
-                // If no profit entry is found, set the profit amount to 0
-            $appProfitAmount = $appProfit ? ($price * ($appProfit->percentage / 100)) : 0;
-            $price *= $daysCount;
-            $bookAdvance = ($price * $unit->deposit) / 100;
+             // If no profit entry is found, set the profit amount to 0
+             $totalPrice = $price * $daysCount;
+             if ($request->promocode){
+                $promocode = Promocode::where('promocode', $request->promocode)->first();
+                if ($promocode->percentage > 0) {
+                    $totalPrice -= ($totalPrice * $promocode->percentage) / 100;
+                } elseif($promocode->amount_total > 0) {
+                    $totalPrice -= $promocode->amount_total;
+                } elseif($promocode->amount_night > 0) {
+                    $price -= $promocode->amount_night;
+                    $totalPrice = $price * $daysCount;
+                }
+            }
+            $appProfitAmount = $appProfit ? ($totalPrice * ($appProfit->percentage / 100)) : 0;
+            $bookAdvance = ($totalPrice * $unit->deposit) / 100;
 
             $reservation = Reservation::create([
                 "user_id" => $user->id,
@@ -310,8 +336,8 @@ class ReservationController extends Controller
                 "adults_count" => $request->adults_count,
                 "children_count" => $request->children_count ?? null,
                 "book_advance" => $bookAdvance,
-                "booking_price" => $price,
-                "owner_profit" => $price - $appProfitAmount,
+                "booking_price" => $totalPrice,
+                "owner_profit" => $totalPrice - $appProfitAmount,
                 "app_profit" => $appProfitAmount,
                 "status" => $status,
             ]);
