@@ -126,17 +126,7 @@ class WithdrawResource extends Resource
                             $userId = $record->user->id;
 
                             // Use the PushNotificationTrait
-                            $notificationObj = [
-                                "title" => $title,
-                                "body" => $body
-                            ];
-                            $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
-
-                            $pusher->trigger(
-                                "channel_" . $userId,
-                                "notification",
-                                $notificationObj
-                            );
+                            app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
                         });
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
@@ -160,17 +150,7 @@ class WithdrawResource extends Resource
                         $transaction->status = 'failed';
                         $transaction->save();
                         // Use the PushNotificationTrait
-                        $notificationObj = [
-                            "title" => $title,
-                            "body" => $body
-                        ];
-                        $pusher = new Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), ['cluster' => env('PUSHER_APP_CLUSTER')]);
-
-                        $pusher->trigger(
-                            "channel_" . $userId,
-                            "notification",
-                            $notificationObj
-                        );
+                        app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
             ])
