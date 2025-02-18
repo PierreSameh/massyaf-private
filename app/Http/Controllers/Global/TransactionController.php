@@ -12,12 +12,13 @@ class TransactionController extends Controller
         $user = auth()->user();
         $sentTransactions = Transaction::where("sender_id", $user->id)->get();
         $receivedTransactions = Transaction::where("receiver_id", $user->id)->get();
-
+        $tansactions = array_merge($sentTransactions->toArray(), $receivedTransactions->toArray());
         return response()->json([
             "success" => true,
             'data'=> [
-                'sent_transactions'=> $sentTransactions,
-                'received_transactions'=> $receivedTransactions
+                // 'sent_transactions'=> $sentTransactions,
+                // 'received_transactions'=> $receivedTransactions,
+                'transactions'=> $tansactions
             ]
         ], 200);
     }
