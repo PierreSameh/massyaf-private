@@ -376,19 +376,26 @@ class UnitController extends Controller
             ]);
 
             // Update amenities
-            if (isset($unitData['amenities'])) {
-                $validAmenities = Amenitie::whereIn('id', $unitData['amenities'])->pluck('id')->toArray();
-                $invalidAmenities = array_diff($unitData['amenities'], $validAmenities);
-
+            if (isset($unitData['amenities']) || isset($unitData['reception']) || isset($unitData['kitchen'])) {
+                $allAmenities = array_merge(
+                    $unitData['amenities'] ?? [],
+                    $unitData['reception'] ?? [],
+                    $unitData['kitchen'] ?? []
+                );
+            
+                $validAmenities = Amenitie::whereIn('id', $allAmenities)->pluck('id')->toArray();
+                $invalidAmenities = array_diff($allAmenities, $validAmenities);
+            
                 if (!empty($invalidAmenities)) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Some amenities are invalid: ' . implode(', ', $invalidAmenities),
                     ], 400);
                 }
-
+            
                 $unit->amenities()->sync($validAmenities);
             }
+            
 
             // Update rooms
             if (isset($unitData['rooms'])) {
