@@ -505,6 +505,14 @@ class ReservationController extends Controller
                 $owner->id,
             );
 
+            $transaction = Transaction::create([
+                "sender_id" => $owner->id,
+                "receiver_id" => $user->id,
+                "amount" => $reservation->book_advance - $penaltyAmount,
+                "status" => "completed",
+                "type" => "cancel_booking",
+                "created_at" => now()
+            ]);
             //transaction and notification
             } else {
                 $user->balance += $reservation->book_advance;
@@ -526,6 +534,14 @@ class ReservationController extends Controller
                     $owner->id,
                 );
 
+                $transaction = Transaction::create([
+                    "sender_id" => $owner->id,
+                    "receiver_id" => $user->id,
+                    "amount" => $reservation->book_advance,
+                    "status" => "completed",
+                    "type" => "cancel_booking",
+                    "created_at" => now()
+                ]);
                 //transaction and notification
             }
         }   

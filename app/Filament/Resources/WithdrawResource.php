@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WithdrawResource\Pages;
 use App\Filament\Resources\WithdrawResource\RelationManagers;
+use App\Models\Transaction;
 use App\Models\Withdraw;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -114,14 +115,17 @@ class WithdrawResource extends Resource
                 
                             $user->balance -= $withdrawalAmount;
                             $user->save();
-                
+
+                            $transaction = Transaction::find($record->transaction_id);
+                            $transaction->status = 'completed';
+                            $transaction->save();
                             // Send notification to the user
                             $title = __('Withdrawal Approved');
                             $body = __('Your withdrawal request has been approved. The amount has been deducted from your balance.');
                             $userId = $record->user->id;
                 
                             // Use the PushNotificationTrait
-                            // app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
+                            app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
                         });
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
@@ -141,9 +145,11 @@ class WithdrawResource extends Resource
                         $title = __('Withdrawal Rejected');
                         $body = __('Your withdrawal request has been rejected.');
                         $userId = $record->user->id;
-    
+                        $transaction = Transaction::find($record->transaction_id);
+                        $transaction->status = 'failed';
+                        $transaction->save();
                         // Use the PushNotificationTrait
-                        // app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
+                        app(PushNotificationTrait::class)->pushNotification($title, $body, $userId);
                     })
                     ->requiresConfirmation(), // Add confirmation dialog
             ])

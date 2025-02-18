@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Services\CodeGeneratorService;
 use App\Traits\PushNotificationTrait;
@@ -81,10 +82,19 @@ class ReservationController extends Controller
         //Take the book advance from the owner
         $user->balance -= $reservation->book_advance;
         $user->save();
+
         //Return money to customer
         $customer = User::where('id', $reservation->user_id)->first();
         $customer->balance += $reservation->book_advance;
         $customer->save();
+        $transaction = Transaction::create([
+            "sender_id" => $user->id,
+            "receiver_id" => $customer->id,
+            "amount" => $reservation->book_advance,
+            "status" => "completed",
+            "type" => "cancel_booking",
+            "created_at" => now()
+        ]);
 
         // notify customer
         $this->pushNotification(
