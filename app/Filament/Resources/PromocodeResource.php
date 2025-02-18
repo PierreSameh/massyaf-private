@@ -21,8 +21,19 @@ class PromocodeResource extends Resource
 {
     protected static ?string $model = Promocode::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Financial');
+    }
 
+    public static function getLabel(): ?string
+    {
+        return __('Promocode');  // Translation function works here
+    }
+    public static function getPluralLabel(): ?string
+    {
+        return __('Promocodes');  // For plural label translations
+    }
     public static function form(Form $form): Form
     {
         return $form

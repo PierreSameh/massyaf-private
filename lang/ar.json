@@ -190,5 +190,13 @@
     "Reservation Policies (English)": "سياسات الحجز (إنجليزي)",
     "Reservation Policies (Arabic)": "سياسات الحجز (عربي)",
     "Add Booked Times": "اضافة الاوقات المحجوزة",
-    "Add ": "إضافة"
+    "Add ": "إضافة",
+    "Promocode": "الرمز الترويجي",
+    "Promocodes": "الرموز الترويجية",
+    "Percentage": "نسبة الخصم",
+    "Amount Total": "القيمة الاجمالية",
+    "Amount Per Night": "القيمة لليلة",
+    "Expired At": "تاريخ الانتهاء",
+    "Active": "نشط"
+
 }
