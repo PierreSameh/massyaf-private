@@ -25,7 +25,7 @@ class ReservationController extends Controller
         $reservations = Reservation::whereRelation("unit", "owner_id", "=", $user->id)
             ->with('unit.images', 'unit.rooms')
             ->whereNotIn('status', ['canceled_user', 'canceled_owner'])
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -103,11 +103,12 @@ class ReservationController extends Controller
     }
     public function accept($id)
     {
+        try{
         $user = auth()->user();
         $reservation = Reservation::where('id', $id)
             ->where('status', 'pending')
             ->whereRelation("unit", "owner_id", "=", $user->id)
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->first();
         if (!$reservation) {
             return response()->json([
@@ -117,10 +118,28 @@ class ReservationController extends Controller
         }
         $reservation->status = "accepted";
         $reservation->save();
+        $unit = $reservation->unit; // Ensure the Reservation model has a `unit` relationship
+        $customer = User::where('id', $reservation->user_id)->first();
+
+        $this->pushNotification(
+            'تم قبول الحجز',
+            "تم قبول الحجز {$unit->name} من فضلك اكمل عملية الدفع",
+            $customer->id,
+            "accept_reservation",
+            $reservation->id
+        );
+
         return response()->json([
             "success" => true,
             "message" => "تم قبول الحجز بنجاح"
         ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            "success" => false,
+            "message" => "حدث خطأ في الخادم",
+            "error" => $e->getMessage()
+        ], 500);
+    }
     }
     public function approve($id)
     {
@@ -128,7 +147,7 @@ class ReservationController extends Controller
         $reservation = Reservation::with('user', 'unit')->where('id', $id)
             ->where('status', 'accepted')
             ->whereRelation("unit", "owner_id", "=", $user->id)
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->first();
         if (!$reservation) {
             return response()->json([

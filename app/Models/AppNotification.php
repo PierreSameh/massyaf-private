@@ -11,6 +11,8 @@ class AppNotification extends Model
         'title',
         'body',
         'read',
+        'type',
+        'ref_id',
     ];
 
     public function user()

@@ -15,7 +15,7 @@ class ReservationFilterController extends Controller
         $reservations = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->where('status', 'pending')
             ->with('unit.images', 'unit.rooms')
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -32,7 +32,7 @@ class ReservationFilterController extends Controller
         $reservations = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->where('status', 'accepted')
             ->with('unit.images', 'unit.rooms')
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -50,7 +50,7 @@ class ReservationFilterController extends Controller
         $reservations = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->where('status', 'approved')
             ->with('unit.images', 'unit.rooms')
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -67,7 +67,7 @@ class ReservationFilterController extends Controller
         $reservations = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->whereIn('status', ['canceled_user', 'canceled_owner'])
             ->with('unit.images', 'unit.rooms')
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->latest()
             ->get();
 
@@ -84,7 +84,7 @@ class ReservationFilterController extends Controller
         $user = auth()->user();
         $newRequests = Reservation::whereRelation("unit","owner_id","=", $user->id)
             ->where('status', 'pending')
-            ->where('paid', 1)
+            // ->where('paid', 1)
             ->count();
         $units = Unit::where('owner_id', $user->id)->count();
         $totalProfits = Reservation::whereRelation("unit","owner_id","=", $user->id)

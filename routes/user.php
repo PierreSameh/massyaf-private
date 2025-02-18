@@ -29,6 +29,7 @@ Route::prefix('user')->group(function () {
         Route::prefix("reservations")->group(function () {
             Route::get('/price/calculate', [ReservationController::class, 'calculatePrice']);
             Route::post('/create', [ReservationController::class, 'reserve']);
+            Route::post('/upload-ids', [ReservationController::class, 'uploadIds']);
             Route::get('/all', [ReservationController::class, 'getAll']);
             Route::get('/{id}', [ReservationController::class,'get']);
             Route::put('/{id}', [ReservationController::class,'cancel']);

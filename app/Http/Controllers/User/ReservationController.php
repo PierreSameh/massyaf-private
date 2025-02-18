@@ -13,7 +13,7 @@ use App\Traits\PayTabsPayment;
 use App\Traits\PushNotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class ReservationController extends Controller
 {
     use PushNotificationTrait, PayTabsPayment;
@@ -163,7 +163,7 @@ class ReservationController extends Controller
                 "date_to" => "required|date",
                 "adults_count" => "required|integer|min:1",
                 "children_count" => "nullable|integer|min:0",
-                "ids.*" => "required|image|max:10284"
+                "ids.*" => "nullable|image|max:10284"
             ]);
             $user = $request->user();
             // Get Unit
@@ -314,12 +314,23 @@ class ReservationController extends Controller
             //Update Reservation transaction id
             $reservation->transaction_id = $transaction->id;
             $reservation->save();
+
+            if($unit->reservation_type == "direct"){
+                $paymentUrl = $this->createPayTabsPayment($transaction->amount, $transaction->id);
+            } else {
+            $this->pushNotification(
+                'تم حجز الوحدة',
+                "تم حجز الوحدة من فضلك ارفق اثباتات الهوية",
+                $user->id,
+                "upload_ids",
+                $reservation->id
+            );
+            }
             //Payment Process
-            $paymentUrl = $this->createPayTabsPayment($transaction->amount, $transaction->id);
             return response()->json([
                 "success" => true,
                 "message" => "تم الحجز بنجاح",
-                "payment_url" => $paymentUrl['data']['redirect_url'],
+                "payment_url" => $paymentUrl['data']['redirect_url'] ?? null,
                 "reservation" => $reservation,
             ]);
         } catch (\Exception $e) {
@@ -329,6 +340,45 @@ class ReservationController extends Controller
                 "error" => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function uploadIds(Request $request){
+        try{
+        $validator = Validator::make($request->all(), [
+            "ids.*" => "required|image|max:10284",
+            "reservation_id" => "required|exists:reservations,id"
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                "success" => false,
+                "message" => $validator->errors()->first()
+            ], 422);
+        }
+
+        $reservation = Reservation::find($request->reservation_id);
+        foreach ($request->file('ids') as $image) {
+            // Save each image
+            $path = $image->store('reservation_ids', 'public'); // Store in 'storage/app/public/reservation_ids'
+
+            // Save the path in the database
+            ReservationId::create([
+                "reservation_id" => $reservation->id,
+                "path" => $path
+            ]);
+        }
+        return response()->json([
+            "success" => true,
+            "message" => "تم رفع اثباتات الهوية بنجاح"
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            "success" => false,
+            "message" => "حدث خطاء في الخادم",
+            "error" => $e->getMessage()
+        ], 500);
+    }
     }
 
     public function getAll()
