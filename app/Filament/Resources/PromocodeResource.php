@@ -63,8 +63,13 @@ class PromocodeResource extends Resource
                     ->label(__('Percentage'))
                     ->suffix('%')
                     ->numeric()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->extraInputAttributes(['oninput' => 'this.value = this.value.replace(/[^0-9]/g, "");'])
                     ->default(null)
                     ->live(onBlur: true)
+                    ->required(fn (Get $get): bool => 
+                    !filled($get('amount_total')) && !filled($get('amount_night')))
                     ->disabled(fn (Get $get): bool => 
                         filled($get('amount_total')) || filled($get('amount_night'))
                     )
@@ -74,12 +79,16 @@ class PromocodeResource extends Resource
                             $set('amount_night', null);
                         }
                     }),
-                Forms\Components\TextInput::make('amount_total')
+                    Forms\Components\TextInput::make('amount_total')
                     ->label(__('Amount Total'))
                     ->suffix(__('EGP'))
                     ->numeric()
+                    ->extraInputAttributes(['oninput' => 'this.value = this.value.replace(/[^0-9]/g, "");'])
                     ->default(null)
                     ->live(onBlur: true)
+                    ->required(fn (Get $get): bool => 
+                    !filled($get('percentage')) && !filled($get('amount_night'))
+                    )
                     ->disabled(fn (Get $get): bool => 
                         filled($get('percentage')) || filled($get('amount_night'))
                     )
@@ -89,12 +98,15 @@ class PromocodeResource extends Resource
                             $set('amount_night', null);
                         }
                     }),
-                Forms\Components\TextInput::make('amount_night')
+                    Forms\Components\TextInput::make('amount_night')
                     ->label(__('Amount Per Night'))
                     ->suffix(__('EGP'))
                     ->numeric()
+                    ->extraInputAttributes(['oninput' => 'this.value = this.value.replace(/[^0-9]/g, "");'])
                     ->default(null)
                     ->live(onBlur: true)
+                    ->required(fn (Get $get): bool => 
+                    !filled($get('percentage')) && !filled($get('amount_total')))
                     ->disabled(fn (Get $get): bool => 
                         filled($get('percentage')) || filled($get('amount_total'))
                     )
@@ -104,8 +116,10 @@ class PromocodeResource extends Resource
                             $set('amount_total', null);
                         }
                     }),
-                Forms\Components\DateTimePicker::make('expired_at')
+                    Forms\Components\DateTimePicker::make('expired_at')
                     ->label(__('Expired At'))
+                    ->displayFormat('d/m/Y')
+                    ->minDate(now()) // Ensure the date is not before today
                     ->required(),
                 Forms\Components\Toggle::make('active')
                     ->label(__('Active'))
@@ -119,26 +133,32 @@ class PromocodeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('promocode')
+                    ->label(__('Promocode'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('percentage')
+                    ->label(__('Percentage'))
                     ->numeric()
+                    ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount_total')
+                    ->label(__('Amount Total'))
+                    ->suffix(__('EGP'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount_night')
+                    ->label(__('Amount Per Night'))
+                    ->suffix(__('EGP'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expired_at')
+                    ->label(__('Expired At'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('active')
+                    ->label(__('Active'))
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__("Creation Date"))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
