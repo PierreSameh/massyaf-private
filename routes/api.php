@@ -10,11 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\Auth\AuthController;
 use App\Http\Controllers\Global\ProfileController;
-use App\Http\Controllers\api\Auth\PhoneVerifyController;
-use App\Http\Controllers\Api\Auth\password\ResetPasswordController;
-use App\Http\Controllers\Api\Auth\password\ForgetPasswordController;
-use App\Http\Controllers\Chat\Owner\LiveChatOwnerController;
-use App\Http\Controllers\Chat\User\LiveChatUserController;
 use App\Http\Controllers\Global\ChatController;
 
 Route::post('/account/register', [AuthController::class, 'register']);
