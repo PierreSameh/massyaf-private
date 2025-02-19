@@ -10,40 +10,33 @@ use App\Services\IcalImportService;
 class IcalController extends Controller
 {
 
-public function exportIcal($unitId)
-{
-    try{
-    $icalContent = (new IcalExportService())->exportForUnit($unitId);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'iCal data exported successfully.',
-        'data' => [
-            'ical' => $icalContent,
-        ],
-    ]);
-    }catch(\Exception $e){
-        return response()->json([
-            "success" => false,
-            "message" => $e->getMessage()
-        ], 500);
-    }
-}
-
-public function importIcal(Request $request, $unitId)
+    public function exportIcal($unitId)
     {
-        // Validate the request
+        try {
+            $filePath = (new IcalExportService())->exportForUnit($unitId);
+            dd(storage_path("app/{$filePath}"));
+            return response()->download(storage_path("public/app/{$filePath}"), "unit_{$unitId}.ics");
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
+    public function importIcal(Request $request, $unitId)
+    {
         $request->validate([
-            'ical' => 'required|string',
+            'ical_file' => 'required|file|mimes:ics',
         ]);
-
-        // Get the iCal content from the request
-        $icalContent = $request->input('ical');
-
-        // Import the iCal data
-        $importedEvents = (new IcalImportService())->importIcal($icalContent, $unitId);
-
-        // Return the results as JSON
+    
+        // Store uploaded file
+        $filePath = $request->file('ical_file')->store('icals');
+    
+        // Import from the stored file
+        $importedEvents = (new IcalImportService())->importIcal($filePath, $unitId);
+    
         return response()->json([
             'success' => true,
             'message' => 'iCal data imported successfully.',
@@ -52,4 +45,5 @@ public function importIcal(Request $request, $unitId)
             ],
         ]);
     }
+    
 }

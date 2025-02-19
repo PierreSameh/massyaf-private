@@ -6,40 +6,45 @@ use App\Models\AvailableDate;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class IcalExportService
 {
     /**
-     * Export booked dates to an iCal file.
+     * Export booked dates to an iCal (.ics) file.
      *
      * @param int $unitId
      * @return string
      */
     public function exportForUnit($unitId)
     {
-        // Fetch booked dates for the specific unit
+        // Create icals directory if it doesn't exist
+        Storage::disk('public')->makeDirectory('icals');
+    
+        // Rest of your existing code...
         $bookedDates = AvailableDate::where('unit_id', $unitId)->get();
-
-        // Create a new calendar
         $calendar = Calendar::create('Booked Dates for Unit ' . $unitId);
-
+    
         foreach ($bookedDates as $date) {
-            // Convert `from` and `to` to DateTime objects
             $from = Carbon::parse($date->from);
             $to = Carbon::parse($date->to);
-
-            // Create an event for each booked date
+    
             $event = Event::create()
                 ->name('Booked Date for Unit ' . $unitId)
-                ->startsAt($from) // Pass DateTime object
-                ->endsAt($to) // Pass DateTime object
+                ->startsAt($from)
+                ->endsAt($to)
                 ->description('This date is booked for the unit.');
-
-            // Add the event to the calendar
+    
             $calendar->event($event);
         }
-
-        // Generate the iCal content
-        return $calendar->get();
+    
+        $icalContent = $calendar->get();
+        $filePath = "icals/" . now()->format('Y-m-d') . "unit_{$unitId}.ics";
+        Storage::disk('public')->put($filePath, $icalContent);
+        
+        \Log::info('File written to ' . $filePath);
+        \Log::info('File exists: ' . (Storage::disk('public')->exists($filePath) ? 'yes' : 'no'));
+    
+        return $filePath;
     }
 }
