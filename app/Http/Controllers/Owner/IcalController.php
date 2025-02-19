@@ -14,8 +14,8 @@ class IcalController extends Controller
     {
         try {
             $filePath = (new IcalExportService())->exportForUnit($unitId);
-            dd(storage_path("app/{$filePath}"));
-            return response()->download(storage_path("public/app/{$filePath}"), "unit_{$unitId}.ics");
+            // return response()->download(storage_path("public/app/{$filePath}"), "unit_{$unitId}.ics");
+            return response()->download(public_path("storage/" . $filePath), "unit_{$unitId}.ics");
         } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
