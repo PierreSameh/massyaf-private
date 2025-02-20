@@ -438,6 +438,7 @@ class ReservationController extends Controller
         $reservations = Reservation::where('user_id', $user->id)
             ->with('unit.images')
             // ->where('paid', 1)
+            ->latest()
             ->get();
 
         return response()->json([
