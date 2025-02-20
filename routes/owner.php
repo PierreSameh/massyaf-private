@@ -38,7 +38,7 @@ Route::prefix('owner')->group(function () {
             Route::post('/{id}', [UnitController::class, 'update']);
             Route::get('/{id}', [UnitController::class, 'get']);
             Route::delete('/{id}', [UnitController::class, 'destroy']);
-            
+            Route::post('/{id}/add-unavailable-dates', [UnitController::class, 'addUnavailableDates']);
             // Export iCal
             Route::get('/{unitId}/export-ical', [IcalController::class, 'exportIcal']);
 

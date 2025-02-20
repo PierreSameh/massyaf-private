@@ -527,6 +527,45 @@ class UnitController extends Controller
             ], 500);
         }
     }
+
+    public function addUnavailableDates(Request $request, $unitId){
+        try{
+            $validated = $request->validate([
+                'unavailable_dates' => 'required|array',
+                'unavailable_dates.*.from' => ['required', 'date'],
+                'unavailable_dates.*.to' => ['required', 'date', 'after_or_equal:available_dates.*.from'],
+            ]);
+
+            $owner = auth()->user();
+            $unit = Unit::find($unitId);
+            if(!$unit){
+                return response()->json([
+                    "success" => false,
+                    "message" => "Unit not found"
+                ], 404);
+            }
+            if($unit->owner_id != $owner->id){
+                return response()->json([
+                    "success" => false,
+                    "message" => "You are not the owner of this unit"
+                ], 401);
+            }
+
+            $unit->availableDates()->createMany($validated['unavailable_dates']);
+
+            return response()->json([
+                "success" => true,
+                "message" => "Unavailable dates added successfully"
+            ], 200);
+        } catch(\Exception $e){
+            return response()->json([
+                "success" => false,
+                "message" => "حدث خطأ في الخادم",
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy($id)
     {
         try {
