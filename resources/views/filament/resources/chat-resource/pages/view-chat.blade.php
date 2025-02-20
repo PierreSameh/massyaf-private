@@ -13,7 +13,7 @@
         <!-- Chat Messages -->
         <div class="space-y-4">
             @foreach ($messages as $message)
-                <div class="flex {{ $message->sender_type === 'user' ? 'justify-end' : 'justify-start' }}">
+                <div class="flex {{ $message->sender_id === $record->user1->id ? 'justify-end' : 'justify-start' }}">
                     <div class="max-w-md p-4 rounded-lg shadow
                         {{ $message->sender_type === 'user' ? 'bg-blue-100 dark:bg-blue-900' : 'bg-gray-100 dark:bg-gray-700' }}">
                         <!-- Sender Information -->
