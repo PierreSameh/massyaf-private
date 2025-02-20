@@ -18,7 +18,7 @@
                         {{ $message->sender_type === 'user' ? 'bg-blue-100 dark:bg-blue-900' : 'bg-gray-100 dark:bg-gray-700' }}">
                         <!-- Sender Information -->
                         <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                            @if ($message->sender_id === ($record->user1->id ?? __("User 1"))
+                            @if ($message->sender_id === ($record->user1->id ?? __("User 1")))
                                 {{ $record->user1->name ?? __('User 1') }} ({{ __("ID") }}: {{ $record->user1->id ?? __('User 1') }}) - {{ __("User 1") }}
                             @else
                                 {{ $record->user2->name ?? __('User 2') }} ({{ __("ID") }}: {{ $record->user2->id ?? __('User 2') }}) - {{ __("User 2") }}
