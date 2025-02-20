@@ -40,8 +40,8 @@ class ViewChat extends Page
             ->schema([
                 Section::make('Chat Details')
                     ->schema([
-                        TextEntry::make('user.name')->label('User'),
-                        TextEntry::make('owner.name')->label('Owner'),
+                        TextEntry::make('user1.name')->label('User 1'),
+                        TextEntry::make('user2.name')->label('User 2'),
                         TextEntry::make('created_at')->label('Created At')->dateTime(),
                     ])
                     ->columns(2),
@@ -52,7 +52,7 @@ class ViewChat extends Page
     {
         // Load the chat messages with the sender information
         $messages = $this->record->messages()
-            ->with(['chat.user', 'chat.owner'])
+            ->with(['chat.user1', 'chat.user2'])
             ->orderBy('created_at', 'asc')
             ->get();
 

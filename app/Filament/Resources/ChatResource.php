@@ -44,8 +44,8 @@ class ChatResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->label(__('ID'))->sortable()->searchable(),
-                TextColumn::make('user.name')->label(__('User'))->searchable(),
-                TextColumn::make('owner.name')->label(__('Owner'))->searchable(),
+                TextColumn::make('user1.name')->label(__('User 1'))->searchable(),
+                TextColumn::make('user2.name')->label(__('User 2'))->searchable(),
                 TextColumn::make('messages_count')
                     ->label(__('Messages'))
                     ->counts('messages'),

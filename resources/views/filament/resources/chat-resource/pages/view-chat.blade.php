@@ -3,7 +3,10 @@
         <!-- Chat Header -->
         <div class="bg-white dark:bg-gray-800 p-4 shadow rounded-lg">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {{__("Chat between")}} {{ $record->user->name }} ({{__("User ID")}}: {{ $record->user->id }})  {{__("and")}} {{ $record->owner->name }} ({{__("Owner ID")}}: {{ $record->owner->id }})
+                {{ __("Chat between") }} 
+                {{ $record->user1->name ?? __('User 1') }} ({{ __("ID") }}: {{ $record->user1->id ?? __('User 1') }})  
+                {{ __("and") }} 
+                {{ $record->user2->name ?? __('User 2') }} ({{ __("ID") }}: {{ $record->user2->id ?? __('User 2') }})
             </h2>
         </div>
 
@@ -16,9 +19,9 @@
                         <!-- Sender Information -->
                         <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
                             @if ($message->sender_type === 'user')
-                                {{ $record->user->name }} ({{__("User ID")}}: {{ $record->user->id }})
+                                {{ $record->user1->name ?? __('User 1') }} ({{ __("ID") }}: {{ $record->user1->id ?? __('User 1') }}) - {{ __("User") }}
                             @else
-                                {{ $record->owner->name }} ({{__("Owner ID")}}: {{ $record->owner->id }})
+                                {{ $record->user2->name ?? __('User 2') }} ({{ __("ID") }}: {{ $record->user2->id ?? __('User 2') }}) - {{ __("Owner") }}
                             @endif
                         </p>
 
