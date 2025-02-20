@@ -143,19 +143,21 @@ class UnitController extends Controller
         return response()->json($unitData);
     }
 
-    public function calculateAppProfit(Request $request){
-        try{
+    public function calculateAppProfit(Request $request)
+    {
+        try {
             $request->validate([
                 "price" => "required|numeric",
                 "unit_type" => "required|in:unit,hotel"
             ]);
 
             $appProfit = Profit::where("type", $request->type)
-            ->where("from", "<=", $request->price)
-            ->where("to", ">=", $request->price)
-            ->latest()
-            ->first();
+                ->where("from", "<=", $request->price)
+                ->where("to", ">=", $request->price)
+                ->latest()
+                ->first();
 
+            return $appProfit;
 
             if (!$appProfit) {
                 // Try to get the nearest lower range
@@ -170,7 +172,7 @@ class UnitController extends Controller
                 "success" => true,
                 "app_profit" => $appProfitAmount
             ], 200);
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => "حدث خطأ في الخادم",
@@ -190,10 +192,10 @@ class UnitController extends Controller
             //generate unique code for units
             $parentId = $unitData['compound_id'] ?: $unitData['hotel_id'];
             $code = $this->codeGeneratorService->unit(
-            $unitData['type'],
-             $parentId,
-             $unitData['room_count'] ?: null,
-             $unitData['floors_count'] ?: null
+                $unitData['type'],
+                $parentId,
+                $unitData['room_count'] ?: null,
+                $unitData['floors_count'] ?: null
             );
 
             // Create the unit
@@ -419,20 +421,20 @@ class UnitController extends Controller
                     $unitData['reception'] ?? [],
                     $unitData['kitchen'] ?? []
                 );
-            
+
                 $validAmenities = Amenitie::whereIn('id', $allAmenities)->pluck('id')->toArray();
                 $invalidAmenities = array_diff($allAmenities, $validAmenities);
-            
+
                 if (!empty($invalidAmenities)) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Some amenities are invalid: ' . implode(', ', $invalidAmenities),
                     ], 400);
                 }
-            
+
                 $unit->amenities()->sync($validAmenities);
             }
-            
+
 
             // Update rooms
             if (isset($unitData['rooms'])) {
@@ -565,8 +567,9 @@ class UnitController extends Controller
         }
     }
 
-    public function addUnavailableDates(Request $request, $unitId){
-        try{
+    public function addUnavailableDates(Request $request, $unitId)
+    {
+        try {
             $validated = $request->validate([
                 'unavailable_dates' => 'required|array',
                 'unavailable_dates.*.from' => ['required', 'date'],
@@ -575,13 +578,13 @@ class UnitController extends Controller
 
             $owner = auth()->user();
             $unit = Unit::find($unitId);
-            if(!$unit){
+            if (!$unit) {
                 return response()->json([
                     "success" => false,
                     "message" => "Unit not found"
                 ], 404);
             }
-            if($unit->owner_id != $owner->id){
+            if ($unit->owner_id != $owner->id) {
                 return response()->json([
                     "success" => false,
                     "message" => "You are not the owner of this unit"
@@ -594,7 +597,7 @@ class UnitController extends Controller
                 "success" => true,
                 "message" => "Unavailable dates added successfully"
             ], 200);
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => "حدث خطأ في الخادم",
