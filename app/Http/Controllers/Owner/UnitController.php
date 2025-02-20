@@ -9,6 +9,7 @@ use App\Models\Amenitie;
 use App\Models\AvailableDate;
 use App\Models\CancelPoliciy;
 use App\Models\LongTermReservations;
+use App\Models\Profit;
 use App\Models\Room;
 use App\Models\Sale;
 use App\Models\SpecialReservationTimes;
@@ -142,7 +143,41 @@ class UnitController extends Controller
         return response()->json($unitData);
     }
 
+    public function calculateAppProfit(Request $request){
+        try{
+            $request->validate([
+                "price" => "required|numeric",
+                "unit_type" => "required|in:unit,hotel"
+            ]);
 
+            $appProfit = Profit::where("type", $request->type)
+            ->where("from", "<=", $request->price)
+            ->where("to", ">=", $request->price)
+            ->latest()
+            ->first();
+
+
+            if (!$appProfit) {
+                // Try to get the nearest lower range
+                $appProfit = Profit::where("type", $request->type)
+                    ->where("to", "<=", $request->price)
+                    ->latest()
+                    ->first();
+            }
+            $appProfitAmount = $appProfit ? ($request->price * ($appProfit->percentage / 100)) : 0;
+
+            return response()->json([
+                "success" => true,
+                "app_profit" => $appProfitAmount
+            ], 200);
+        } catch(\Exception $e){
+            return response()->json([
+                "success" => false,
+                "message" => "حدث خطأ في الخادم",
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function create(StoreUnitRequest $request)
     {
