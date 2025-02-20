@@ -19,7 +19,7 @@ Route::post('/account/forget-password/check-code', [AuthController::class, 'forg
 Route::post('/account/forget-password/reset', [AuthController::class, 'forgetPassword']);
 
 Route::post('/deposit', [WalletController::class, 'deposit'])->middleware('auth:sanctum');
-Route::get('/callback', [PayTabsController::class, 'handleCallBack']);
+Route::post('/callback', [PayTabsController::class, 'handleCallBack']);
 Route::middleware('auth:sanctum')->group(function () {
     //Ask Code for email validation
     Route::get('account/ask-code', [AuthController::class, 'askCode']);
