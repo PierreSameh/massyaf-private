@@ -138,14 +138,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Wishlist::class);
     }
 
-    public function userChats()
+    public function user1Chats()
     {
-        return $this->hasMany(Chat::class, 'user_id');
+        return $this->hasMany(Chat::class, 'user1_id');
     }
 
-    public function ownerChats()
+    public function user2Chats()
     {
-        return $this->hasMany(Chat::class, 'owner_id');
+        return $this->hasMany(Chat::class, 'iser2_id');
     }
 
     public function reviews()
