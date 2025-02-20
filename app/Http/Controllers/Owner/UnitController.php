@@ -152,7 +152,6 @@ class UnitController extends Controller
             ]);
 
             $appProfit = Profit::where("type", $request->type)
-                ->where("from", "<=", $request->price)
                 ->latest()
                 ->first();
 
