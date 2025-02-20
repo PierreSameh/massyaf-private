@@ -151,15 +151,16 @@ class UnitController extends Controller
                 "unit_type" => "required|in:unit,hotel"
             ]);
 
-            $appProfit = Profit::where("type", $request->type)
+            $appProfit = Profit::where("type", $request->unit_type)
+                ->where("from", "<=", $request->price)
+                ->where("to", ">=", $request->price)
                 ->latest()
                 ->first();
 
-            return $appProfit;
 
             if (!$appProfit) {
                 // Try to get the nearest lower range
-                $appProfit = Profit::where("type", $request->type)
+                $appProfit = Profit::where("type", $request->unit_type)
                     ->where("to", "<=", $request->price)
                     ->latest()
                     ->first();
