@@ -41,6 +41,7 @@ class Unit extends Model
         'insurance_amount',
         'max_individuals',
         'youth_only',
+        'pets_allowed',
         'min_reservation_days',
         'deposit',
         'upon_arival_price',
