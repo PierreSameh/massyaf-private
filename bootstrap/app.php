@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ]);
-        $middleware->append(SetLocale::class);
+        // $middleware->append(SetLocale::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
