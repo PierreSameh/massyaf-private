@@ -19,9 +19,9 @@
                         <!-- Sender Information -->
                         <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">
                             @if ($message->sender_id === $record->user1->id)
-                                {{ $record->user1->name ?? __('User 1') }} ({{ __("ID") }}: {{ $record->user1->id ?? __('User 1') }}) - {{ __("User") }}
+                                {{ $record->user1->name ?? __('User 1') }} ({{ __("ID") }}: {{ $record->user1->id ?? __('User 1') }}) - {{ __("User 1") }}
                             @else
-                                {{ $record->user2->name ?? __('User 2') }} ({{ __("ID") }}: {{ $record->user2->id ?? __('User 2') }}) - {{ __("Owner") }}
+                                {{ $record->user2->name ?? __('User 2') }} ({{ __("ID") }}: {{ $record->user2->id ?? __('User 2') }}) - {{ __("User 2") }}
                             @endif
                         </p>
 
