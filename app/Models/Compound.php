@@ -45,7 +45,7 @@ class Compound extends Model
 
         if ($isApiRequest) {
             foreach ($images as $image) {
-                $json[] = url(Storage::url("app/public/" . $image));
+                $json[] = asset("/storage/" . $image);
             }
         } else {
             foreach ($images as $image) {
