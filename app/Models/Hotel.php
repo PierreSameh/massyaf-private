@@ -45,7 +45,7 @@ class Hotel extends Model
         $isApiRequest = str_contains(request()->path(), 'api');
         if($isApiRequest){
             foreach( $images as $image ){
-               $json[] = url(Storage::url("app/public/" . $image));
+               $json[] = url(Storage::url( $image));
             }
         } else {
             foreach( $images as $image ){
