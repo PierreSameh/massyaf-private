@@ -16,6 +16,6 @@ class ReservationId extends Model
     public function getPathAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? asset("/storage/" . $value) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
 }

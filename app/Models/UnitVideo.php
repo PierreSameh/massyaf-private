@@ -17,6 +17,6 @@ class UnitVideo extends Model
     public function getVideoAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? asset("/storage/" . $value) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
 }

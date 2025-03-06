@@ -51,12 +51,12 @@ class User extends Authenticatable implements FilamentUser
     public function getImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? asset("/storage/" . $value) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
     public function getIdImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? asset("/storage/" . $value) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
     /**
      * The attributes that should be hidden for serialization.
