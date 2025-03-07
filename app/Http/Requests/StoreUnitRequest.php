@@ -18,9 +18,9 @@ class StoreUnitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images.*' => 'nullable|file|image|max:2048',
-            'videos.*' => 'nullable|file|mimetypes:video/mp4,video/avi,video/mpeg|max:10240',
-            
+            'images.*' => 'nullable|file|image',
+            'videos.*' => 'nullable|file',
+
             // Fields for unit type, city, and compound/hotel
             'type' => ['required', 'in:unit,hotel'],
             'name' => ['required', 'string', 'max:255'],
@@ -59,39 +59,39 @@ class StoreUnitRequest extends FormRequest
             'weekend_prices' => ['required', 'in:0,1'],
             'min_weekend_period' => ['nullable', 'integer', 'min:1'],
             'weekend_price' => ['nullable', 'numeric', 'min:0'],
-            
+
             // Rooms validation
             'rooms' => ['nullable', 'array'],
             'rooms.*.bed_count' => ['required', 'integer', 'min:1'],
             'rooms.*.bed_sizes' => ['nullable', 'array'],
             'rooms.*.amenities' => ['nullable', 'array'],
-            
+
             // Available Dates validation
             'available_dates' => ['nullable', 'array'],
             'available_dates.*.from' => ['required', 'date'],
             'available_dates.*.to' => ['required', 'date', 'after_or_equal:available_dates.*.from'],
-            
+
             // Cancel Policies validation
             'cancel_policies' => ['nullable', 'array'],
             'cancel_policies.*.days' => ['required', 'integer', 'min:0'],
             'cancel_policies.*.penalty' => ['required', 'numeric', 'min:0', 'max:100'],
-            
+
             // Additional Fees validation
             'additional_fees' => ['nullable', 'array'],
             'additional_fees.*.fees' => ['required', 'string', 'max:255'],
             'additional_fees.*.amount' => ['required', 'numeric', 'min:0'],
-            
+
             // Long Term Reservations validation
             'long_term_reservations' => ['nullable', 'array'],
             'long_term_reservations.*.more_than_days' => ['required', 'integer', 'min:1'],
             'long_term_reservations.*.sale_percentage' => ['required', 'numeric', 'min:0', 'max:100'],
-            
+
             // Sales validation
             'sales' => ['nullable', 'array'],
             'sales.*.from' => ['required', 'date'],
             'sales.*.to' => ['required', 'date', 'after_or_equal:sales.*.from'],
             'sales.*.sale_percentage' => ['required', 'numeric', 'min:0', 'max:100'],
-            
+
             // Special Reservation Times validation
             'special_reservation_times' => ['nullable', 'array'],
             'special_reservation_times.*.from' => ['required', 'date'],
@@ -100,7 +100,7 @@ class StoreUnitRequest extends FormRequest
             'special_reservation_times.*.min_reservation_period' => ['required', 'integer', 'min:1'],
         ];
     }
-    
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
