@@ -189,7 +189,7 @@ class UnitController extends Controller
             $unitData = $validated;
             $owner = $request->user();
             //generate unique code for units
-            $parentId = isset($unitData['compound_id']) ?: $unitData['hotel_id'];
+            $parentId = isset($unitData['compound_id']) ? $unitData['compound_id'] : $unitData['hotel_id'];
             $code = $this->codeGeneratorService->unit(
                 $unitData['type'],
                 $parentId,
