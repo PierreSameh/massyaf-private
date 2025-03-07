@@ -16,6 +16,6 @@ class UnitImage extends Model
     public function getImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? url(Storage::url("app/public/" . $value)) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
 }

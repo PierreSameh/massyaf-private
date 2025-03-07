@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Sanctum\HasApiTokens; 
+use Laravel\Sanctum\HasApiTokens;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
@@ -47,16 +47,16 @@ class User extends Authenticatable implements FilamentUser
     protected $appends = [
         'units_count',
     ];
-    
+
     public function getImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? url(Storage::url("app/public/" . $value)) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
     public function getIdImageAttribute($value)
     {
         // Assuming the 'picture' column stores the image path
-        return $value ? url(Storage::url("app/public/" . $value)) : null;
+        return $value ? url(Storage::url( $value)) : null;
     }
     /**
      * The attributes that should be hidden for serialization.
@@ -156,7 +156,7 @@ class User extends Authenticatable implements FilamentUser
     public function getUnitsCountAttribute()
 {
     return $this->type === 'owner' ? $this->units()->count() : null;
-}   
+}
 
     public function appNotifications()
     {
