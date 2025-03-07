@@ -182,7 +182,6 @@ class UnitController extends Controller
 
     public function create(StoreUnitRequest $request)
     {
-        \Log::info("test");
         try {
             DB::beginTransaction();
 
