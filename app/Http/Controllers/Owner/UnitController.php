@@ -182,6 +182,7 @@ class UnitController extends Controller
 
     public function create(StoreUnitRequest $request)
     {
+        \Log::info("test");
         try {
             DB::beginTransaction();
 
@@ -341,7 +342,7 @@ class UnitController extends Controller
                     Storage::disk('public')->delete($video->path());
                 }
             }
-            // Log::error("Error creating unit: " . $e->getMessage() . "request: " . json_encode($request->all()));
+            \Log::error("Error creating unit: " . $e->getMessage() . "request: " . json_encode($request->all()));
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create unit',
