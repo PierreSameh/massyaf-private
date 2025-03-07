@@ -557,6 +557,7 @@ class UnitController extends Controller
                     Storage::disk('public')->delete($video->path());
                 }
             }
+            \Log::error("Error updating unit: " . $e->getMessage() . "request: " . json_encode($request->all()));
 
             return response()->json([
                 'success' => false,
