@@ -19,6 +19,12 @@ class CodeGeneratorService
                 $parent = Hotel::find($parentId);
                 break;
         }
+        if (!$parent) {
+            throw new \Exception("Parent not found for ID: $parentId");
+        }
+        if (!$parent->base_code) {
+            throw new \Exception("Base code is null for ID: $parentId");
+        }
         // Generate the base code (without sequence)
         $baseCode = $parent->base_code . $rooms . $floor;
         // Initialize the sequence number
