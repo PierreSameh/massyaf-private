@@ -183,19 +183,32 @@ class UnitController extends Controller
     public function create(StoreUnitRequest $request)
     {
         try {
+            \Log::info('Starting unit creation process.', ['request_data' => $request->all()]);
             DB::beginTransaction();
 
             $validated = $request->validated();
             $unitData = $validated;
             $owner = $request->user();
+
+            \Log::info('Validated request data.', ['validated_data' => $unitData]);
+
             //generate unique code for units
             $parentId = isset($unitData['compound_id']) ? $unitData['compound_id'] : $unitData['hotel_id'];
+
+            if (!$parentId) {
+                \Log::error('Parent ID not found in request data.', ['request_data' => $request->all()]);
+                throw new \Exception('Parent ID is required.');
+            }
+    
+            \Log::info('Generating unique code for unit.', ['type' => $unitData['type'], 'parent_id' => $parentId]);
+    
             $code = $this->codeGeneratorService->unit(
                 $unitData['type'],
                 $parentId,
                 $unitData['room_count'] ?: null,
                 $unitData['floors_count'] ?: null
             );
+            \Log::info('Generated unit code.', ['unit_code' => $code]);
 
             // Create the unit
             $unit = Unit::create([
@@ -235,9 +248,12 @@ class UnitController extends Controller
                 'min_weekend_period' => $unitData['min_weekend_period'] ?? null,
                 'weekend_price' => $unitData['weekend_price'] ?? null,
             ]);
+            \Log::info('Unit created successfully.', ['unit_id' => $unit->id]);
 
             if (!empty($unitData['amenities'])) {
                 $unit->amenities()->attach($unitData['amenities']);
+                \Log::info('Amenities attached.', ['unit_id' => $unit->id]);
+
             }
             if (!empty($unitData['reception'])) {
                 $unit->amenities()->attach($unitData['reception']);
@@ -299,6 +315,8 @@ class UnitController extends Controller
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('uploads/units/images', 'public');
                     $unit->images()->create(['image' => $path]);
+                    \Log::info('Image uploaded.', ['path' => $path]);
+
                 }
             }
 
@@ -307,10 +325,13 @@ class UnitController extends Controller
                 foreach ($request->file('videos') as $video) {
                     $path = $video->store('uploads/units/videos', 'public');
                     $unit->videos()->create(['video' => $path]);
+                    \Log::info('Video uploaded.', ['path' => $path]);
+
                 }
             }
 
             DB::commit();
+            \Log::info('Transaction committed. Unit creation successful.');
 
             return response()->json([
                 'success' => true,
@@ -334,11 +355,15 @@ class UnitController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     Storage::disk('public')->delete($image->path());
+                    \Log::info('Deleted image due to error.', ['path' => $image->path()]);
+
                 }
             }
             if ($request->hasFile('videos')) {
                 foreach ($request->file('videos') as $video) {
                     Storage::disk('public')->delete($video->path());
+                    \Log::info('Deleted video due to error.', ['path' => $video->path()]);
+
                 }
             }
             \Log::error("Error creating unit: " . $e->getMessage() . "request: " . json_encode($request->all()));
